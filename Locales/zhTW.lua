@@ -6,7 +6,7 @@ local ADDON_NAME, SanluliUtils = ...
 
 local L = SanluliUtils.Locale
 
-L["addon.name"] = "老德工具箱"
+L["addon.name"] = "SanluliUtils"
 L["addon.test.title"] = "|cffff0000(測試)|r"
 L["addon.test.tooltip"] = "\n|cffff0000測試功能, 無法保證它能按預期效果工作|r"
 L["addons.simulationcraft.title"] = "SimulationCraft"

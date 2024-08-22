@@ -102,8 +102,7 @@ function Module:MERCHANT_SHOW()
                         if (itemInfo and not itemInfo.isLocked) then
                             if (itemInfo.quality == Enum.ItemQuality.Poor and not itemInfo.hasNoValue) then
                                 local price = itemInfo.stackCount * select(11, GetItemInfo(itemInfo.hyperlink))
-
-                                if (not Module:GetConfig(CONFIG_AUTO_SELL_JUNK_METHOD) == CONFIG_AUTO_SELL_JUNK_METHOD_BLIZZARD) then
+                                if (Module:GetConfig(CONFIG_AUTO_SELL_JUNK_METHOD) ~= CONFIG_AUTO_SELL_JUNK_METHOD_BLIZZARD) then
                                     -- 使用右键方式出售物品
                                     C_Container.UseContainerItem(bagId, slot)
                                 end

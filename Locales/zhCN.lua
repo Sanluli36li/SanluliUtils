@@ -6,7 +6,7 @@ local ADDON_NAME, SanluliUtils = ...
 
 local L = SanluliUtils.Locale
 
-L["addon.name"] = "老德工具箱"
+L["addon.name"] = "SanluliUtils"
 L["addon.test.title"] = "|cffff0000(测试)|r"
 L["addon.test.tooltip"] = "\n|cffff0000测试功能, 无法保证它能按预期效果运作|r"
 L["addons.simulationcraft.title"] = "SimulationCraft"
@@ -66,8 +66,8 @@ L["general.autoSellJunk.method.12Items.title"] = "每次仅出售12件垃圾"
 L["general.autoSellJunk.method.12Items.tooltip"] = "打开商人界面时将出售12件垃圾, 它们可以被购回(避免出售掉一些具有特殊意义的物品)"
 L["general.autoSellJunk.method.allItems.title"] = "出售所有垃圾"
 L["general.autoSellJunk.method.allItems.tooltip"] = "打开商人界面时将出售所有垃圾, 超出12件物品的部分将无法购回"
-L["general.autoSellJunk.method.blizzard.title"] = "出售所有垃圾(不可购回)"
-L["general.autoSellJunk.method.blizzard.tooltip"] = "打开商人界面时将出售所有垃圾, 且它们不会出现在购回界面中(使用暴雪内置的方法, 等效于点击出售垃圾按钮并确认)"
+L["general.autoSellJunk.method.blizzard.title"] = "出售所有垃圾(暴雪)"
+L["general.autoSellJunk.method.blizzard.tooltip"] = "打开商人界面时将出售所有垃圾, 超出12件物品的部分将无法购回(使用暴雪内置的方法, 等效于点击出售垃圾按钮并确认)"
 L["general.autoSellJunk.title"] = "自动出售垃圾"
 L["general.autoSellJunk.tooltip"] = "打开商人界面时自动出售灰色品质的物品\n标记为\"忽略此背包->出售垃圾\"的背包将被忽略"
 L["general.fasterAutoLoot.title"] = "更快的自动拾取"

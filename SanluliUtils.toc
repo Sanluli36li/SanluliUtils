@@ -1,12 +1,10 @@
 ## Interface: 110000, 110002
 ## Title: SanluliUtils
-## Title-zhCN: 老德工具箱
-## Title-zhTW: 老德工具箱
 ## Notes: Sanluli36li's Utils
 ## Notes-zhCN: 三鹿李的一些小工具
 ## Notes-zhTW: 三鹿李的一些小工具
 ## Author: Sanluli36li (Olddruid@CN-Galakrond)
-## Version: 2.0.1
+## Version: 2.0.2
 ## SavedVariables: SanluliUtilsDB
 ## IconTexture: 625999
 
