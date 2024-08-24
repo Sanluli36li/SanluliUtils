@@ -1,12 +1,13 @@
-## Interface: 110000, 110002
+## Interface: 110002
 ## Title: SanluliUtils
 ## Notes: Sanluli36li's Utils
 ## Notes-zhCN: 三鹿李的一些小工具
 ## Notes-zhTW: 三鹿李的一些小工具
 ## Author: Sanluli36li (Olddruid@CN-Galakrond)
-## Version: 2.0.2
+## Version: @project-vision@
 ## SavedVariables: SanluliUtilsDB
 ## IconTexture: 625999
+## X-Curse-Project-ID: 1089806
 
 Core.lua
 
