@@ -13,7 +13,7 @@ When opening the merchant interface, automatically repair all equipment. You can
 When opening the merchant interface, automatically repair all equipment.  
 You can select：  
     - Sell 12 items per time, and they can be buyback
-    - Sell all junk. Items exceeding 12 can't be buyback.*
+    - Sell all junk. Items exceeding 12 can't be buyback.
     - Sell all junk. When you sell at least two stacks of junk at a time, they will not appear in the buyback interface.  
 - **Auto Input Confirm Text**  
 Complete the input for you in some prompt boxes that need to enter the specified text. (Example: Enter \"DELETE\" to delete an item)  
@@ -21,6 +21,8 @@ Complete the input for you in some prompt boxes that need to enter the specified
 - **Faster Auto Loot**  
 *This feature is ported from [AutoLootPlus](https://www.curseforge.com/wow/addons/auto-loot-plus) (Author: mjbmitch)*  
 Auto loot will loot all items faster.
+- **Press "Tab" to switch chat types** (Creative from [rick33](https://nga.178.com/nuke.php?func=ucp&uid=39795)(NGA Forum))  
+Press "Tab" key in the chat edit box to quickly switch between: \"|cffffffffSay|r\"、\"|cffaaaaffParty|r\"、\"|cffff7f00Raid|r\"、\"|cffff7f00Instance|r\"、\"|cff40ff40Guild|r\"、\"|cff40c040Officer|r\"channels(Only available in channels you join)  
 ### Blizzard UI  
 - **Synchronize ActionBar Frame configuration**  
 - **Synchronize Raid Frame configuration**  

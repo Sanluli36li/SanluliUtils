@@ -94,6 +94,14 @@ local settingsData = {
             default = true
         },
         {
+            controlType = ControlType.CHECKBOX,
+            settingType = SettingType.ADDON_VAR,
+            title = L["general.chatTypeTabSwitch.title"],
+            tooltip = L["general.chatTypeTabSwitch.tooltip"],
+            key = "general.chatTypeTabSwitch.enable",
+            default = true
+        },
+        {
             controlType = ControlType.SECTION_HEADER,
             title = L["blizzardui.title"]
         },
@@ -123,7 +131,6 @@ local settingsData = {
                 end
             end
         },
-        
         {
             controlType = ControlType.CHECKBOX,
             settingType = SettingType.ADDON_VAR,
