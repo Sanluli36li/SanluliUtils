@@ -1,6 +1,9 @@
 # SanluliUtils
 
 This is a very lightweight AddOn that does not add any interface elements to the game. It uses the Blizzard Settings framework and is fully compatible with Dragonflight's new search function.  
+[Curseforge](https://www.curseforge.com/wow/addons/sanluliutils)
+
+Other Language README:  
 [简体中文](README-zhCN.md)
 
 ## Features:
@@ -18,11 +21,10 @@ You can select：
 - **Auto Input Confirm Text**  
 Complete the input for you in some prompt boxes that need to enter the specified text. (Example: Enter \"DELETE\" to delete an item)  
 ![](https://img.nga.178.com/attachments/mon_202408/22/5kQ2u-456lK10T1kSe9-5g.jpg)
-- **Faster Auto Loot**  
-*This feature is ported from [AutoLootPlus](https://www.curseforge.com/wow/addons/auto-loot-plus) (Author: mjbmitch)*  
-Auto loot will loot all items faster.
+- **Faster Auto Loot** (Ported from mjbmitch's [AutoLootPlus](https://www.curseforge.com/wow/addons/auto-loot-plus))  
+Auto loot will loot all items faster.  
 - **Press "Tab" to switch chat types** (Creative from [rick33](https://nga.178.com/nuke.php?func=ucp&uid=39795)(NGA Forum))  
-Press "Tab" key in the chat edit box to quickly switch between: \"|cffffffffSay|r\"、\"|cffaaaaffParty|r\"、\"|cffff7f00Raid|r\"、\"|cffff7f00Instance|r\"、\"|cff40ff40Guild|r\"、\"|cff40c040Officer|r\"channels(Only available in channels you join)  
+Press "Tab" key in the chat edit box to quickly switch between: "Say", "Party", "Raid", "Instance", "Guild", "Officer" channels(Only available in channels you join)  
 ### Blizzard UI  
 - **Synchronize ActionBar Frame configuration**  
 - **Synchronize Raid Frame configuration**  

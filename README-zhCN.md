@@ -1,6 +1,7 @@
 # SanluliUtils
 
 这是一个非常轻量化的小功能合集插件，它不会向游戏添加任何界面元素，使用暴雪自带的选项框体，并且完全兼容巨龙时代新增的搜索功能  
+[Curseforge](https://www.curseforge.com/wow/addons/sanluliutils)
 
 ## 功能列表
 
@@ -17,8 +18,7 @@
 - **自动输入确认内容**  
 在一些需要你输入确认信息的提示框(比如删除物品)中自动输入确认信息  
 ![](https://img.nga.178.com/attachments/mon_202408/22/5kQ2u-456lK10T1kSe9-5g.jpg)
-- **更快的自动拾取**  
-*此功能移植自[AutoLootPlus](https://www.curseforge.com/wow/addons/auto-loot-plus)插件(作者: mjbmitch)*  
+- **更快的自动拾取** (移植自mjbmitch的[AutoLootPlus](https://www.curseforge.com/wow/addons/auto-loot-plus)插件)  
 打开拾取界面的瞬间捡起里面所有东西(只在开启自动拾取时有效)
 - **Tab快速切换聊天频道** (功能建议来自[rick33](https://nga.178.com/nuke.php?func=ucp&uid=39795)(NGA))  
 在聊天框中按Tab键快速在"说"、"小队"、"团队"、"副本"、"公会"、"官员"频道中切换(只对你加入的频道有效)
