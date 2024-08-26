@@ -8,6 +8,7 @@
 ## SavedVariables: SanluliUtilsDB
 ## IconTexture: 625999
 ## X-Curse-Project-ID: 1089806
+## X-Wago-ID: j6jz846R
 
 Core.lua
 
