@@ -99,7 +99,9 @@ function Module:Startup()
         local cvars = Module:GetConfig(CONFIG_SYNC_RAID_FRAME_CVARS)
         if cvars then
             for k, v in pairs(cvars) do
-                SetCVar(k, v)
+                if GetCVar(k) ~= v then
+                    SetCVar(k, v)
+                end
             end
         else
             self:SaveRaidFrameCVars()
@@ -109,7 +111,9 @@ function Module:Startup()
         local cvars = Module:GetConfig(CONFIG_SYNC_ACTION_BAR_CVARS)
         if cvars then
             for k, v in pairs(cvars) do
-                SetCVar(k, v)
+                if GetCVar(k) ~= v then
+                    SetCVar(k, v)
+                end
             end
         else
             self:SaveActionBarCVars()

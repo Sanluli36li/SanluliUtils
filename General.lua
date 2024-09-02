@@ -39,92 +39,100 @@ local function generateMoneyText(copper)
     end
 end
 
-function Module:MERCHANT_SHOW()
-    -- Auto Repair
-    -- by Sanluli36li
-    if Module:GetConfig(CONFIG_AUTO_REPAIR) then
-        if (CanMerchantRepair()) then
-            local cost = GetRepairAllCost()
-            if cost > 0 then
-                if (Module:GetConfig(CONFIG_AUTO_REPAIR_FUNDS) == CONFIG_AUTO_REPAIR_FUNDS_GUILD and CanGuildBankRepair() and GetGuildBankWithdrawMoney() + GetMoney() >= cost) then
-                    if (GetGuildBankWithdrawMoney() >= cost) then
-                        -- 公修充足，使用公会资金
-                        RepairAllItems(true)
-                        SanluliUtils:Print(L["general.autoRepair.message.repaired"]:format("|cffffffff"..generateMoneyText(cost).."|r("..L["general.autoRepair.message.guild"]..")"))
-                    elseif (GetGuildBankWithdrawMoney() == 0) then
-                        -- 公修耗尽，使用个人资金并提示公修耗尽
-                        RepairAllItems(false)
-                        SanluliUtils:Print(L["general.autoRepair.message.repaired"]:format("|cffffffff"..generateMoneyText(cost).."|r"))
-                        SanluliUtils:Print(L["general.autoRepair.message.guildExhausted"])
-                    else
-                        -- 公修不足，使用公会资金和个人资金修理并提示公修耗尽
-                        local guildMoney = GetGuildBankWithdrawMoney()
-                        RepairAllItems(true)
-                        SanluliUtils:Print(L["general.autoRepair.message.repaired"]:format("|cffffffff"..generateMoneyText(guildMoney).."|r("..L["general.autoRepair.message.guild"]..")"))
-                        SanluliUtils:Print(L["general.autoRepair.message.repaired"]:format("|cffffffff"..generateMoneyText(cost - guildMoney).."|r"))
-                        SanluliUtils:Print(L["general.autoRepair.message.guildExhausted"])
-                    end
-                elseif (GetMoney() >= cost) then
-                    -- 使用个人资金
+local function RepairItems(guildBankRepair)
+    if CanMerchantRepair() then
+        local cost = GetRepairAllCost()
+        if cost > 0 then
+            local money = GetMoney()
+            local guildMoney = GetGuildBankWithdrawMoney()
+            if guildBankRepair and CanGuildBankRepair() and guildMoney + money >= cost then
+                if guildMoney >= cost then
+                    -- 公修充足，使用公会资金
+                    RepairAllItems(true)
+                    SanluliUtils:Print(L["general.autoRepair.message.repaired"]:format("|cffffffff"..generateMoneyText(cost).."|r("..L["general.autoRepair.message.guild"]..")"))
+                elseif guildMoney == 0 then
+                    -- 公修耗尽，使用个人资金并提示公修耗尽
                     RepairAllItems(false)
                     SanluliUtils:Print(L["general.autoRepair.message.repaired"]:format("|cffffffff"..generateMoneyText(cost).."|r"))
+                    SanluliUtils:Print(L["general.autoRepair.message.guildExhausted"])
                 else
-                    -- 金钱不足，提示
-                    SanluliUtils:Print(L["general.autoRepair.message.oom"]:format("|cffffffff"..generateMoneyText(cost).."|r"))
+                    -- 公修不足，使用公会资金和个人资金修理并提示公修耗尽
+                    RepairAllItems(true)
+                    SanluliUtils:Print(L["general.autoRepair.message.repaired"]:format("|cffffffff"..generateMoneyText(guildMoney).."|r("..L["general.autoRepair.message.guild"]..")"))
+                    SanluliUtils:Print(L["general.autoRepair.message.repaired"]:format("|cffffffff"..generateMoneyText(cost - guildMoney).."|r"))
+                    SanluliUtils:Print(L["general.autoRepair.message.guildExhausted"])
                 end
+            elseif money >= cost then
+                -- 使用个人资金
+                RepairAllItems(false)
+                SanluliUtils:Print(L["general.autoRepair.message.repaired"]:format("|cffffffff"..generateMoneyText(cost).."|r"))
+            else
+                -- 金钱不足，提示
+                SanluliUtils:Print(L["general.autoRepair.message.oom"]:format("|cffffffff"..generateMoneyText(cost).."|r"))
             end
         end
     end
+end
 
-    -- Auto Sell Junk
-    -- by Sanluli36li
-    if (Module:GetConfig(CONFIG_AUTO_SELL_JUNK)) then
-        local npcId = select(6, strsplit("-", UnitGUID("npc")))
-        -- 排除自动铁锤
-        if (C_MerchantFrame.IsSellAllJunkEnabled() and npcId and not HAMMER_MERCHANTS[npcId]) then
-            local sold = 0
-            local totalPrice = 0
+local function SellJunkItems(blizzardMethod, sellAllItems)
+    local npcId = select(6, strsplit("-", UnitGUID("npc")))
+    -- 排除自动铁锤
+    if (C_MerchantFrame.IsSellAllJunkEnabled() and npcId and not HAMMER_MERCHANTS[npcId]) then
+        local sold = 0
+        local totalPrice = 0
 
-            for bagId = BACKPACK_CONTAINER, NUM_BAG_SLOTS do
-                if (sold >= 12 and Module:GetConfig(CONFIG_AUTO_SELL_JUNK_METHOD) == CONFIG_AUTO_SELL_JUNK_METHOD_12_ITEMS) then
-                    break
-                end
+        for bagId = BACKPACK_CONTAINER, NUM_BAG_SLOTS do
+            if sold >= 12 and (not blizzardMethod) and (not sellAllItems) then
+                break
+            end
 
-                -- 跳过定义为忽略出售垃圾的背包
-                if (not C_Container.GetBagSlotFlag(bagId, 64)) then
+            -- 跳过定义为忽略出售垃圾的背包
+            if (not C_Container.GetBagSlotFlag(bagId, 64)) then
 
-                    for slot = 0, C_Container.GetContainerNumSlots(bagId) do
-                        -- 仅售出12件物品，保证可以回购，防止误售
-                        if (sold >= 12 and Module:GetConfig(CONFIG_AUTO_SELL_JUNK_METHOD) == CONFIG_AUTO_SELL_JUNK_METHOD_12_ITEMS) then
-                            break
-                        end
+                for slot = 0, C_Container.GetContainerNumSlots(bagId) do
+                    -- 仅售出12件物品，保证可以回购，防止误售
+                    if sold >= 12 and (not blizzardMethod) and (not sellAllItems) then
+                        break
+                    end
 
-                        local itemInfo = C_Container.GetContainerItemInfo(bagId, slot)
-                        if (itemInfo and not itemInfo.isLocked) then
-                            if (itemInfo.quality == Enum.ItemQuality.Poor and not itemInfo.hasNoValue) then
-                                local price = itemInfo.stackCount * select(11, GetItemInfo(itemInfo.hyperlink))
-                                if (Module:GetConfig(CONFIG_AUTO_SELL_JUNK_METHOD) ~= CONFIG_AUTO_SELL_JUNK_METHOD_BLIZZARD) then
-                                    -- 使用右键方式出售物品
-                                    C_Container.UseContainerItem(bagId, slot)
-                                end
-
-                                -- 统计物品数量和价值
-                                totalPrice = totalPrice + price
-                                sold = sold + 1
+                    local itemInfo = C_Container.GetContainerItemInfo(bagId, slot)
+                    if (itemInfo and not itemInfo.isLocked) then
+                        if (itemInfo.quality == Enum.ItemQuality.Poor and not itemInfo.hasNoValue) then
+                            local price = itemInfo.stackCount * select(11, GetItemInfo(itemInfo.hyperlink))
+                            if not blizzardMethod then
+                                -- 使用右键方式出售物品
+                                C_Container.UseContainerItem(bagId, slot)
                             end
+
+                            -- 统计物品数量和价值
+                            totalPrice = totalPrice + price
+                            sold = sold + 1
                         end
                     end
                 end
             end
-
-            if (Module:GetConfig(CONFIG_AUTO_SELL_JUNK_METHOD) == CONFIG_AUTO_SELL_JUNK_METHOD_BLIZZARD) then
-                -- 使用暴雪内置出售所有垃圾方法
-                C_MerchantFrame.SellAllJunkItems()
-            end
-            if totalPrice > 0 then
-                SanluliUtils:Print(L["general.autoSellJunk.message.sold"]:format(sold, "|cffffffff"..generateMoneyText(totalPrice).."|r"))
-            end
         end
+
+        if blizzardMethod then
+            -- 使用暴雪内置出售所有垃圾方法
+            C_MerchantFrame.SellAllJunkItems()
+        end
+        if totalPrice > 0 then
+            SanluliUtils:Print(L["general.autoSellJunk.message.sold"]:format(sold, "|cffffffff"..generateMoneyText(totalPrice).."|r"))
+        end
+    end
+end
+
+function Module:MERCHANT_SHOW()
+    if Module:GetConfig(CONFIG_AUTO_REPAIR) then
+        RepairItems(Module:GetConfig(CONFIG_AUTO_REPAIR_FUNDS) == CONFIG_AUTO_REPAIR_FUNDS_GUILD)
+    end
+
+    if (Module:GetConfig(CONFIG_AUTO_SELL_JUNK)) then
+        SellJunkItems(
+            Module:GetConfig(CONFIG_AUTO_SELL_JUNK_METHOD) == CONFIG_AUTO_SELL_JUNK_METHOD_BLIZZARD,
+            Module:GetConfig(CONFIG_AUTO_SELL_JUNK_METHOD) == CONFIG_AUTO_SELL_JUNK_METHOD_ALL_ITEMS or Module:GetConfig(CONFIG_AUTO_SELL_JUNK_METHOD) == CONFIG_AUTO_SELL_JUNK_METHOD_BLIZZARD
+        )
     end
 end
 Module:RegisterEvent("MERCHANT_SHOW")
