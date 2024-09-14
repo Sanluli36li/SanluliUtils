@@ -19,3 +19,4 @@ General.lua
 BlizzardUI.lua
 AddOns.lua
 Client.lua
+Social.lua

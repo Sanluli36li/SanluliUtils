@@ -28,6 +28,7 @@ local ACTION_BAR_CVARS = {
     countdownForCooldowns = true                -- 显示冷却时间
 }
 
+-- 总是显示额外能量条状态
 hooksecurefunc(PlayerPowerBarAltStatusFrame, "Hide", function(self)
     if Module:GetConfig(CONFIG_FORCE_SHOW_POWER_BAR_ALT_STATUS) then
         self:Show()
@@ -61,7 +62,20 @@ function Module:SaveRaidFrameCVars()
     for k, v in pairs(RAID_FRAME_CVARS) do
         cvars[k] = GetCVar(k)
     end
-    SanluliUtils:SetConfig(Module.name, CONFIG_SYNC_RAID_FRAME_CVARS, cvars)
+    SanluliUtils:SetConfig(self.name, CONFIG_SYNC_RAID_FRAME_CVARS, cvars)
+end
+
+function Module:LoadRaidFrameCVars()
+    local cvars = self:GetConfig(CONFIG_SYNC_RAID_FRAME_CVARS)
+    if cvars then
+        for k, v in pairs(cvars) do
+            if GetCVar(k) ~= v then
+                SetCVar(k, v)
+            end
+        end
+    else
+        self:SaveRaidFrameCVars()
+    end
 end
 
 function Module:SaveActionBarCVars()
@@ -69,19 +83,32 @@ function Module:SaveActionBarCVars()
     for k, v in pairs(ACTION_BAR_CVARS) do
         cvars[k] = GetCVar(k)
     end
-    self:SetConfig(Module.name, CONFIG_SYNC_ACTION_BAR_CVARS, cvars)
+    self:SetConfig(self.name, CONFIG_SYNC_ACTION_BAR_CVARS, cvars)
+end
+
+function Module:LoadActionBarCVars()
+    local cvars = self:GetConfig(CONFIG_SYNC_ACTION_BAR_CVARS)
+    if cvars then
+        for k, v in pairs(cvars) do
+            if GetCVar(k) ~= v then
+                SetCVar(k, v)
+            end
+        end
+    else
+        self:SaveActionBarCVars()
+    end
 end
 
 function Module:CVAR_UPDATE(name, value)
-    if Module:GetConfig(CONFIG_SYNC_RAID_FRAME_ENABLE) and RAID_FRAME_CVARS[name] then
-        local cvars = Module:GetConfig(CONFIG_SYNC_RAID_FRAME_CVARS)
+    if self:GetConfig(CONFIG_SYNC_RAID_FRAME_ENABLE) and RAID_FRAME_CVARS[name] then
+        local cvars = self:GetConfig(CONFIG_SYNC_RAID_FRAME_CVARS)
         if cvars then
             cvars[name] = value
         else
             self:SaveRaidFrameCVars()
         end
-    elseif Module:GetConfig(CONFIG_SYNC_ACTION_BAR_ENABLE) and ACTION_BAR_CVARS[name] then
-        local cvars = Module:GetConfig(CONFIG_SYNC_ACTION_BAR_CVARS)
+    elseif self:GetConfig(CONFIG_SYNC_ACTION_BAR_ENABLE) and ACTION_BAR_CVARS[name] then
+        local cvars = self:GetConfig(CONFIG_SYNC_ACTION_BAR_CVARS)
         if cvars then
             cvars[name] = value
         else
@@ -92,31 +119,13 @@ end
 Module:RegisterEvent("CVAR_UPDATE")
 
 function Module:Startup()
-    if Module:GetConfig(CONFIG_HIDE_ACTION_BAR_NAME) then
+    if self:GetConfig(CONFIG_HIDE_ACTION_BAR_NAME) then
         self:SetActionBarNameDisplay(false)
     end
-    if Module:GetConfig(CONFIG_SYNC_RAID_FRAME_ENABLE) then
-        local cvars = Module:GetConfig(CONFIG_SYNC_RAID_FRAME_CVARS)
-        if cvars then
-            for k, v in pairs(cvars) do
-                if GetCVar(k) ~= v then
-                    SetCVar(k, v)
-                end
-            end
-        else
-            self:SaveRaidFrameCVars()
-        end
+    if self:GetConfig(CONFIG_SYNC_RAID_FRAME_ENABLE) then
+        self:LoadRaidFrameCVars()
     end
-    if Module:GetConfig(CONFIG_SYNC_ACTION_BAR_ENABLE) then
-        local cvars = Module:GetConfig(CONFIG_SYNC_ACTION_BAR_CVARS)
-        if cvars then
-            for k, v in pairs(cvars) do
-                if GetCVar(k) ~= v then
-                    SetCVar(k, v)
-                end
-            end
-        else
-            self:SaveActionBarCVars()
-        end
+    if self:GetConfig(CONFIG_SYNC_ACTION_BAR_ENABLE) then
+        self:LoadActionBarCVars()
     end
 end

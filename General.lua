@@ -124,14 +124,14 @@ local function SellJunkItems(blizzardMethod, sellAllItems)
 end
 
 function Module:MERCHANT_SHOW()
-    if Module:GetConfig(CONFIG_AUTO_REPAIR) then
-        RepairItems(Module:GetConfig(CONFIG_AUTO_REPAIR_FUNDS) == CONFIG_AUTO_REPAIR_FUNDS_GUILD)
+    if self:GetConfig(CONFIG_AUTO_REPAIR) then
+        RepairItems(self:GetConfig(CONFIG_AUTO_REPAIR_FUNDS) == CONFIG_AUTO_REPAIR_FUNDS_GUILD)
     end
 
-    if (Module:GetConfig(CONFIG_AUTO_SELL_JUNK)) then
+    if (self:GetConfig(CONFIG_AUTO_SELL_JUNK)) then
         SellJunkItems(
-            Module:GetConfig(CONFIG_AUTO_SELL_JUNK_METHOD) == CONFIG_AUTO_SELL_JUNK_METHOD_BLIZZARD,
-            Module:GetConfig(CONFIG_AUTO_SELL_JUNK_METHOD) == CONFIG_AUTO_SELL_JUNK_METHOD_ALL_ITEMS or Module:GetConfig(CONFIG_AUTO_SELL_JUNK_METHOD) == CONFIG_AUTO_SELL_JUNK_METHOD_BLIZZARD
+            self:GetConfig(CONFIG_AUTO_SELL_JUNK_METHOD) == CONFIG_AUTO_SELL_JUNK_METHOD_BLIZZARD,
+            self:GetConfig(CONFIG_AUTO_SELL_JUNK_METHOD) == CONFIG_AUTO_SELL_JUNK_METHOD_ALL_ITEMS or self:GetConfig(CONFIG_AUTO_SELL_JUNK_METHOD) == CONFIG_AUTO_SELL_JUNK_METHOD_BLIZZARD
         )
     end
 end
@@ -140,7 +140,7 @@ Module:RegisterEvent("MERCHANT_SHOW")
 function Module:LOOT_OPENED(...)
     -- Faster Auto Loot
     -- Source: https://www.curseforge.com/wow/addons/auto-loot-plus by mjbmitch
-    if Module:GetConfig(CONFIG_FASTER_AUTO_LOOT) then
+    if self:GetConfig(CONFIG_FASTER_AUTO_LOOT) then
         -- Check if auto loot is enabled xor its activation key is pressed
         if GetCVarBool(CVAR_AUTO_LOOT) ~= IsModifiedClick(BINDING_AUTO_LOOT) then
             -- Work backwards toward the built-in auto loot iterator
@@ -172,82 +172,39 @@ for dialogName, confirmString in pairs(CONFIRM_STRINGS) do
     end)
 end
 
-local CHAT_TYPE_ID = {
-    SAY = 1,
-    PARTY = 2,
-    RAID = 3,
-    INSTANCE_CHAT = 4,
-    GUILD = 5,
-    OFFICER = 6
-}
-
-local CHAT_TYPES = {
-    [CHAT_TYPE_ID.SAY] = {              -- 说 (总是使用)
-        type = "SAY"
-    },
-    [CHAT_TYPE_ID.PARTY] = {            -- 小队 (在小队中，且不在团队中(非随机副本队伍))
-        type = "PARTY",
-        isEnable = function() return IsInGroup(LE_PARTY_CATEGORY_HOME) and not IsInRaid(LE_PARTY_CATEGORY_HOME) end
-    },
-    [CHAT_TYPE_ID.RAID] = {             -- 团队 (在团队中(非随机副本队伍))
-        type = "RAID",
-        isEnable = function()
-            return IsInRaid(LE_PARTY_CATEGORY_HOME)
-        end
-    },
-    [CHAT_TYPE_ID.INSTANCE_CHAT] = {    -- 副本 (在副本队伍中)
-        type = "INSTANCE_CHAT",
-        isEnable = function ()
-            return IsInGroup(LE_PARTY_CATEGORY_INSTANCE)
-        end
-    },
-    [CHAT_TYPE_ID.GUILD] = {            -- 公会 (在公会中)
-        type = "GUILD",
-        isEnable = function()
-            return IsInGuild()
-        end
-    },
-    [CHAT_TYPE_ID.OFFICER] = {          -- 官员 (是公会官员)
-        type = "OFFICER",
-        isEnable = function ()
-            return C_GuildInfo.IsGuildOfficer()
-        end
-    }
-}
-
-local lastChatType = 1
-
-local function TrySetChatType(editBox, id)
-    if CHAT_TYPES[id] and (CHAT_TYPES[id].isEnable and CHAT_TYPES[id].isEnable()) or not CHAT_TYPES[id].isEnable then
-        editBox:SetAttribute("chatType", CHAT_TYPES[id].type)
-        ChatEdit_UpdateHeader(editBox)
-        return true
-    else
-        return false
-    end
-end
-
-hooksecurefunc("ChatEdit_OnTabPressed", function(editBox)
-    if Module:GetConfig(CONFIG_CHAT_TYPE_TAB_SWITCH) and editBox == ChatFrame1EditBox then
-        if not (strsub(editBox:GetText(), 1, 1) == "/") then    -- "/"开头命令自动补全时不执行
-            -- print("Current: ", editBox:GetAttribute("chatType"), CHAT_TYPE_ID[editBox:GetAttribute("chatType")])
-            local currentId = CHAT_TYPE_ID[editBox:GetAttribute("chatType")] or 0
-
-            if currentId == 0 then  -- 非循环表中的情况 切换上次TAB切换到的频道, 或切换为“说”
-                return TrySetChatType(editBox, lastChatType) or TrySetChatType(editBox, 1)
-            else
-                local nextId = ((currentId >= #CHAT_TYPES) and 1) or currentId + 1
-                while true do
-                    if nextId == currentId then -- 循环一圈没有找到下一个, 跳出
-                        break
-                    elseif TrySetChatType(editBox, nextId) then -- 尝试设置下一个
-                        lastChatType = nextId
-                        return
-                    else                                        -- 下一个不满足条件
-                        nextId = ((nextId >= #CHAT_TYPES) and 1) or (nextId + 1)
-                    end
-                end
+local function removeWaitingRolls(rollID)
+    local waitingRolls = GroupLootContainer.waitingRolls
+    if #waitingRolls > 0 then
+        for i = #waitingRolls, 1 -1 do
+            if waitingRolls[i].rollID == rollID then
+                table.remove(waitingRolls, i)
             end
         end
     end
-end)
+end
+
+function Module:START_LOOT_ROLL(rollID, rollTime, lootHandle)
+    if self:GetConfig("autoRoll.enable") then
+        local texture, name, count, quality, bindOnPickUp, canNeed, canGreed, canDisenchant, reasonNeed, reasonGreed, reasonDisenchant, deSkillRequired, canTransmog = GetLootRollItemInfo(rollID)
+        local itemLink = GetLootRollItemLink(rollID)
+
+        if not canNeed then
+            if self:GetConfig("autoRoll.method") == 1 then
+                if canTransmog then
+                    removeWaitingRolls(rollID)
+                    RollOnLoot(rollID, 4)   -- 幻化
+                    SanluliUtils:Print(L["general.autoRoll.message.transmog"]:format(itemLink))
+                elseif canGreed then
+                    removeWaitingRolls(rollID)
+                    RollOnLoot(rollID, 2)   -- 贪婪
+                    SanluliUtils:Print(L["general.autoRoll.message.greed"]:format(itemLink))
+                end
+            else
+                removeWaitingRolls(rollID)
+                RollOnLoot(rollID, 0)       -- 放弃
+                SanluliUtils:Print(L["general.autoRoll.message.pass"]:format(itemLink))
+            end
+        end
+    end
+end
+Module:RegisterEvent("START_LOOT_ROLL")
