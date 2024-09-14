@@ -82,7 +82,7 @@ hooksecurefunc("ChatEdit_OnTabPressed", function(editBox)
         end
     end
 end)
-
+--[[
 hooksecurefunc("FriendsFrame_CheckBattlenetStatus", function(self)
 	--local battleTag = FriendsFrameBattlenetFrame.Tag:GetText()
     local _, battleTag = BNGetInfo();
@@ -108,3 +108,4 @@ BNet_GetBNetAccountName = function(accountInfo)
 
 	return name;
 end
+]]
