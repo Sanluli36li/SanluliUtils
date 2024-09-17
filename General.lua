@@ -172,6 +172,7 @@ for dialogName, confirmString in pairs(CONFIRM_STRINGS) do
     end)
 end
 
+--[[
 local function removeWaitingRolls(rollID)
     local waitingRolls = GroupLootContainer.waitingRolls
     if #waitingRolls > 0 then
@@ -182,6 +183,9 @@ local function removeWaitingRolls(rollID)
         end
     end
 end
+]]
+
+local rolledList = {}
 
 function Module:START_LOOT_ROLL(rollID, rollTime, lootHandle)
     if self:GetConfig("autoRoll.enable") then
@@ -191,20 +195,34 @@ function Module:START_LOOT_ROLL(rollID, rollTime, lootHandle)
         if not canNeed then
             if self:GetConfig("autoRoll.method") == 1 then
                 if canTransmog then
-                    removeWaitingRolls(rollID)
+                    -- removeWaitingRolls(rollID)
                     RollOnLoot(rollID, 4)   -- 幻化
+                    rolledList[rollID] = true
                     SanluliUtils:Print(L["general.autoRoll.message.transmog"]:format(itemLink))
                 elseif canGreed then
-                    removeWaitingRolls(rollID)
+                    -- removeWaitingRolls(rollID)
                     RollOnLoot(rollID, 2)   -- 贪婪
+                    rolledList[rollID] = true
                     SanluliUtils:Print(L["general.autoRoll.message.greed"]:format(itemLink))
                 end
             else
-                removeWaitingRolls(rollID)
+                -- removeWaitingRolls(rollID)
                 RollOnLoot(rollID, 0)       -- 放弃
+                rolledList[rollID] = true
                 SanluliUtils:Print(L["general.autoRoll.message.pass"]:format(itemLink))
             end
         end
     end
 end
 Module:RegisterEvent("START_LOOT_ROLL")
+
+hooksecurefunc("GroupLootFrame_OnShow", function(self)
+    if rolledList[self.rollID] then
+        GroupLootContainer_RemoveFrame(GroupLootContainer, self)
+        rolledList[self.rollID] = nil
+    end
+end)
+
+hooksecurefunc("GroupLootFrame_OnHide", function(self)
+    rolledList[self.rollID] = nil
+end)
