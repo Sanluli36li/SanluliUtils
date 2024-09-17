@@ -112,15 +112,16 @@ function SanluliUtils:ForAllModules(event, ...)
 	end
 end
 
-SanluliUtils:RegisterEvent("PLAYER_ENTERING_WORLD", SanluliUtils)
-function SanluliUtils:PLAYER_ENTERING_WORLD()
-	SanluliUtilsDB = (type(SanluliUtilsDB) == "table" and SanluliUtilsDB) or {}
-	SanluliUtils.Database = SanluliUtilsDB
+SanluliUtils:RegisterEvent("ADDON_LOADED", SanluliUtils)
 
-	self:ForAllModules('BeforeStartup')
-	self:ForAllModules('Startup')
-	self:ForAllModules('AfterStartup')
+function SanluliUtils:ADDON_LOADED(addOnName, containsBindings)
+	if addOnName == ADDON_NAME then
+		SanluliUtilsDB = (type(SanluliUtilsDB) == "table" and SanluliUtilsDB) or {}
+		self.Database = SanluliUtilsDB
 
-	self:UnregisterEvent("PLAYER_ENTERING_WORLD", self)
+		self:ForAllModules('BeforeStartup')
+		self:ForAllModules('Startup')
+		self:ForAllModules('AfterStartup')
+	end
 end
 
