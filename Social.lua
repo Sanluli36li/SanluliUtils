@@ -1,7 +1,11 @@
 local ADDON_NAME, SanluliUtils = ...
 
+local Module = SanluliUtils:NewModule("social")
 local L = SanluliUtils.Locale
-local Module = SanluliUtils.Modules.general
+
+local CONFIG_CHAT_TYPE_TAB_SWITCH = "chatTypeTabSwitch.enable"
+local CONFIG_FRIEND_LIST_CHARACTER_NAME_CLASS_COLOR = "friendsList.characterNameClassColor.enable"
+local CONFIG_FRIEND_LIST_HIDE_BATTLE_NET_TAG_SUFFIX = "friendsList.hideBattleNetTagSuffix.enable"
 
 local CHAT_TYPE_ID = {
     SAY = 1,
@@ -46,6 +50,13 @@ local CHAT_TYPES = {
     }
 }
 
+local CLASSES_COLORS = {}
+
+for i = 1, GetNumClasses(), 1 do
+    local classNameLocalization, className, classId = GetClassInfo(i)
+    CLASSES_COLORS[classNameLocalization] = "|c"..C_ClassColor.GetClassColor(className):GenerateHexColor()
+end
+
 local lastChatType = 1
 
 local function TrySetChatType(editBox, id)
@@ -82,26 +93,52 @@ hooksecurefunc("ChatEdit_OnTabPressed", function(editBox)
         end
     end
 end)
+
+hooksecurefunc("FriendsFrame_UpdateFriendButton", function(button, elementData)
+    if Module:GetConfig(CONFIG_FRIEND_LIST_CHARACTER_NAME_CLASS_COLOR) then
+        local id = button.id
+        if button.buttonType == FRIENDS_BUTTON_TYPE_BNET then
+            local accountInfo = C_BattleNet.GetFriendAccountInfo(id)
+            if accountInfo then
+                local nameText = BNet_GetBNetAccountName(accountInfo)        
+                local characterName = FriendsFrame_GetFormattedCharacterName(accountInfo.gameAccountInfo.characterName, nil, accountInfo.gameAccountInfo.clientProgram, accountInfo.gameAccountInfo.timerunningSeasonID)
+
+                if characterName ~= "" and accountInfo.gameAccountInfo.className then
+                    local classColor = accountInfo.gameAccountInfo.className and CLASSES_COLORS[accountInfo.gameAccountInfo.className]
+
+                    if accountInfo.gameAccountInfo.clientProgram == BNET_CLIENT_WOW and classColor then
+                        button.name:SetText(nameText.." "..classColor.."("..characterName..")"..FONT_COLOR_CODE_CLOSE)
+                    end
+                end
+            end
+        end
+    end
+end)
+
 --[[
 hooksecurefunc("FriendsFrame_CheckBattlenetStatus", function(self)
 	--local battleTag = FriendsFrameBattlenetFrame.Tag:GetText()
-    local _, battleTag = BNGetInfo();
-	if battleTag then
+    print(SanluliUtilsDB["social."..CONFIG_FRIEND_LIST_HIDE_BATTLE_NET_TAG_SUFFIX])
+    print(Module)
+    print(Module:GetConfig(CONFIG_FRIEND_LIST_HIDE_BATTLE_NET_TAG_SUFFIX), "|", Module:GetConfig(CONFIG_CHAT_TYPE_TAB_SWITCH),"|",Module:GetConfig(CONFIG_FRIEND_LIST_CHARACTER_NAME_CLASS_COLOR),"")
+    if SanluliUtilsDB["social."..CONFIG_FRIEND_LIST_HIDE_BATTLE_NET_TAG_SUFFIX] then
+        local _, battleTag = BNGetInfo();
+        if battleTag then
 
-		local symbol = string.find(battleTag, "#")
-		if symbol then
-			battleTag = string.sub(battleTag, 1, symbol - 1).."|cff416380#0000|r"
-		end
-		FriendsFrameBattlenetFrame.Tag:SetText(battleTag)
-	end
+            local symbol = string.find(battleTag, "#")
+            if symbol then
+                battleTag = string.sub(battleTag, 1, symbol - 1).."|cff416380#0000|r"
+            end
+            FriendsFrameBattlenetFrame.Tag:SetText(battleTag)
+        end
+    end
 end)
-
 
 local BattleNetGetBNetAccountName = BNet_GetBNetAccountName
 BNet_GetBNetAccountName = function(accountInfo)
     -- print(accountInfo.accountName)
 	if not accountInfo then
-		return;
+		return
 	end
 
 	name = BNet_GetTruncatedBattleTag(accountInfo.battleTag);
