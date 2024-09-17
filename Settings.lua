@@ -127,7 +127,7 @@ local settingsData = {
             default = false,
             onValueChanged = function (value)
                 if value then
-                    SanluliUtils.blizzardui.SaveActionBarCVars()
+                    SanluliUtils.blizzardui:SaveActionBarCVars()
                 end
             end
         },
@@ -140,7 +140,7 @@ local settingsData = {
             default = false,
             onValueChanged = function (value)
                 if value then
-                    SanluliUtils.blizzardui.SaveRaidFrameCVars()
+                    SanluliUtils.blizzardui:SaveRaidFrameCVars()
                 end
             end
         },
