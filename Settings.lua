@@ -16,24 +16,27 @@ local SettingType = {
 }
 
 --[[
-    module:         模块名称
-    title:          选项中显示的模块标题
-    settings:       当前分类的选项列表
-        setting     
-            controlType:    控制器类型 (必须)
-                
-                
-            settingType:    变量类型 (必须)
-            title:          选项标题 (必须)
-            tooltip:        鼠标提示信息
-            default:        默认值 (必须)
-            key:            储存在插件配置文件中的配置键名 (必须)
-            onValueChanged: 当该选项值被改变时调用此函数, 新的值将作为参数传递
-            subSettings:    该选项的子选项列表
-                ...
-        ...
-    subCategorys:   子分类列表
-        ...             此分类的子分类列表
+    module          string      模块名称
+    title           string      选项中显示的模块标题
+    settings        table[]     当前分类的选项列表   
+        controlType     number      控制器类型 (必须)
+        settingType     number      选项类型 (必须)
+        title           string      选项标题 (必须)
+        tooltip         string      鼠标提示信息
+        default                     默认值 (必须)
+        key             string      储存在插件配置文件中的配置键名 (必须)
+        getValue        function    如果选项类型是PROXY, 必须
+        setValue        function    如果选项类型是PROXY, 必须
+        onValueChanged  function    当该选项值被改变时调用此函数, 新的值将作为参数传递
+        dropdown        table       下拉菜单 如果选项类型是CHECK_AND_DROPDOWN, 必须
+            settingType     number      选项类型 (必须)
+            key             string      下拉菜单的选项配置键名 (必须)
+            default                     默认值 (必须)
+            options         table[]
+                1               string      下拉菜单项目标题 (必须)
+                2               string      下拉菜单项目鼠标提示信息
+        subSettings     table[]     该选项的子选项列表, 具体表现标题缩进
+    subCategorys    table[]     子分类列表
 
 ]]
 
@@ -86,19 +89,29 @@ local settingsData = {
             default = true
         },
         {
+            controlType = ControlType.CHECKBOX_AND_DROPDOWN,
+            settingType = SettingType.ADDON_VAR,
+            title = L["general.autoRoll.title"],
+            tooltip = L["general.autoRoll.tooltip"],
+            key = "general.autoRoll.enable",
+            default = false,
+            dropdown = {
+                settingType = SettingType.ADDON_VAR,
+                key = "general.autoRoll.method",
+                default = 1,
+                options = {
+                    { L["general.autoRoll.method.greed.title"], L["general.autoRoll.method.greed.tooltip"] },
+                    { L["general.autoRoll.method.pass.title"], L["general.autoRoll.method.pass.tooltip"] }
+                }
+            },
+            testing = true
+        },
+        {
             controlType = ControlType.CHECKBOX,
             settingType = SettingType.ADDON_VAR,
             title = L["general.fasterAutoLoot.title"],
             tooltip = L["general.fasterAutoLoot.tooltip"],
             key = "general.fasterAutoLoot.enable",
-            default = true
-        },
-        {
-            controlType = ControlType.CHECKBOX,
-            settingType = SettingType.ADDON_VAR,
-            title = L["general.chatTypeTabSwitch.title"],
-            tooltip = L["general.chatTypeTabSwitch.tooltip"],
-            key = "general.chatTypeTabSwitch.enable",
             default = true
         },
         {
@@ -156,6 +169,43 @@ local settingsData = {
         }
     },
     subCategorys = {
+        {
+            module = "social",
+            title = L["social.title"],
+            settings = {
+                {
+                    controlType = ControlType.CHECKBOX,
+                    settingType = SettingType.ADDON_VAR,
+                    title = L["social.chatTypeTabSwitch.title"],
+                    tooltip = L["social.chatTypeTabSwitch.tooltip"],
+                    key = "social.chatTypeTabSwitch.enable",
+                    default = true
+                },
+                {
+                    controlType = ControlType.SECTION_HEADER,
+                    title = L["social.friendsList.title"],
+                },
+                {
+                    controlType = ControlType.CHECKBOX,
+                    settingType = SettingType.ADDON_VAR,
+                    title = L["social.friendsList.characterNameClassColor.title"],
+                    tooltip = L["social.friendsList.characterNameClassColor.tooltip"],
+                    key = "social.friendsList.characterNameClassColor.enable",
+                    default = true,
+                },
+                --[[
+                {
+                    controlType = ControlType.CHECKBOX,
+                    settingType = SettingType.ADDON_VAR,
+                    title = L["social.friendsList.hideBattleNetTagSuffix.title"],
+                    tooltip = L["social.friendsList.hideBattleNetTagSuffix.tooltip"],
+                    key = "social.friendsList.hideBattleNetTagSuffix.enable",
+                    default = false,
+                },
+                ]]
+
+            }
+        },
         {
             module = "addons",
             title = L["addons.title"],
@@ -405,6 +455,10 @@ local function SetupCheckboxAndDropdown(category, layout, data)
 end
 
 Setup = function (category, layout, data)
+    if data.testing then
+        data.title = L["addon.test.title"]..data.title
+        data.tooltip = data.tooltip.."\n\n"..L["addon.test.tooltip"]
+    end
     if data.controlType == ControlType.SECTION_HEADER then
         layout:AddInitializer(CreateSettingsListSectionHeaderInitializer(data.title));
         if data.subSettings then

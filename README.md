@@ -21,13 +21,11 @@ You can select：
 - **Auto Input Confirm Text**  
 Complete the input for you in some prompt boxes that need to enter the specified text. (Example: Enter \"DELETE\" to delete an item)  
 ![](https://img.nga.178.com/attachments/mon_202408/22/5kQ2u-456lK10T1kSe9-5g.jpg)
-- **Auto Roll**
+- **Auto Roll (testing)**
 When your raid loots an item and waits for the roll, If you **can't Need** the item, Automatic dice roll  
 For items you can Need, you still need to decide how to roll  
 - **Faster Auto Loot** (Ported from mjbmitch's [AutoLootPlus](https://www.curseforge.com/wow/addons/auto-loot-plus))  
 Auto loot will loot all items faster.  
-- **Press "Tab" to switch chat types** (Creative from [rick33](https://nga.178.com/nuke.php?func=ucp&uid=39795)(NGA Forum))  
-Press "Tab" key in the chat edit box to quickly switch between: "Say", "Party", "Raid", "Instance", "Guild", "Officer" channels(Only available in channels you join)  
 ### Blizzard UI  
 - **Synchronize ActionBar Frame configuration**  
 - **Synchronize Raid Frame configuration**  
@@ -38,6 +36,11 @@ Always show the text above when in some Boss Encounters or Areas that have an Ex
 - **Hide Action Bar Button Name**  
 Hide the names of Macros, Equipment Sets, etc. on the Blizzard action bar.  
 ![](https://img.nga.178.com/attachments/mon_202408/22/5kQ2u-jxarK6T8S2y-1l.jpg)  
+### Social
+- **Press "Tab" to switch chat types** (Creative from [rick33](https://nga.178.com/nuke.php?func=ucp&uid=39795)(NGA Forum))  
+Press "Tab" key in the chat edit box to quickly switch between: "Say", "Party", "Raid", "Instance", "Guild", "Officer" channels(Only available in channels you join)  
+- **Characters Name Class Color**
+Character names in friends list will be displayed in class color  
 
 ### Client
 - **Reducing Violence**  

@@ -8,7 +8,7 @@ local L = SanluliUtils.Locale
 
 L["addon.name"] = "SanluliUtils"
 L["addon.test.title"] = "|cffff0000(测试)|r"
-L["addon.test.tooltip"] = "\n|cffff0000测试功能, 无法保证它能按预期效果运作|r"
+L["addon.test.tooltip"] = "|cffff0000此功能仍然需要测试, 无法保证它能按预期效果运作|r"
 L["addons.simulationcraft.title"] = "SimulationCraft"
 L["addons.simulationcraft.forceHideMinimap.title"] = "总是隐藏Simc小地图按钮"
 L["addons.title"] = "插件增强"
