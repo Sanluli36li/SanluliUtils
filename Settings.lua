@@ -191,19 +191,44 @@ local settingsData = {
                     title = L["social.friendsList.characterNameClassColor.title"],
                     tooltip = L["social.friendsList.characterNameClassColor.tooltip"],
                     key = "social.friendsList.characterNameClassColor.enable",
-                    default = true,
+                    default = true
                 },
-                --[[
                 {
                     controlType = ControlType.CHECKBOX,
+                    settingType = SettingType.ADDON_VAR,
+                    title = L["social.friendsList.hideBattleNetFriendsRealName.title"],
+                    tooltip = L["social.friendsList.hideBattleNetFriendsRealName.tooltip"],
+                    key = "social.friendsList.hideBattleNetFriendsRealName.enable",
+                    default = false
+                },
+                {
+                    controlType = ControlType.CHECKBOX_AND_DROPDOWN,
                     settingType = SettingType.ADDON_VAR,
                     title = L["social.friendsList.hideBattleNetTagSuffix.title"],
                     tooltip = L["social.friendsList.hideBattleNetTagSuffix.tooltip"],
                     key = "social.friendsList.hideBattleNetTagSuffix.enable",
                     default = false,
-                },
-                ]]
-
+                    dropdown = {
+                        settingType = SettingType.ADDON_VAR,
+                        key = "social.friendsList.hideBattleNetTagSuffix.method",
+                        default = 1,
+                        options = {
+                            { L["social.friendsList.hideBattleNetTagSuffix.method.hide.title"] },
+                            { L["social.friendsList.hideBattleNetTagSuffix.method.replace.title"] }
+                        },
+                        onValueChanged = function (value)
+                            SanluliUtils.social:SetBattleTagHideStatus(value)
+                        end
+                    },
+                    onValueChanged = function (value)
+                        if value then
+                            print(SanluliUtils.social:GetConfig("friendsList.hideBattleNetTagSuffix.method"))
+                            SanluliUtils.social:SetBattleTagHideStatus(SanluliUtils.social:GetConfig("friendsList.hideBattleNetTagSuffix.method"))
+                        else
+                            SanluliUtils.social:SetBattleTagHideStatus(0)
+                        end
+                    end
+                }
             }
         },
         {

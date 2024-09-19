@@ -6,6 +6,8 @@ local L = SanluliUtils.Locale
 local CONFIG_CHAT_TYPE_TAB_SWITCH = "chatTypeTabSwitch.enable"
 local CONFIG_FRIEND_LIST_CHARACTER_NAME_CLASS_COLOR = "friendsList.characterNameClassColor.enable"
 local CONFIG_FRIEND_LIST_HIDE_BATTLE_NET_TAG_SUFFIX = "friendsList.hideBattleNetTagSuffix.enable"
+local CONFIG_FRIEND_LIST_HIDE_BATTLE_NET_TAG_SUFFIX_METHOD = "friendsList.hideBattleNetTagSuffix.method"
+local CONFIG_FRIEND_LIST_HIDE_BATTLE_NET_FRIENDS_REAL_NAME = "friendsList.hideBattleNetFriendsRealName.enable"
 
 local CHAT_TYPE_ID = {
     SAY = 1,
@@ -97,10 +99,15 @@ end)
 hooksecurefunc("FriendsFrame_UpdateFriendButton", function(button, elementData)
     if Module:GetConfig(CONFIG_FRIEND_LIST_CHARACTER_NAME_CLASS_COLOR) then
         local id = button.id
-        if button.buttonType == FRIENDS_BUTTON_TYPE_BNET then
+        if button.buttonType == FRIENDS_BUTTON_TYPE_WOW then
+            local info = C_FriendList.GetFriendInfoByIndex(id)
+            if info and info.name and info.className and CLASSES_COLORS[info.className] and info.level then
+                button.name:SetText(CLASSES_COLORS[info.className]..info.name.."|r"..", "..format(FRIENDS_LEVEL_TEMPLATE, info.level, info.className))
+            end
+        elseif button.buttonType == FRIENDS_BUTTON_TYPE_BNET then
             local accountInfo = C_BattleNet.GetFriendAccountInfo(id)
             if accountInfo then
-                local nameText = BNet_GetBNetAccountName(accountInfo)        
+                local nameText = BNet_GetBNetAccountName(accountInfo)
                 local characterName = FriendsFrame_GetFormattedCharacterName(accountInfo.gameAccountInfo.characterName, nil, accountInfo.gameAccountInfo.clientProgram, accountInfo.gameAccountInfo.timerunningSeasonID)
 
                 if characterName ~= "" and accountInfo.gameAccountInfo.className then
@@ -115,16 +122,29 @@ hooksecurefunc("FriendsFrame_UpdateFriendButton", function(button, elementData)
     end
 end)
 
---[[
-hooksecurefunc("FriendsFrame_CheckBattlenetStatus", function(self)
-	--local battleTag = FriendsFrameBattlenetFrame.Tag:GetText()
-    print(SanluliUtilsDB["social."..CONFIG_FRIEND_LIST_HIDE_BATTLE_NET_TAG_SUFFIX])
-    print(Module)
-    print(Module:GetConfig(CONFIG_FRIEND_LIST_HIDE_BATTLE_NET_TAG_SUFFIX), "|", Module:GetConfig(CONFIG_CHAT_TYPE_TAB_SWITCH),"|",Module:GetConfig(CONFIG_FRIEND_LIST_CHARACTER_NAME_CLASS_COLOR),"")
-    if SanluliUtilsDB["social."..CONFIG_FRIEND_LIST_HIDE_BATTLE_NET_TAG_SUFFIX] then
+function Module:SetBattleTagHideStatus(value)
+    if value == 0 then
         local _, battleTag = BNGetInfo();
         if battleTag then
-
+            local symbol = string.find(battleTag, "#")
+            if symbol  then
+                local suffix = string.sub(battleTag, symbol);
+                battleTag = string.sub(battleTag, 1, symbol - 1).."|cff416380"..suffix.."|r";
+            end
+            FriendsFrameBattlenetFrame.Tag:SetText(battleTag)
+        end
+    elseif value == 1 then
+        local _, battleTag = BNGetInfo();
+        if battleTag then
+            local symbol = string.find(battleTag, "#")
+            if symbol then
+                battleTag = string.sub(battleTag, 1, symbol - 1)
+            end
+            FriendsFrameBattlenetFrame.Tag:SetText(battleTag)
+        end
+    elseif value == 2 then
+        local _, battleTag = BNGetInfo();
+        if battleTag then
             local symbol = string.find(battleTag, "#")
             if symbol then
                 battleTag = string.sub(battleTag, 1, symbol - 1).."|cff416380#0000|r"
@@ -132,17 +152,19 @@ hooksecurefunc("FriendsFrame_CheckBattlenetStatus", function(self)
             FriendsFrameBattlenetFrame.Tag:SetText(battleTag)
         end
     end
+end
+
+hooksecurefunc("FriendsFrame_CheckBattlenetStatus", function(self)
+    if Module:GetConfig(CONFIG_FRIEND_LIST_HIDE_BATTLE_NET_TAG_SUFFIX) then
+        Module:SetBattleTagHideStatus(Module:GetConfig(CONFIG_FRIEND_LIST_HIDE_BATTLE_NET_TAG_SUFFIX_METHOD))
+    end
 end)
 
-local BattleNetGetBNetAccountName = BNet_GetBNetAccountName
+local Old_BNet_GetBNetAccountName = BNet_GetBNetAccountName
 BNet_GetBNetAccountName = function(accountInfo)
-    -- print(accountInfo.accountName)
-	if not accountInfo then
-		return
-	end
-
-	name = BNet_GetTruncatedBattleTag(accountInfo.battleTag);
-
-	return name;
+    if Module:GetConfig(CONFIG_FRIEND_LIST_HIDE_BATTLE_NET_FRIENDS_REAL_NAME) then
+        return (accountInfo and BNet_GetTruncatedBattleTag(accountInfo.battleTag)) or nil
+    else
+        return Old_BNet_GetBNetAccountName(accountInfo)
+    end
 end
-]]
