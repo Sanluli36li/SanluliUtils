@@ -14,8 +14,11 @@ function Module.SetSimulationCraftMinimap(value)
     end
 end
 
-function Module:Startup()
+function Module:PLAYER_ENTERING_WORLD()
     if Module:GetConfig("simulationcraft.forceHideMinimap") then
         Module.SetSimulationCraftMinimap(false)
     end
+    self:UnregisterEvent("PLAYER_ENTERING_WORLD")
 end
+
+Module:RegisterEvent("PLAYER_ENTERING_WORLD")
