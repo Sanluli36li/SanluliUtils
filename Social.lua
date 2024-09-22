@@ -223,7 +223,7 @@ end)
 --------------------
 
 BNet_GetBNetAccountName = function(accountInfo)
-    if Module:GetConfig(CONFIG_FRIEND_LIST_HIDE_BATTLE_NET_FRIEwNDS_REAL_NAME) then
+    if Module:GetConfig(CONFIG_FRIEND_LIST_HIDE_BATTLE_NET_FRIENDS_REAL_NAME) then
         return (accountInfo and BNet_GetTruncatedBattleTag(accountInfo.battleTag)) or nil
     else
         return BlizzardFunction.BNet_GetBNetAccountName(accountInfo)
