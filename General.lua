@@ -5,7 +5,7 @@ local L = SanluliUtils.Locale
 
 local CONFIG_AUTO_INPUT_CONFIRM = "autoInputConfirm.enable"
 local CONFIG_AUTO_REPAIR = "autoRepair.enable"
-local CONFIG_AUTO_REPAIR_FUNDS = "general.autoRepair.funds"
+local CONFIG_AUTO_REPAIR_FUNDS = "autoRepair.funds"
 local CONFIG_AUTO_REPAIR_FUNDS_PERSONAL = 1
 local CONFIG_AUTO_REPAIR_FUNDS_GUILD = 2
 local CONFIG_AUTO_SELL_JUNK = "autoSellJunk.enable"
@@ -14,10 +14,8 @@ local CONFIG_AUTO_SELL_JUNK_METHOD_12_ITEMS = 1
 local CONFIG_AUTO_SELL_JUNK_METHOD_ALL_ITEMS = 2
 local CONFIG_AUTO_SELL_JUNK_METHOD_BLIZZARD = 3
 local CONFIG_FASTER_AUTO_LOOT = "fasterAutoLoot.enable"
-local CONFIG_CHAT_TYPE_TAB_SWITCH = "chatTypeTabSwitch.enable"
 
 local CVAR_AUTO_LOOT = "autoLootDefault"
-
 local BINDING_AUTO_LOOT = "AUTOLOOTTOGGLE"
 
 local TEXT_MONEY_GOLD_SLIVER_COPPER = "%d|Tinterface/moneyframe/ui-goldicon:0|t%d|Tinterface/moneyframe/ui-silvericon:0|t%d|Tinterface/moneyframe/ui-coppericon:0|t"
@@ -25,8 +23,17 @@ local TEXT_MONEY_SLIVER_COPPER = "%d|Tinterface/moneyframe/ui-silvericon:0|t%d|T
 local TEXT_MONEY_COPPER = "%d|Tinterface/moneyframe/ui-coppericon:0|t"
 
 local HAMMER_MERCHANTS = {
-    [100995] = true,    -- 自动铁锤
-    [113831] = true,    -- 自动铁锤(里弗斯)
+    ["100995"] = true,    -- 自动铁锤
+    ["113831"] = true,    -- 自动铁锤(里弗斯)
+}
+
+local CONFIRM_STRINGS = {
+    ["CONFIRM_AZERITE_EMPOWERED_RESPEC_EXPENSIVE"] = CONFIRM_AZERITE_EMPOWERED_RESPEC_STRING,   -- BfA 特质装高价重铸
+    ["DELETE_GOOD_ITEM"] = DELETE_ITEM_CONFIRM_STRING,                                          -- 删除物品
+    ["DELETE_GOOD_QUEST_ITEM"] = DELETE_ITEM_CONFIRM_STRING,                                    -- 删除任务物品
+    ["CONFIRM_DESTROY_COMMUNITY"] = COMMUNITIES_DELETE_CONFIRM_STRING,                          -- 删除社区
+    ["UNLEARN_SKILL"] = UNLEARN_SKILL_CONFIRMATION,                                             -- 忘却专业
+    ["CONFIRM_RAF_REMOVE_RECRUIT"] = REMOVE_RECRUIT_CONFIRM_STRING,                             -- 移除战友招募
 }
 
 local function generateMoneyText(copper)
@@ -123,6 +130,35 @@ local function SellJunkItems(blizzardMethod, sellAllItems)
     end
 end
 
+local function removeWaitingRolls(rollID)
+    local waitingRolls = GroupLootContainer.waitingRolls
+    if #waitingRolls > 0 then
+        for i = #waitingRolls, 1 ,-1 do
+            if waitingRolls[i].rollID == rollID then
+                table.remove(waitingRolls, i)
+            end
+        end
+    end
+end
+
+--------------------
+-- 暴雪函数安全钩子
+--------------------
+
+-- 提示框 显示
+for dialogName, confirmString in pairs(CONFIRM_STRINGS) do
+    hooksecurefunc(StaticPopupDialogs[dialogName], "OnShow", function(self)
+        -- 自动输入DELETE
+        if Module:GetConfig(CONFIG_AUTO_INPUT_CONFIRM) then
+            self.editBox:SetText(confirmString)
+        end
+    end)
+end
+
+--------------------
+-- 事件处理
+--------------------
+
 function Module:MERCHANT_SHOW()
     if self:GetConfig(CONFIG_AUTO_REPAIR) then
         RepairItems(self:GetConfig(CONFIG_AUTO_REPAIR_FUNDS) == CONFIG_AUTO_REPAIR_FUNDS_GUILD)
@@ -154,56 +190,31 @@ function Module:LOOT_OPENED(...)
 end
 Module:RegisterEvent("LOOT_OPENED")
 
-local CONFIRM_STRINGS = {
-    ["CONFIRM_AZERITE_EMPOWERED_RESPEC_EXPENSIVE"] = CONFIRM_AZERITE_EMPOWERED_RESPEC_STRING,   -- BfA 特质装高价重铸
-    ["DELETE_GOOD_ITEM"] = DELETE_ITEM_CONFIRM_STRING,                                          -- 删除物品
-    ["DELETE_GOOD_QUEST_ITEM"] = DELETE_ITEM_CONFIRM_STRING,                                    -- 删除任务物品
-    ["CONFIRM_DESTROY_COMMUNITY"] = COMMUNITIES_DELETE_CONFIRM_STRING,                          -- 删除社区
-    ["UNLEARN_SKILL"] = UNLEARN_SKILL_CONFIRMATION,                                             -- 忘却专业
-    ["CONFIRM_RAF_REMOVE_RECRUIT"] = REMOVE_RECRUIT_CONFIRM_STRING,                             -- 移除战友招募
-}
-
-for dialogName, confirmString in pairs(CONFIRM_STRINGS) do
-    hooksecurefunc(StaticPopupDialogs[dialogName], "OnShow", function(self)
-        -- 自动输入DELETE
-        if Module:GetConfig(CONFIG_AUTO_INPUT_CONFIRM) then
-            self.editBox:SetText(confirmString)
-        end
-    end)
-end
-
-
-local function removeWaitingRolls(rollID)
-    local waitingRolls = GroupLootContainer.waitingRolls
-    if #waitingRolls > 0 then
-        for i = #waitingRolls, 1 ,-1 do
-            if waitingRolls[i].rollID == rollID then
-                table.remove(waitingRolls, i)
-            end
-        end
-    end
-end
-
 function Module:START_LOOT_ROLL(rollID, rollTime, lootHandle)
     if Module:GetConfig("autoRoll.enable") then
         local texture, name, count, quality, bindOnPickUp, canNeed, canGreed, canDisenchant, reasonNeed, reasonGreed, reasonDisenchant, deSkillRequired, canTransmog = GetLootRollItemInfo(rollID)
         local itemLink = GetLootRollItemLink(rollID)
 
         if not canNeed then
+            local reasonText = ""
+            if _G["LOOT_ROLL_INELIGIBLE_REASON"..reasonNeed] then
+                reasonText = "(".._G["LOOT_ROLL_INELIGIBLE_REASON"..reasonNeed]..")"
+            end
+
             if Module:GetConfig("autoRoll.method") == 1 then
                 if canTransmog then
                     removeWaitingRolls(rollID)
                     RollOnLoot(rollID, 4)   -- 幻化
-                    SanluliUtils:Print(L["general.autoRoll.message.transmog"]:format(itemLink))
+                    SanluliUtils:Print(L["general.autoRoll.message.transmog"]:format(itemLink)..reasonText)
                 elseif canGreed then
                     removeWaitingRolls(rollID)
                     RollOnLoot(rollID, 2)   -- 贪婪
-                    SanluliUtils:Print(L["general.autoRoll.message.greed"]:format(itemLink))
+                    SanluliUtils:Print(L["general.autoRoll.message.greed"]:format(itemLink)..reasonText)
                 end
             else
                 removeWaitingRolls(rollID)
                 RollOnLoot(rollID, 0)       -- 放弃
-                SanluliUtils:Print(L["general.autoRoll.message.pass"]:format(itemLink))
+                SanluliUtils:Print(L["general.autoRoll.message.pass"]:format(itemLink)..reasonText)
             end
         end
     end
