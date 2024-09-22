@@ -28,13 +28,6 @@ local ACTION_BAR_CVARS = {
     countdownForCooldowns = true                -- 显示冷却时间
 }
 
--- 总是显示额外能量条状态
-hooksecurefunc(PlayerPowerBarAltStatusFrame, "Hide", function(self)
-    if Module:GetConfig(CONFIG_FORCE_SHOW_POWER_BAR_ALT_STATUS) then
-        self:Show()
-    end
-end)
-
 function Module:SetActionBarNameDisplay(value)
     local actionBars = {
         "Action",               -- 主动作条
@@ -98,6 +91,21 @@ function Module:LoadActionBarCVars()
         self:SaveActionBarCVars()
     end
 end
+
+--------------------
+-- 暴雪函数安全钩子
+--------------------
+
+-- 总是显示额外能量条状态
+hooksecurefunc(PlayerPowerBarAltStatusFrame, "Hide", function(self)
+    if Module:GetConfig(CONFIG_FORCE_SHOW_POWER_BAR_ALT_STATUS) then
+        self:Show()
+    end
+end)
+
+--------------------
+-- 事件处理
+--------------------
 
 function Module:CVAR_UPDATE(name, value)
     if self:GetConfig(CONFIG_SYNC_RAID_FRAME_ENABLE) and RAID_FRAME_CVARS[name] then

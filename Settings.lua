@@ -3,6 +3,10 @@ local ADDON_NAME, SanluliUtils = ...
 local Module = SanluliUtils:NewModule("settings")
 local L = SanluliUtils.Locale
 
+local CHARACTER_NAME = UnitName("player")
+local PLAYER_CLASS_COLOR = "|c"..C_ClassColor.GetClassColor(select(2, UnitClass("player"))):GenerateHexColor()
+local REALM_NAME = GetRealmName()
+
 local ControlType = {
     SECTION_HEADER = 1,         -- 标题
     CHECKBOX = 2,               -- 选择框
@@ -180,6 +184,27 @@ local settingsData = {
                     tooltip = L["social.chatTypeTabSwitch.tooltip"],
                     key = "social.chatTypeTabSwitch.enable",
                     default = true
+                },
+                {
+                    controlType = ControlType.CHECKBOX_AND_DROPDOWN,
+                    settingType = SettingType.ADDON_VAR,
+                    title = L["social.chat.bnPlayerLink.title"],
+                    tooltip = L["social.chat.bnPlayerLink.tooltip"],
+                    key = "social.chat.bnPlayerLink.enable",
+                    default = true,
+                    dropdown = {
+                        settingType = SettingType.ADDON_VAR,
+                        key = "social.chat.bnPlayerLink.format",
+                        default = 3,
+                        options = {
+                            { "BattleTag" },
+                            { PLAYER_CLASS_COLOR.."BattleTag"..FONT_COLOR_CODE_CLOSE },
+                            { "BattleTag"..PLAYER_CLASS_COLOR.."("..CHARACTER_NAME..")"..FONT_COLOR_CODE_CLOSE },
+                            { "BattleTag"..PLAYER_CLASS_COLOR.."("..CHARACTER_NAME.."-"..REALM_NAME..")"..FONT_COLOR_CODE_CLOSE },
+                            { PLAYER_CLASS_COLOR..CHARACTER_NAME..FONT_COLOR_CODE_CLOSE},
+                            { PLAYER_CLASS_COLOR..CHARACTER_NAME.."-"..REALM_NAME..FONT_COLOR_CODE_CLOSE}
+                        }
+                    }
                 },
                 {
                     controlType = ControlType.SECTION_HEADER,

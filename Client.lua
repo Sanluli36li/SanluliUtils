@@ -26,12 +26,16 @@ local REGION_IDS = {
     CN = 5
 }
 
+local BlizzardFunction = {
+    C_BattleNetGetFriendAccountInfo = C_BattleNet.GetFriendGameAccountInfo
+}
+
 Module.PORTAL_CURRENT = GetCVar(CVAR_PORTAL)
 
 -- 记录客户端的真实地区
 Module.REAL_REGION_ID = REGION_IDS[Module.PORTAL_CURRENT] or 1
 -- 留存原有的获取好友信息方法
-Module.BattleNetGetFriendGameAccountInfo = C_BattleNet.GetFriendGameAccountInfo
+-- Module.BattleNetGetFriendGameAccountInfo = C_BattleNet.GetFriendGameAccountInfo
 Module.FixedDifferentRegion = false
 
 
@@ -91,7 +95,7 @@ function Module:SetDifferentRegionFix(value, printToChatFrame)
     elseif value then
         -- 替换获取好友信息的方法
         C_BattleNet.GetFriendGameAccountInfo = function(...)
-            local gameAccountInfo = self.BattleNetGetFriendGameAccountInfo(...)
+            local gameAccountInfo = BlizzardFunction.C_BattleNetGetFriendAccountInfo(...)
 
             if gameAccountInfo.regionID == self.REAL_REGION_ID then
                 gameAccountInfo.isInCurrentRegion = true
@@ -107,7 +111,7 @@ function Module:SetDifferentRegionFix(value, printToChatFrame)
         end
     else
         -- 恢复获取好友信息的方法
-        C_BattleNet.GetFriendGameAccountInfo = self.BattleNetGetFriendGameAccountInfo
+        C_BattleNet.GetFriendGameAccountInfo = BlizzardFunction.C_BattleNetGetFriendAccountInfo
         self.FixedDifferentRegion = false
         if printToChatFrame then
             SanluliUtils:Print(L["client.regionDeceive.differentRegionFix.message.restored"])
@@ -171,18 +175,32 @@ StaticPopupDialogs["SANLULIUTILS_REGION_DECEIVE_HELP_HIDE"] = {
     exclusive = 1,
     whileDead = 1,
 }
+]]
 
+
+--------------------
+-- 暴雪函数安全钩子
+--------------------
+
+--[[
+-- 支持界面 显示
 hooksecurefunc(HelpFrame, "ShowFrame", function(self)
     if not Module.IsSameRegion() then
         StaticPopup_Show("SANLULIUTILS_REGION_DECEIVE_HELP_SHOW")
     end
 end)
+
+-- 支持界面 隐藏
 hooksecurefunc(HelpFrame, "Hide", function(self)
     if Module.IsSameRegion() and (Module.PORTAL_CURRENT == "CN") and Module:GetConfig(CONFIG_REGION_DECEIVE) then
         StaticPopup_Show("SANLULIUTILS_REGION_DECEIVE_HELP_HIDE")
     end
 end)
 ]]
+
+--------------------
+-- 事件处理
+--------------------
 
 function Module:Startup()
     -- 启用客户端地区误导选项
@@ -201,5 +219,4 @@ function Module:Startup()
     if GetCurrentRegionName() ~= 5 then
         self:SetProfanityFilter(Module:GetConfig(CONFIG_PROFANITY_FILTER), false)
     end
-
 end
