@@ -8,6 +8,8 @@ L["addon.test.tooltip"] = "\n|cffff0000This is a testing feature and there is no
 L["addons.simulationcraft.title"] = "SimulationCraft"
 L["addons.simulationcraft.forceHideMinimap.title"] = "Force Hide Simc Minimap Icon"
 L["addons.title"] = "AddOns"
+L["blizzardui.actionBar.hideHotkey.title"] = "Hide Action Bar Hotkey"
+L["blizzardui.actionBar.hideHotkey.tooltip"] = "Hide the hotkey text on the Blizzard action bar."
 L["blizzardui.actionBar.hideName.title"] = "Hide Action Bar Button Name"
 L["blizzardui.actionBar.hideName.tooltip"] = "Hide the names of Macros, Equipment Sets, etc. on the Blizzard action bar."
 L["blizzardui.actionBar.title"] = "Action Bar"
@@ -36,6 +38,8 @@ If this option does not have an effect, you may need to change the game language
    
 |cffff0000Changing this option requires a client restart|r
 ]]
+L["client.profanityFilter.achievementDataInject.title"] = "Prevent Achievements filtered in Chat"
+L["client.profanityFilter.achievementDataInject.tooltip"] = "Prevent achievements earned on certain dates from being blocked by the server.\n\n|cffff0000For China Region|r"
 L["client.profanityFilter.message.disabled"] = "Disabled Mature Language Filter"
 L["client.profanityFilter.message.enabled"] = "Enabled Mature Language Filter"
 L["client.profanityFilter.title"] = "Mature Language Filter"

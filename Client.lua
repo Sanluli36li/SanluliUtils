@@ -7,6 +7,7 @@ local L = SanluliUtils.Locale
 local CONFIG_PROFANITY_FILTER = "profanityFilter"
 local CONFIG_REGION_DECEIVE = "regionDeceive.enable"
 local CONFIG_REGION_DECEIVE_DIFFERENT_REGION_FIX = "regionDeceive.differentRegionFix"
+local CONFIG_ACHIEVEMENTS_DATA_INJECT = "profanityFilter.achievementDataInject"
 -- local CONFIG_REGION_DECEIVE_TEMPORARILY_DISABLED = "regionDeceive.temporarilyDisabled"
 
 local CVAR_PORTAL = "portal"
@@ -198,6 +199,20 @@ hooksecurefunc(HelpFrame, "Hide", function(self)
 end)
 ]]
 
+-- 发送聊天信息
+hooksecurefunc("SendChatMessage", function (msg, chatType, languageID, target)
+    if chatType == "SAY" or chatType == "YELL" or chatType == "CHANNEL" then
+        return
+    end
+    if Module.PORTAL_CURRENT == "CN" and Module:GetConfig(CONFIG_ACHIEVEMENTS_DATA_INJECT) then
+        if string.find(msg, ":9:18:") then
+            local str = string.gsub(msg, ":9:18:", ":009:018:")
+            SendChatMessage(str, chatType, languageID, target)
+        end
+    end
+    
+end)
+
 --------------------
 -- 事件处理
 --------------------
@@ -219,4 +234,11 @@ function Module:Startup()
     if GetCurrentRegionName() ~= 5 then
         self:SetProfanityFilter(Module:GetConfig(CONFIG_PROFANITY_FILTER), false)
     end
+
+    -- ChatFrame_AddMessageEventFilter(Filter)
 end
+
+function Module:CHAT_REGIONAL_SEND_FAILED()
+    print("fail")
+end
+Module:RegisterEvent("CHAT_REGIONAL_SEND_FAILED")

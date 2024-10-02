@@ -12,6 +12,8 @@ L["addon.test.tooltip"] = "\n|cffff0000此功能仍在測試, 無法保證它能
 L["addons.simulationcraft.title"] = "SimulationCraft"
 L["addons.simulationcraft.forceHideMinimap.title"] = "始終隱藏Simc小地圖按鈕"
 L["addons.title"] = "插件增强"
+L["blizzardui.actionBar.hideHotkey.title"] = "隱藏動作條快捷鍵"
+L["blizzardui.actionBar.hideHotkey.tooltip"] = "隱藏暴雪動作條上的快捷鍵"
 L["blizzardui.actionBar.hideName.title"] = "隱藏動作條按鈕名稱"
 L["blizzardui.actionBar.hideName.tooltip"] = "隱藏暴雪動作條上的宏、裝備管理員等按鈕的名稱"
 L["blizzardui.actionBar.title"] = "動作條"
@@ -40,6 +42,8 @@ L["client.overrideArchive.enable.tooltip"] = [[
         
 |cffff0000這個選項需要重啓客戶端|r
 ]]
+L["client.profanityFilter.achievementDataInject.title"] = "成就屏蔽修復"
+L["client.profanityFilter.achievementDataInject.tooltip"] = "修復某些特定日期獲得的成就無法發送的問題\n(對“說”、“喊”和聊天頻道無效)\n\n|cffff0000僅限中國大陸地區服務器|r"
 L["client.profanityFilter.message.disabled"] = "已關閉不當言詞過濾器"
 L["client.profanityFilter.message.enabled"] = "已開啓不當言詞過濾器"
 L["client.profanityFilter.title"] = "不當言詞過濾器|cffff0000(强制更改)|r"

@@ -12,6 +12,8 @@ L["addon.test.tooltip"] = "|cffff0000此功能仍然需要测试, 无法保证�
 L["addons.simulationcraft.title"] = "SimulationCraft"
 L["addons.simulationcraft.forceHideMinimap.title"] = "总是隐藏Simc小地图按钮"
 L["addons.title"] = "插件增强"
+L["blizzardui.actionBar.hideHotkey.title"] = "隐藏动作条快捷键"
+L["blizzardui.actionBar.hideHotkey.tooltip"] = "隐藏暴雪动作条上的快捷键"
 L["blizzardui.actionBar.hideName.title"] = "隐藏动作条按钮名称"
 L["blizzardui.actionBar.hideName.tooltip"] = "隐藏暴雪动作条上的宏、装备方案等按钮的名称"
 L["blizzardui.actionBar.title"] = "动作条"
@@ -33,6 +35,8 @@ L["client.overrideArchive.disable.tooltip"] = [[
 ]]
 L["client.overrideArchive.enable.title"] = "减轻暴力表现|cffff0000(需要重启游戏)|r"
 L["client.overrideArchive.enable.tooltip"] = "通常情况下, 你应该看不见这个选项"
+L["client.profanityFilter.achievementDataInject.title"] = "成就屏蔽修复"
+L["client.profanityFilter.achievementDataInject.tooltip"] = "修复某些日期获得的成就无法发送的问题\n(对“说”、“喊”和聊天频道无效)"
 L["client.profanityFilter.message.disabled"] = "已禁用语言过滤器"
 L["client.profanityFilter.message.enabled"] = "已启用语言过滤器"
 L["client.profanityFilter.title"] = "语言过滤器|cffff0000(强制更改)|r"

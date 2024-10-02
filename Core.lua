@@ -1,6 +1,6 @@
 local ADDON_NAME, SanluliUtils = ...
 
-_G["SanluliUtils"] = SanluliUtils
+_G[ADDON_NAME] = SanluliUtils
 
 local ADDON_MESSAGE_AFFIX = "|cffffffffSanluliUtils: |r"
 local ADDON_LISTENER_SUFFIX = "Listener"
