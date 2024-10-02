@@ -10,6 +10,8 @@
 ## X-Curse-Project-ID: 1089806
 ## X-Wago-ID: j6jz846R
 
+Libs\libs.xml
+
 Core.lua
 
 Locales\locales.xml
