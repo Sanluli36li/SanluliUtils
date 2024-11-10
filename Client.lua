@@ -193,7 +193,7 @@ C_BattleNet.GetFriendGameAccountInfo = function(...)
     if Module:GetConfig(CONFIG_REGION_DECEIVE) and Module:GetConfig(CONFIG_REGION_DECEIVE_DIFFERENT_REGION_FIX) then
         local gameAccountInfo = BlizzardFunction.C_BattleNetGetFriendAccountInfo(...)
 
-        if gameAccountInfo.regionID == self.REAL_REGION_ID then
+        if gameAccountInfo.regionID == Module.REAL_REGION_ID then
             gameAccountInfo.isInCurrentRegion = true
         else
             gameAccountInfo.isInCurrentRegion = false
