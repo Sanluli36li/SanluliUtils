@@ -70,7 +70,7 @@ function Module:SaveRaidFrameCVars()
     for k, v in pairs(RAID_FRAME_CVARS) do
         cvars[k] = GetCVar(k)
     end
-    SanluliUtils:SetConfig(self.name, CONFIG_SYNC_RAID_FRAME_CVARS, cvars)
+    self:SetConfig(CONFIG_SYNC_RAID_FRAME_CVARS, cvars)
 end
 
 function Module:LoadRaidFrameCVars()
@@ -91,7 +91,7 @@ function Module:SaveActionBarCVars()
     for k, v in pairs(ACTION_BAR_CVARS) do
         cvars[k] = GetCVar(k)
     end
-    self:SetConfig(self.name, CONFIG_SYNC_ACTION_BAR_CVARS, cvars)
+    self:SetConfig(CONFIG_SYNC_ACTION_BAR_CVARS, cvars)
 end
 
 function Module:LoadActionBarCVars()
@@ -105,6 +105,7 @@ function Module:LoadActionBarCVars()
     else
         self:SaveActionBarCVars()
     end
+    MultiActionBar_Update()
 end
 
 --------------------

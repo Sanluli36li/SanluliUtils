@@ -8,7 +8,8 @@ local CONFIG_PROFANITY_FILTER = "profanityFilter"
 local CONFIG_REGION_DECEIVE = "regionDeceive.enable"
 local CONFIG_REGION_DECEIVE_DIFFERENT_REGION_FIX = "regionDeceive.differentRegionFix"
 local CONFIG_ACHIEVEMENTS_DATA_INJECT = "profanityFilter.achievementDataInject"
--- local CONFIG_REGION_DECEIVE_TEMPORARILY_DISABLED = "regionDeceive.temporarilyDisabled"
+local CONFIG_REGION_DECEIVE_TEMPORARILY_DISABLED = "regionDeceive.temporarilyDisabled"
+local CONFIG_GUILD_NEWS_FIX = "guildNewsFix"
 
 local CVAR_PORTAL = "portal"
 local CVAR_PROFANITY_FILTER = "profanityFilter"
@@ -28,7 +29,8 @@ local REGION_IDS = {
 }
 
 local BlizzardFunction = {
-    C_BattleNetGetFriendAccountInfo = C_BattleNet.GetFriendGameAccountInfo
+    C_BattleNetGetFriendAccountInfo = C_BattleNet.GetFriendGameAccountInfo,
+    CommunitiesGuildNewsFrame_OnEvent = CommunitiesGuildNewsFrame_OnEvent
 }
 
 Module.PORTAL_CURRENT = GetCVar(CVAR_PORTAL)
@@ -64,7 +66,7 @@ end
 
 -- 设置: 区域误导选项
 function Module:SetRegionDeceive(value, printToChatFrame)
-    if self.PORTAL_CURRENT ~= PROTAL_CN then
+    if Module.PORTAL_CURRENT ~= PROTAL_CN then
         return
     elseif value then
         ConsoleExec(PORTAL_COMMAND:format(PORTAL_US))
@@ -76,46 +78,15 @@ function Module:SetRegionDeceive(value, printToChatFrame)
         -- 重新设置语言过滤器
         Module:SetProfanityFilter(Module:GetConfig(CONFIG_PROFANITY_FILTER), false)
         -- 修改地区会导致“不同的地区”BUG，启用修复
-        Module:SetDifferentRegionFix(Module:GetConfig(CONFIG_REGION_DECEIVE_DIFFERENT_REGION_FIX), printToChatFrame)
+        -- Module:SetDifferentRegionFix(Module:GetConfig(CONFIG_REGION_DECEIVE_DIFFERENT_REGION_FIX), printToChatFrame)
     else
-        ConsoleExec(PORTAL_COMMAND:format(self.PORTAL_CURRENT))
+        ConsoleExec(PORTAL_COMMAND:format(Module.PORTAL_CURRENT))
 
         if printToChatFrame then
             SanluliUtils:Print(L["client.regionDeceive.message.disabled"])
         end
         if Module:GetConfig(CONFIG_REGION_DECEIVE_DIFFERENT_REGION_FIX) then
-            Module:SetDifferentRegionFix(false, printToChatFrame)
-        end
-    end
-end
-
--- 设置: 修复"不同的地区"问题
-function Module:SetDifferentRegionFix(value, printToChatFrame)
-    if self.FixedDifferentRegion == value then
-        return
-    elseif value then
-        -- 替换获取好友信息的方法
-        C_BattleNet.GetFriendGameAccountInfo = function(...)
-            local gameAccountInfo = BlizzardFunction.C_BattleNetGetFriendAccountInfo(...)
-
-            if gameAccountInfo.regionID == self.REAL_REGION_ID then
-                gameAccountInfo.isInCurrentRegion = true
-            else
-                gameAccountInfo.isInCurrentRegion = false
-            end
-
-            return gameAccountInfo
-        end
-        self.FixedDifferentRegion = true
-        if printToChatFrame then
-            SanluliUtils:Print(L["client.regionDeceive.differentRegionFix.message.fixed"])
-        end
-    else
-        -- 恢复获取好友信息的方法
-        C_BattleNet.GetFriendGameAccountInfo = BlizzardFunction.C_BattleNetGetFriendAccountInfo
-        self.FixedDifferentRegion = false
-        if printToChatFrame then
-            SanluliUtils:Print(L["client.regionDeceive.differentRegionFix.message.restored"])
+            -- Module:SetDifferentRegionFix(false, printToChatFrame)
         end
     end
 end
@@ -140,7 +111,7 @@ end
 
 -- 开启地区误导导致的支持界面无限转圈圈，提示用户临时关闭地区误导选项
 -- 2024/08/01: 此问题已解决，故移除此功能
---[[
+-- 2024/11/01: 发现只是网页能打开了而已，仍然无法登录账号填写表单，故恢复此功能
 
 -- 帮助界面提示
 StaticPopupDialogs["SANLULIUTILS_REGION_DECEIVE_HELP_SHOW"] = {
@@ -176,7 +147,6 @@ StaticPopupDialogs["SANLULIUTILS_REGION_DECEIVE_HELP_HIDE"] = {
     exclusive = 1,
     whileDead = 1,
 }
-]]
 
 
 --------------------
@@ -202,15 +172,58 @@ end)
 -- 发送聊天信息
 hooksecurefunc("SendChatMessage", function (msg, chatType, languageID, target)
     if chatType == "SAY" or chatType == "YELL" or chatType == "CHANNEL" then
+        -- 说/喊在副本外、向频道发送消息必须有硬件事件, 考虑到需要在这些地方发送成就的情况比较少, 跳过
         return
     end
     if Module.PORTAL_CURRENT == "CN" and Module:GetConfig(CONFIG_ACHIEVEMENTS_DATA_INJECT) then
+        -- 替换被异常屏蔽的成就
         if string.find(msg, ":9:18:") then
             local str = string.gsub(msg, ":9:18:", ":009:018:")
+            -- 重新发送
             SendChatMessage(str, chatType, languageID, target)
         end
     end
-    
+end)
+
+--------------------
+-- 替换暴雪方法
+--------------------
+
+C_BattleNet.GetFriendGameAccountInfo = function(...)
+    if Module:GetConfig(CONFIG_REGION_DECEIVE) and Module:GetConfig(CONFIG_REGION_DECEIVE_DIFFERENT_REGION_FIX) then
+        local gameAccountInfo = BlizzardFunction.C_BattleNetGetFriendAccountInfo(...)
+
+        if gameAccountInfo.regionID == self.REAL_REGION_ID then
+            gameAccountInfo.isInCurrentRegion = true
+        else
+            gameAccountInfo.isInCurrentRegion = false
+        end
+
+        return gameAccountInfo
+    else
+        return BlizzardFunction.C_BattleNetGetFriendAccountInfo(...)
+    end
+end
+
+local newsRequireUpdate, newsTimer
+CommunitiesFrameGuildDetailsFrameNews:SetScript("OnEvent", function(frame, event)
+    if Module:GetConfig(CONFIG_GUILD_NEWS_FIX) and event == "GUILD_NEWS_UPDATE" then
+        if newsTimer then
+            newsRequireUpdate = true
+        else
+            BlizzardFunction.CommunitiesGuildNewsFrame_OnEvent(frame, event)
+            
+            -- 1秒后, 如果还需要更新公会新闻, 再次更新
+            newsTimer = C_Timer.NewTimer(1, function()
+                if newsRequireUpdate then
+                    BlizzardFunction.CommunitiesGuildNewsFrame_OnEvent(frame, event)
+                end
+                newsTimer = nil
+            end)
+        end
+    else
+        BlizzardFunction.CommunitiesGuildNewsFrame_OnEvent(frame, event)
+    end
 end)
 
 --------------------
@@ -220,25 +233,15 @@ end)
 function Module:Startup()
     -- 启用客户端地区误导选项
     if (self.PORTAL_CURRENT == PROTAL_CN) and Module:GetConfig(CONFIG_REGION_DECEIVE) then
-        --[[
         if Module:GetConfig(CONFIG_REGION_DECEIVE_TEMPORARILY_DISABLED) then
             SanluliUtils:Print(L["client.regionDeceive.temporarilyDisabled.message.enabled"])
             SanluliUtils:SetConfig("client", CONFIG_REGION_DECEIVE_TEMPORARILY_DISABLED, false)
         else
             self.SetRegionDeceive(true, false)
         end
-        ]]
-        self:SetRegionDeceive(true, false)
     end
 
     if GetCurrentRegionName() ~= 5 then
         self:SetProfanityFilter(Module:GetConfig(CONFIG_PROFANITY_FILTER), false)
     end
-
-    -- ChatFrame_AddMessageEventFilter(Filter)
 end
-
-function Module:CHAT_REGIONAL_SEND_FAILED()
-    print("fail")
-end
-Module:RegisterEvent("CHAT_REGIONAL_SEND_FAILED")

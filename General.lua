@@ -14,6 +14,22 @@ local CONFIG_AUTO_SELL_JUNK_METHOD_12_ITEMS = 1
 local CONFIG_AUTO_SELL_JUNK_METHOD_ALL_ITEMS = 2
 local CONFIG_AUTO_SELL_JUNK_METHOD_BLIZZARD = 3
 local CONFIG_FASTER_AUTO_LOOT = "fasterAutoLoot.enable"
+local CONFIG_AUTO_COMBATLOG = "autoCombatlog.enable"
+local CONFIG_AUTO_COMBATLOG_RAID = "autoCombatlog.raid"
+local CONFIG_AUTO_COMBATLOG_RAID_DIFFICULTY = "autoCombatlog.raid.difficulty"
+local CONFIG_AUTO_COMBATLOG_RAID_DIFFICULTY_LFR = 1
+local CONFIG_AUTO_COMBATLOG_RAID_DIFFICULTY_NORMAL = 2
+local CONFIG_AUTO_COMBATLOG_RAID_DIFFICULTY_HEROIC = 3
+local CONFIG_AUTO_COMBATLOG_RAID_DIFFICULTY_MYTHIC = 4
+local CONFIG_AUTO_COMBATLOG_DUNGEON = "autoCombatlog.dungeon"
+local CONFIG_AUTO_COMBATLOG_DUNGEON_DIFFICULTY = "autoCombatlog.dungeon.difficulty"
+local CONFIG_AUTO_COMBATLOG_DUNGEON_DIFFICULTY_HEROIC = 2
+local CONFIG_AUTO_COMBATLOG_DUNGEON_DIFFICULTY_MYTHIC = 3
+local CONFIG_AUTO_COMBATLOG_DUNGEON_DIFFICULTY_MYTHIC_PLUS = 4
+
+local DIFFICULTY = {
+    
+}
 
 local CVAR_AUTO_LOOT = "autoLootDefault"
 local BINDING_AUTO_LOOT = "AUTOLOOTTOGGLE"
@@ -141,6 +157,50 @@ local function removeWaitingRolls(rollID)
     end
 end
 
+local function toggleCombatlog(force)
+    if type(force) == "boolean" then
+        if LoggingCombat() ~= force then
+            LoggingCombat(force)
+            SanluliUtils:Print((force and COMBATLOGENABLED) or COMBATLOGDISABLED)
+        end
+        return
+    end
+    local _, instanceType, difficultyID, difficultyName, maxPlayers, dynamicDifficulty, isDynamic, instanceID, instanceGroupSize, LfgDungeonID = GetInstanceInfo()
+    local _, groupType, isHeroic, isChallengeMode, displayHeroic, displayMythic, toggleDifficultyID = GetDifficultyInfo(difficultyID)
+    local legacyLoot = C_Loot.IsLegacyLootModeEnabled()
+
+    if not legacyLoot and ((
+        Module:GetConfig(CONFIG_AUTO_COMBATLOG_RAID) and instanceType == "raid" and (               -- 团队副本
+            Module:GetConfig(CONFIG_AUTO_COMBATLOG_RAID_DIFFICULTY) <= (
+                (displayMythic and CONFIG_AUTO_COMBATLOG_RAID_DIFFICULTY_MYTHIC) or                 -- 史诗
+                ((displayHeroic or isHeroic) and CONFIG_AUTO_COMBATLOG_RAID_DIFFICULTY_HEROIC) or   -- 英雄
+                (difficultyID == 17 and CONFIG_AUTO_COMBATLOG_RAID_DIFFICULTY_LFR) or               -- 团队查找器
+                CONFIG_AUTO_COMBATLOG_RAID_DIFFICULTY_NORMAL                                        -- 普通难度
+            )
+        )
+    ) or (
+        Module:GetConfig(CONFIG_AUTO_COMBATLOG_DUNGEON) and instanceType == "party" and (           -- 地下城
+            Module:GetConfig(CONFIG_AUTO_COMBATLOG_DUNGEON_DIFFICULTY) <= (
+                (isChallengeMode and CONFIG_AUTO_COMBATLOG_DUNGEON_DIFFICULTY_MYTHIC_PLUS) or       -- 史诗钥石
+                (displayMythic and CONFIG_AUTO_COMBATLOG_DUNGEON_DIFFICULTY_MYTHIC) or              -- 史诗难度
+                (isHeroic and CONFIG_AUTO_COMBATLOG_DUNGEON_DIFFICULTY_HEROIC) or                   -- 英雄难度
+                1
+            )
+        )
+    ))
+    then
+        if not LoggingCombat() then
+            LoggingCombat(true)
+            SanluliUtils:Print(COMBATLOGENABLED)
+        end
+    else
+        if LoggingCombat() then
+            LoggingCombat(false)
+            SanluliUtils:Print(COMBATLOGDISABLED)
+        end
+    end
+end
+
 --------------------
 -- 暴雪函数安全钩子
 --------------------
@@ -220,3 +280,19 @@ function Module:START_LOOT_ROLL(rollID, rollTime, lootHandle)
     end
 end
 Module:RegisterEvent("START_LOOT_ROLL")
+
+function Module:UPDATE_INSTANCE_INFO()
+    if Module:GetConfig(CONFIG_AUTO_COMBATLOG) then
+        toggleCombatlog()
+    end
+end
+Module:RegisterEvent("UPDATE_INSTANCE_INFO")
+
+function Module:CHALLENGE_MODE_START()
+    if Module:GetConfig(CONFIG_AUTO_COMBATLOG) then
+        toggleCombatlog()
+    end
+end
+Module:RegisterEvent("CHALLENGE_MODE_START")
+
+

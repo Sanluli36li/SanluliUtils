@@ -77,7 +77,6 @@ local settingsData = {
                     { L["general.autoRoll.method.pass.title"], L["general.autoRoll.method.pass.tooltip"] }
                 }
             },
-            testing = true
         },
         {
             controlType = CONTROL_TYPE.CHECKBOX,
@@ -86,6 +85,56 @@ local settingsData = {
             tooltip = L["general.fasterAutoLoot.tooltip"],
             key = "general.fasterAutoLoot.enable",
             default = true
+        },
+        {
+            controlType = CONTROL_TYPE.CHECKBOX,
+            settingType = SETTING_TYPE.ADDON_VARIABLE,
+            name = L["general.autoCombatlog.title"],
+            tooltip = L["general.autoCombatlog.tooltip"],
+            key = "general.autoCombatlog.enable",
+            default = false,
+            subSettings = {
+                {
+                    controlType = CONTROL_TYPE.CHECKBOX_AND_DROPDOWN,
+                    settingType = SETTING_TYPE.ADDON_VARIABLE,
+                    name = L["general.autoCombatlog.raid.title"],
+                    tooltip = L["general.autoCombatlog.raid.tooltip"],
+                    key = "general.autoCombatlog.raid",
+                    default = true,
+                    dropdown = {
+                        settingType = SETTING_TYPE.ADDON_VARIABLE,
+                        key = "general.autoCombatlog.raid.difficulty",
+                        default = 4,
+                        options = {
+                            { L["general.autoCombatlog.difficulty.all"] },
+                            { L["general.autoCombatlog.difficulty.normal"] },
+                            { L["general.autoCombatlog.difficulty.heroic"] },
+                            { L["general.autoCombatlog.difficulty.mythicRaid"] },
+                        }
+                    }
+                    
+                },
+                {
+                    controlType = CONTROL_TYPE.CHECKBOX_AND_DROPDOWN,
+                    settingType = SETTING_TYPE.ADDON_VARIABLE,
+                    name = L["general.autoCombatlog.dungeon.title"],
+                    tooltip = L["general.autoCombatlog.dungeon.tooltip"],
+                    key = "general.autoCombatlog.dungeon",
+                    default = false,
+                    dropdown = {
+                        settingType = SETTING_TYPE.ADDON_VARIABLE,
+                        key = "general.autoCombatlog.dungeon.difficulty",
+                        default = 4,
+                        options = {
+                            { L["general.autoCombatlog.difficulty.all"] },
+                            { L["general.autoCombatlog.difficulty.heroic"] },
+                            { L["general.autoCombatlog.difficulty.mythic"] },
+                            { L["general.autoCombatlog.difficulty.mythicPlus"] },
+                        }
+                    }
+                    
+                }
+            }
         },
         {
             controlType = CONTROL_TYPE.SECTION_HEADER,
@@ -358,13 +407,21 @@ local settingsData = {
                 {
                     controlType = CONTROL_TYPE.CHECKBOX,
                     settingType = SETTING_TYPE.ADDON_VARIABLE,
-                    name = "成就屏蔽修复",
-                    tooltip = "解除某些日期获得的成就无法发送的问题",
+                    name = L["client.profanityFilter.achievementDataInject.title"],
+                    tooltip = L["client.profanityFilter.achievementDataInject.tooltip"],
                     key = "client.profanityFilter.achievementDataInject",
                     default = true,
                     isVisible = function()
                         return SanluliUtils.client.PORTAL_CURRENT == "CN"
                     end
+                },
+                {
+                    controlType = CONTROL_TYPE.CHECKBOX,
+                    settingType = SETTING_TYPE.ADDON_VARIABLE,
+                    name = L["client.guildNewsFilter.title"],
+                    tooltip = L["client.guildNewsFilter.tooltip"],
+                    key = "client.guildNewsFix",
+                    default = true,
                 },
             }
         }
