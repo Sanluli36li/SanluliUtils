@@ -100,12 +100,16 @@ function Module:LoadActionBarCVars()
         for k, v in pairs(cvars) do
             if GetCVar(k) ~= v then
                 SetCVar(k, v)
+                if k == "enableMultiActionBars" then
+                    MultiActionBar_Update()
+                    SanluliUtils:Print("检测到动作条变更, 建议使用 /reload 避免污染")
+                end
             end
         end
     else
         self:SaveActionBarCVars()
     end
-    MultiActionBar_Update()
+    
 end
 
 --------------------
@@ -142,7 +146,7 @@ function Module:CVAR_UPDATE(name, value)
 end
 Module:RegisterEvent("CVAR_UPDATE")
 
-function Module:Startup()
+function Module:AfterStartup()
     if self:GetConfig(CONFIG_HIDE_ACTION_BAR_NAME) then
         self:SetActionBarNameDisplay(false)
     end
