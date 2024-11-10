@@ -41,6 +41,24 @@ local ACTION_BARS = {
     "PetAction"             -- 宠物动作条
 }
 
+StaticPopupDialogs["SANLULIUTILS_SYNC_ACTIONBAR_TAINT"] = {
+    preferredIndex = 3,
+    text = L["blizzardui.sync.actionBar.dialogs.noTaint"],
+    button1 = YES,
+    button2 = CANCEL,
+    OnAccept = function(self, data)
+        ReloadUI()
+    end,
+    OnCancel = function(self, data)
+    end,
+    hideOnEscape = 1,
+    timeout = 0,
+    exclusive = 1,
+    whileDead = 1,
+}
+
+local shouldSaveCVar = false
+
 function Module:SetActionBarNameDisplay(value)
     local alpha = (value and 1) or 0
 
@@ -102,6 +120,7 @@ function Module:LoadActionBarCVars()
                 SetCVar(k, v)
                 if k == "enableMultiActionBars" then
                     MultiActionBar_Update()
+                    StaticPopup_Show("SANLULIUTILS_SYNC_ACTIONBAR_TAINT")
                     SanluliUtils:Print("检测到动作条变更, 建议使用 /reload 避免污染")
                 end
             end
@@ -128,7 +147,9 @@ end)
 --------------------
 
 function Module:CVAR_UPDATE(name, value)
-    if self:GetConfig(CONFIG_SYNC_RAID_FRAME_ENABLE) and RAID_FRAME_CVARS[name] then
+    if not shouldSaveCVar then
+        return
+    elseif self:GetConfig(CONFIG_SYNC_RAID_FRAME_ENABLE) and RAID_FRAME_CVARS[name] then
         local cvars = self:GetConfig(CONFIG_SYNC_RAID_FRAME_CVARS)
         if cvars then
             cvars[name] = value
@@ -147,6 +168,7 @@ end
 Module:RegisterEvent("CVAR_UPDATE")
 
 function Module:AfterStartup()
+    shouldSaveCVar = true
     if self:GetConfig(CONFIG_HIDE_ACTION_BAR_NAME) then
         self:SetActionBarNameDisplay(false)
     end
