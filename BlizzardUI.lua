@@ -41,6 +41,8 @@ local ACTION_BARS = {
     "PetAction"             -- 宠物动作条
 }
 
+local shouldSaveCVar = false
+
 function Module:SetActionBarNameDisplay(value)
     local alpha = (value and 1) or 0
 
@@ -128,7 +130,9 @@ end)
 --------------------
 
 function Module:CVAR_UPDATE(name, value)
-    if self:GetConfig(CONFIG_SYNC_RAID_FRAME_ENABLE) and RAID_FRAME_CVARS[name] then
+    if not shouldSaveCVar then
+        return
+    elseif self:GetConfig(CONFIG_SYNC_RAID_FRAME_ENABLE) and RAID_FRAME_CVARS[name] then
         local cvars = self:GetConfig(CONFIG_SYNC_RAID_FRAME_CVARS)
         if cvars then
             cvars[name] = value
@@ -147,6 +151,7 @@ end
 Module:RegisterEvent("CVAR_UPDATE")
 
 function Module:AfterStartup()
+    shouldSaveCVar = true
     if self:GetConfig(CONFIG_HIDE_ACTION_BAR_NAME) then
         self:SetActionBarNameDisplay(false)
     end
