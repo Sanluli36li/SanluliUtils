@@ -77,16 +77,11 @@ function Module:SetRegionDeceive(value, printToChatFrame)
 
         -- 重新设置语言过滤器
         Module:SetProfanityFilter(Module:GetConfig(CONFIG_PROFANITY_FILTER), false)
-        -- 修改地区会导致“不同的地区”BUG，启用修复
-        -- Module:SetDifferentRegionFix(Module:GetConfig(CONFIG_REGION_DECEIVE_DIFFERENT_REGION_FIX), printToChatFrame)
     else
         ConsoleExec(PORTAL_COMMAND:format(Module.PORTAL_CURRENT))
 
         if printToChatFrame then
             SanluliUtils:Print(L["client.regionDeceive.message.disabled"])
-        end
-        if Module:GetConfig(CONFIG_REGION_DECEIVE_DIFFERENT_REGION_FIX) then
-            -- Module:SetDifferentRegionFix(false, printToChatFrame)
         end
     end
 end
@@ -121,7 +116,7 @@ StaticPopupDialogs["SANLULIUTILS_REGION_DECEIVE_HELP_SHOW"] = {
     button2 = CANCEL,
     OnAccept = function(self, data)
         HideUIPanel(HelpFrame)
-        Module.SetRegionDeceive(false, false)
+        Module:SetRegionDeceive(false, false)
         SanluliUtils:SetConfig("client", CONFIG_REGION_DECEIVE_TEMPORARILY_DISABLED, true)
         ReloadUI()
     end,
@@ -138,7 +133,7 @@ StaticPopupDialogs["SANLULIUTILS_REGION_DECEIVE_HELP_HIDE"] = {
     button1 = YES,
     button2 = CANCEL,
     OnAccept = function(self, data)
-        Module.SetRegionDeceive(true, true)
+        Module:SetRegionDeceive(true, true)
     end,
     OnCancel = function(self, data)
     end,
@@ -153,21 +148,21 @@ StaticPopupDialogs["SANLULIUTILS_REGION_DECEIVE_HELP_HIDE"] = {
 -- 暴雪函数安全钩子
 --------------------
 
---[[
 -- 支持界面 显示
-hooksecurefunc(HelpFrame, "ShowFrame", function(self)
-    if not Module.IsSameRegion() then
+hooksecurefunc(HelpFrame, "Show", function(self)
+    if not Module:IsSameRegion() then
         StaticPopup_Show("SANLULIUTILS_REGION_DECEIVE_HELP_SHOW")
+        HelpFrame:ClearPoint("TOP")
+        HelpFrame:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
     end
 end)
 
 -- 支持界面 隐藏
 hooksecurefunc(HelpFrame, "Hide", function(self)
-    if Module.IsSameRegion() and (Module.PORTAL_CURRENT == "CN") and Module:GetConfig(CONFIG_REGION_DECEIVE) then
+    if Module:IsSameRegion() and (Module.PORTAL_CURRENT == "CN") and Module:GetConfig(CONFIG_REGION_DECEIVE) then
         StaticPopup_Show("SANLULIUTILS_REGION_DECEIVE_HELP_HIDE")
     end
 end)
-]]
 
 -- 发送聊天信息
 hooksecurefunc("SendChatMessage", function (msg, chatType, languageID, target)
@@ -235,9 +230,9 @@ function Module:Startup()
     if (self.PORTAL_CURRENT == PROTAL_CN) and Module:GetConfig(CONFIG_REGION_DECEIVE) then
         if Module:GetConfig(CONFIG_REGION_DECEIVE_TEMPORARILY_DISABLED) then
             SanluliUtils:Print(L["client.regionDeceive.temporarilyDisabled.message.enabled"])
-            SanluliUtils:SetConfig("client", CONFIG_REGION_DECEIVE_TEMPORARILY_DISABLED, false)
+            self:SetConfig(CONFIG_REGION_DECEIVE_TEMPORARILY_DISABLED, false)
         else
-            self.SetRegionDeceive(true, false)
+            self:SetRegionDeceive(true, false)
         end
     end
 
