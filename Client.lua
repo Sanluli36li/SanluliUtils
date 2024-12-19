@@ -66,7 +66,7 @@ end
 
 -- 设置: 区域误导选项
 function Module:SetRegionDeceive(value, printToChatFrame)
-    if Module.PORTAL_CURRENT ~= PROTAL_CN then
+    if self.PORTAL_CURRENT ~= PROTAL_CN then
         return
     elseif value then
         ConsoleExec(PORTAL_COMMAND:format(PORTAL_US))
@@ -76,9 +76,9 @@ function Module:SetRegionDeceive(value, printToChatFrame)
         end
 
         -- 重新设置语言过滤器
-        Module:SetProfanityFilter(Module:GetConfig(CONFIG_PROFANITY_FILTER), false)
+        self:SetProfanityFilter(self:GetConfig(CONFIG_PROFANITY_FILTER), false)
     else
-        ConsoleExec(PORTAL_COMMAND:format(Module.PORTAL_CURRENT))
+        ConsoleExec(PORTAL_COMMAND:format(self.PORTAL_CURRENT))
 
         if printToChatFrame then
             SanluliUtils:Print(L["client.regionDeceive.message.disabled"])
@@ -213,6 +213,7 @@ CommunitiesFrameGuildDetailsFrameNews:SetScript("OnEvent", function(frame, event
                 if newsRequireUpdate then
                     BlizzardFunction.CommunitiesGuildNewsFrame_OnEvent(frame, event)
                 end
+                newsRequireUpdate = false
                 newsTimer = nil
             end)
         end
