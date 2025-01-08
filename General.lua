@@ -67,7 +67,7 @@ local function RepairItems(guildBankRepair)
         local cost = GetRepairAllCost()
         if cost > 0 then
             local money = GetMoney()
-            local guildMoney = GetGuildBankWithdrawMoney()
+            local guildMoney = (GetGuildBankWithdrawMoney() == -1 and GetGuildBankMoney()) or min(GetGuildBankWithdrawMoney(), GetGuildBankMoney())
             if guildBankRepair and CanGuildBankRepair() and guildMoney + money >= cost then
                 if guildMoney >= cost then
                     -- 公修充足，使用公会资金
