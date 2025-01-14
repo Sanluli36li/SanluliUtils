@@ -30,7 +30,9 @@ local REGION_IDS = {
 
 local BlizzardFunction = {
     C_BattleNetGetFriendAccountInfo = C_BattleNet.GetFriendGameAccountInfo,
-    CommunitiesGuildNewsFrame_OnEvent = CommunitiesGuildNewsFrame_OnEvent
+    CommunitiesGuildNewsFrame_OnEvent = CommunitiesGuildNewsFrame_OnEvent,
+    GetCurrentRegion = GetCurrentRegion,
+    GetCurrentRegionName = GetCurrentRegionName
 }
 
 Module.PORTAL_CURRENT = GetCVar(CVAR_PORTAL)
@@ -223,6 +225,21 @@ CommunitiesFrameGuildDetailsFrameNews:SetScript("OnEvent", function(frame, event
         BlizzardFunction.CommunitiesGuildNewsFrame_OnEvent(frame, event)
     end
 end)
+
+GetCurrentRegion = function(...)
+    if Module:GetConfig(CONFIG_REGION_DECEIVE) and Module:GetConfig(CONFIG_REGION_DECEIVE_DIFFERENT_REGION_FIX) then
+        return REGION_IDS[GetCVar(CVAR_PORTAL)] or 1
+    else
+        return BlizzardFunction.GetCurrentRegion
+    end
+end
+GetCurrentRegionName = function(...)
+    if Module:GetConfig(CONFIG_REGION_DECEIVE) and Module:GetConfig(CONFIG_REGION_DECEIVE_DIFFERENT_REGION_FIX) then
+       return GetCVar(CVAR_PORTAL)
+    else
+        return BlizzardFunction.GetCurrentRegion
+    end
+end
 
 --------------------
 -- 事件处理
