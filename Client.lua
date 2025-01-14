@@ -230,14 +230,14 @@ GetCurrentRegion = function(...)
     if Module:GetConfig(CONFIG_REGION_DECEIVE) and Module:GetConfig(CONFIG_REGION_DECEIVE_DIFFERENT_REGION_FIX) then
         return REGION_IDS[GetCVar(CVAR_PORTAL)] or 1
     else
-        return BlizzardFunction.GetCurrentRegion
+        return BlizzardFunction.GetCurrentRegion()
     end
 end
 GetCurrentRegionName = function(...)
     if Module:GetConfig(CONFIG_REGION_DECEIVE) and Module:GetConfig(CONFIG_REGION_DECEIVE_DIFFERENT_REGION_FIX) then
        return GetCVar(CVAR_PORTAL)
     else
-        return BlizzardFunction.GetCurrentRegion
+        return BlizzardFunction.GetCurrentRegionName()
     end
 end
 
