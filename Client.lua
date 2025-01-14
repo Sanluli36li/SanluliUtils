@@ -161,6 +161,8 @@ end)
 hooksecurefunc(HelpFrame, "Hide", function(self)
     if Module:IsSameRegion() and (Module.PORTAL_CURRENT == "CN") and Module:GetConfig(CONFIG_REGION_DECEIVE) then
         StaticPopup_Show("SANLULIUTILS_REGION_DECEIVE_HELP_HIDE")
+    elseif StaticPopup_Visible("SANLULIUTILS_REGION_DECEIVE_HELP_SHOW") then
+        StaticPopup_Hide("SANLULIUTILS_REGION_DECEIVE_HELP_SHOW")
     end
 end)
 
