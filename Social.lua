@@ -4,6 +4,11 @@ local Module = SanluliUtils:NewModule("social")
 local L = SanluliUtils.Locale
 
 -- 配置项目键名
+local CONFIG_CHAT_HYPERLINK_ENHANCE = "chat.hyperlinkEnhance.enable"
+local CONFIG_CHAT_HYPERLINK_ENHANCE_DISPLAY_ICON = "chat.hyperlinkEnhance.displayIcon"
+local CONFIG_CHAT_HYPERLINK_ENHANCE_DISPLAY_ITEM_LEVEL = "chat.hyperlinkEnhance.displayItemLevel"
+local CONFIG_CHAT_HYPERLINK_ENHANCE_DISPLAY_ITEM_TYPE = "chat.hyperlinkEnhance.displayItemType"
+local CONFIG_CHAT_HYPERLINK_ENHANCE_DISPLAY_SOCKETS = "chat.hyperlinkEnhance.displaySockets"
 local CONFIG_CHAT_TYPE_TAB_SWITCH = "chatTypeTabSwitch.enable"
 local CONFIG_FRIEND_LIST_CHARACTER_NAME_CLASS_COLOR = "friendsList.characterNameClassColor.enable"
 local CONFIG_FRIEND_LIST_HIDE_BATTLE_NET_TAG_SUFFIX = "friendsList.hideBattleNetTagSuffix.enable"
@@ -149,6 +154,172 @@ function Module:SetBattleTagHideStatus(value)
         end
     end
 end
+
+local function chatFilter(chatFrame, event, message, ...)
+    if not Module:GetConfig(CONFIG_CHAT_HYPERLINK_ENHANCE) then return end
+    local newMessage = message:gsub("(\124c([\\a-fA-F0-9]+)\124Hitem:([^\124]+)\124h(%b[])\124h\124r)", function(itemLink, color, metaData, itemName)
+        -- 物品
+        local sourceItemName = strsub(itemName, 2, -2)
+        local sourceItemNameWithoutIcon = sourceItemName:gsub("\124.*", "")
+        local name, _, itemQuality, itemLevel, itemMinLevel, itemType, itemSubType, _, itemEquipLoc, itemTexture, _, classID, subclassID, bindType,
+        expacID, setID, isCraftingReagent
+        = GetItemInfo(itemLink)
+        local displayItemName = sourceItemNameWithoutIcon
+
+        if not name then return end
+
+        local sockets = ""
+
+        local tooltipInfo = C_TooltipInfo.GetHyperlink(itemLink)
+        if tooltipInfo and tooltipInfo.type == Enum.TooltipDataType.Item and tooltipInfo.lines then
+            for i, line in ipairs(tooltipInfo.lines) do
+                if line.type == Enum.TooltipDataLineType.ItemBinding then
+                    if line.bonding == 5 or line.bonding == 10 then
+                        -- 战团绑定/装备前战团绑定 链接显示为传家宝颜色
+                        color = "ff00ccff"
+                    end
+                elseif Module:GetConfig(CONFIG_CHAT_HYPERLINK_ENHANCE_DISPLAY_SOCKETS) and line.type == Enum.TooltipDataLineType.GemSocket then
+                    -- 插槽信息
+                    if line.gemIcon then
+                        sockets = sockets.."|T"..line.gemIcon..":12:12:0:-2|t"
+                    elseif line.socketType then
+                        sockets = sockets.."|T"..string.format("Interface\\ItemSocketingFrame\\UI-EmptySocket-%s", line.socketType)..":12:12:0:-2|t"
+                    end
+                end
+            end
+            
+        end
+
+        if sockets ~= "" then
+            sockets = sockets.." "
+        end
+
+        -- 物品分类
+        if Module:GetConfig(CONFIG_CHAT_HYPERLINK_ENHANCE_DISPLAY_ITEM_TYPE) then
+            -- print(classID, subclassID, itemType, itemSubType)
+            if classID == Enum.ItemClass.Consumable then
+                -- 消耗品
+                if subclassID == Enum.ItemConsumableSubclass.Other then
+                    -- 消耗品->其他: 消耗品
+                    displayItemName = "("..itemType..")"..displayItemName
+                else
+                    displayItemName = "("..itemSubType..")"..displayItemName
+                end
+            elseif classID == Enum.ItemClass.Armor then
+                -- 护甲
+                if subclassID == Enum.ItemArmorSubclass.Generic or itemEquipLoc == "INVTYPE_CLOAK" then
+                    -- 护甲->杂项/背部(所有披风都是布甲类型, 需要特判): 装备栏位
+                    displayItemName = "(".._G[itemEquipLoc]..")"..displayItemName
+                elseif subclassID == Enum.ItemArmorSubclass.Shield then
+                    -- 护甲->盾牌: 盾牌
+                    displayItemName = "("..itemSubType..")"..displayItemName
+                else
+                    -- 其他: 护甲类型和装备栏位
+                    displayItemName = "("..itemSubType.."||".._G[itemEquipLoc]..")"..displayItemName
+                end
+            elseif classID == Enum.ItemClass.Gem or classID == Enum.ItemClass.ItemEnhancement then
+                -- 宝石/物品强化: 仅显示分类
+                displayItemName = "("..itemType..")"..displayItemName
+            elseif classID == Enum.ItemClass.Miscellaneous then
+                -- 杂项
+                if subclassID == Enum.ItemMiscellaneousSubclass.Junk and itemQuality > Enum.ItemQuality.Poor then
+                    -- 非破烂品质垃圾 (由于套装兑换物被归类于此, 需要区分真正的垃圾)
+                    displayItemName = "("..itemType..")"..displayItemName
+                else
+                    displayItemName = "("..itemSubType..")"..displayItemName
+                end
+            elseif itemSubType or itemType then
+                -- 其他类型
+                displayItemName = "("..(itemSubType or itemType)..")"..displayItemName
+            end
+        end
+
+        -- 重新格式化钥石物品
+        --[[
+            注: 
+            物品格式的钥石链接仅在获得钥石时或与林多尔米对话更换或降低钥石时使用
+            发送链接时通常使用单独的钥石格式而非物品格式
+            此部分将统一两种链接的显示效果
+        ]]
+        if classID == Enum.ItemClass.Reagent and subclassID == Enum.ItemReagentSubclass.Keystone then
+            local data = strsplittable(":", metaData)
+                if data[16] and data[18] then
+                local mapName = C_ChallengeMode.GetMapUIInfo(tonumber(data[16]))
+                if mapName then
+                    displayItemName = CHALLENGE_MODE_KEYSTONE_HYPERLINK:format(mapName, tonumber(data[18]))
+                end
+            end
+        end
+
+        -- 物品等级 (仅武器、护甲、专业装备展示物品等级)
+        if Module:GetConfig(CONFIG_CHAT_HYPERLINK_ENHANCE_DISPLAY_ITEM_LEVEL) and (
+            classID == Enum.ItemClass.Weapon or
+            classID == Enum.ItemClass.Armor or
+            classID == Enum.ItemClass.Profession or
+            (classID == Enum.ItemClass.Miscellaneous and Enum.ItemMiscellaneousSubclass.Junk and itemQuality >= Enum.ItemQuality.Epic)   -- 杂项->垃圾 (史诗品质以上) (套装兑换物)
+        ) then
+            displayItemName = itemLevel..":"..displayItemName
+        end
+
+        local newItemLink = "|c"..color.."|H".."item:"..metaData.."|h".."["..sourceItemName:gsub(sourceItemNameWithoutIcon:gsub("[%(%)%.%%%+%-%*%?%[%^%$%]]", "%%%1"), displayItemName).."]".."|h".."|r"
+
+        return ((Module:GetConfig(CONFIG_CHAT_HYPERLINK_ENHANCE_DISPLAY_ICON) and itemTexture and "|T"..itemTexture..":12:12:0:-2|t") or "")..newItemLink..((Module:GetConfig(CONFIG_CHAT_HYPERLINK_ENHANCE_DISPLAY_SOCKETS) and sockets) or "")
+    end):gsub("(\124Hkeystone:([0-9]+):[^\124]+\124h(%b[])\124h)", function(keystoneLink, itemIDStr, keystoneName)
+        -- 史诗钥石
+        if Module:GetConfig(CONFIG_CHAT_HYPERLINK_ENHANCE_DISPLAY_ICON) then
+            local itemID = tonumber(itemIDStr)
+            local name, _, itemQuality, itemLevel, itemMinLevel, itemType, itemSubType, _, itemEquipLoc, itemTexture = GetItemInfo(itemID)
+
+            if itemTexture then
+                return "|T"..itemTexture..":12:12:1:-2|t"..keystoneLink
+            end
+        end
+    end):gsub("(\124Hspell:[^\124]+\124h(%b[])\124h)", function(spellLink, spellName)
+        -- 法术
+        if Module:GetConfig(CONFIG_CHAT_HYPERLINK_ENHANCE_DISPLAY_ICON) then
+            local spellInfo = C_Spell.GetSpellInfo(spellLink)
+
+            if spellInfo and spellInfo.iconID then
+                return "|T"..spellInfo.iconID..":12:12:1:-2|t"..spellLink
+            end
+        end
+    end):gsub("(\124Hmount:([0-9]+):[^\124]+\124h(%b[])\124h)", function(mountLink, spellIDStr, spellName)
+        -- 坐骑
+        if Module:GetConfig(CONFIG_CHAT_HYPERLINK_ENHANCE_DISPLAY_ICON) then
+            local spellID = tonumber(spellIDStr)
+            local spellInfo = C_Spell.GetSpellInfo(spellID)
+
+            if spellInfo and spellInfo.iconID then
+                return "|T"..spellInfo.iconID..":12:12:1:-2|t"..mountLink
+            end
+        end
+    end)
+
+    return false, newMessage, ...
+end
+ChatFrame_AddMessageEventFilter("CHAT_MSG_SAY", chatFilter)                     -- 说
+ChatFrame_AddMessageEventFilter("CHAT_MSG_EMOTE", chatFilter)                   -- 表情
+ChatFrame_AddMessageEventFilter("CHAT_MSG_YELL", chatFilter)                    -- 大喊
+ChatFrame_AddMessageEventFilter("CHAT_MSG_GUILD", chatFilter)                   -- 公会聊天
+-- ChatFrame_AddMessageEventFilter("CHAT_MSG_OFFICER", chatFilter)                 -- 官员聊天 (加密字符串 无法替换)
+ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER", chatFilter)                 -- 悄悄话
+ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER_INFORM", chatFilter)          -- 悄悄话
+ChatFrame_AddMessageEventFilter("CHAT_MSG_BN_WHISPER", chatFilter)              -- 战网昵称密语
+ChatFrame_AddMessageEventFilter("CHAT_MSG_BN_WHISPER_INFORM", chatFilter)       -- 战网昵称密语
+ChatFrame_AddMessageEventFilter("CHAT_MSG_PARTY", chatFilter)                   -- 小队
+ChatFrame_AddMessageEventFilter("CHAT_MSG_PARTY_LEADER", chatFilter)            -- 小队队长
+ChatFrame_AddMessageEventFilter("CHAT_MSG_RAID", chatFilter)                    -- 团队
+ChatFrame_AddMessageEventFilter("CHAT_MSG_RAID_LEADER", chatFilter)             -- 团队领袖
+ChatFrame_AddMessageEventFilter("CHAT_MSG_INSTANCE_CHAT", chatFilter)           -- 副本
+ChatFrame_AddMessageEventFilter("CHAT_MSG_INSTANCE_CHAT_LEADER", chatFilter)    -- 副本向导
+
+ChatFrame_AddMessageEventFilter("CHAT_MSG_CHANNEL", chatFilter)                 -- 频道
+
+ChatFrame_AddMessageEventFilter("CHAT_MSG_LOOT", chatFilter)                    -- 物品拾取
+ChatFrame_AddMessageEventFilter("CHAT_MSG_CURRENCY", chatFilter)                -- 货币
+
+ChatFrame_AddMessageEventFilter("CHAT_MSG_GUILD_ITEM_LOOTED", chatFilter)       -- 公会物品拾取
+
 
 --------------------
 -- 暴雪函数安全钩子

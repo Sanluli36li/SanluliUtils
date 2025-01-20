@@ -7,8 +7,9 @@ local L = SanluliUtils.Locale
 local CONFIG_PROFANITY_FILTER = "profanityFilter"
 local CONFIG_REGION_DECEIVE = "regionDeceive.enable"
 local CONFIG_REGION_DECEIVE_DIFFERENT_REGION_FIX = "regionDeceive.differentRegionFix"
-local CONFIG_ACHIEVEMENTS_DATA_INJECT = "profanityFilter.achievementDataInject"
 local CONFIG_REGION_DECEIVE_TEMPORARILY_DISABLED = "regionDeceive.temporarilyDisabled"
+local CONFIG_ACHIEVEMENTS_DATA_INJECT = "profanityFilter.achievementDataInject"
+local CONFIG_MOUNT_LINK_FIX = "mountLinkFix"
 local CONFIG_GUILD_NEWS_FIX = "guildNewsFix"
 
 local CVAR_PORTAL = "portal"
@@ -29,10 +30,11 @@ local REGION_IDS = {
 }
 
 local BlizzardFunction = {
-    C_BattleNetGetFriendAccountInfo = C_BattleNet.GetFriendGameAccountInfo,
+    C_BattleNet_GetFriendAccountInfo = C_BattleNet.GetFriendGameAccountInfo,
     CommunitiesGuildNewsFrame_OnEvent = CommunitiesGuildNewsFrame_OnEvent,
     GetCurrentRegion = GetCurrentRegion,
-    GetCurrentRegionName = GetCurrentRegionName
+    GetCurrentRegionName = GetCurrentRegionName,
+    C_MountJournal_GetMountLink = C_MountJournal.GetMountLink
 }
 
 Module.PORTAL_CURRENT = GetCVar(CVAR_PORTAL)
@@ -190,7 +192,7 @@ end)
 
 C_BattleNet.GetFriendGameAccountInfo = function(...)
     if Module:GetConfig(CONFIG_REGION_DECEIVE) and Module:GetConfig(CONFIG_REGION_DECEIVE_DIFFERENT_REGION_FIX) then
-        local gameAccountInfo = BlizzardFunction.C_BattleNetGetFriendAccountInfo(...)
+        local gameAccountInfo = BlizzardFunction.C_BattleNet_GetFriendAccountInfo(...)
 
         if gameAccountInfo.regionID == Module.REAL_REGION_ID then
             gameAccountInfo.isInCurrentRegion = true
@@ -200,7 +202,39 @@ C_BattleNet.GetFriendGameAccountInfo = function(...)
 
         return gameAccountInfo
     else
-        return BlizzardFunction.C_BattleNetGetFriendAccountInfo(...)
+        return BlizzardFunction.C_BattleNet_GetFriendAccountInfo(...)
+    end
+end
+
+GetCurrentRegion = function(...)
+    if Module:GetConfig(CONFIG_REGION_DECEIVE) and Module:GetConfig(CONFIG_REGION_DECEIVE_DIFFERENT_REGION_FIX) then
+        return REGION_IDS[GetCVar(CVAR_PORTAL)] or 1
+    else
+        return BlizzardFunction.GetCurrentRegion()
+    end
+end
+
+GetCurrentRegionName = function(...)
+    if Module:GetConfig(CONFIG_REGION_DECEIVE) and Module:GetConfig(CONFIG_REGION_DECEIVE_DIFFERENT_REGION_FIX) then
+       return GetCVar(CVAR_PORTAL)
+    else
+        return BlizzardFunction.GetCurrentRegionName()
+    end
+end
+
+C_MountJournal.GetMountLink = function(spellID)
+    local link = BlizzardFunction.C_MountJournal_GetMountLink(spellID)
+    if link then
+        return link
+    elseif Module:GetConfig(CONFIG_MOUNT_LINK_FIX) then
+        local mountID = C_MountJournal.GetMountFromSpell(spellID)
+        if mountID then
+            local name = C_MountJournal.GetMountInfoByID(mountID)
+            local creatureDisplayInfoID = C_MountJournal.GetMountInfoExtraByID(mountID)
+
+            link = "|cff71d5ff".."|H".."mount:"..spellID..":"..(creatureDisplayInfoID or "0")..":".."|h".."["..name.."]".."|h".."|r"
+            return link
+        end
     end
 end
 
@@ -226,20 +260,6 @@ CommunitiesFrameGuildDetailsFrameNews:SetScript("OnEvent", function(frame, event
     end
 end)
 
-GetCurrentRegion = function(...)
-    if Module:GetConfig(CONFIG_REGION_DECEIVE) and Module:GetConfig(CONFIG_REGION_DECEIVE_DIFFERENT_REGION_FIX) then
-        return REGION_IDS[GetCVar(CVAR_PORTAL)] or 1
-    else
-        return BlizzardFunction.GetCurrentRegion()
-    end
-end
-GetCurrentRegionName = function(...)
-    if Module:GetConfig(CONFIG_REGION_DECEIVE) and Module:GetConfig(CONFIG_REGION_DECEIVE_DIFFERENT_REGION_FIX) then
-       return GetCVar(CVAR_PORTAL)
-    else
-        return BlizzardFunction.GetCurrentRegionName()
-    end
-end
 
 --------------------
 -- 事件处理

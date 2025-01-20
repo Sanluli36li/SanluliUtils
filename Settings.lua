@@ -209,6 +209,48 @@ local settingsData = {
                 {
                     controlType = CONTROL_TYPE.CHECKBOX,
                     settingType = SETTING_TYPE.ADDON_VARIABLE,
+                    name = L["social.chat.hyperlinkEnhance.title"],
+                    tooltip = L["social.chat.hyperlinkEnhance.tooltip"],
+                    key = "social.chat.hyperlinkEnhance.enable",
+                    default = true,
+                    subSettings = {
+                        {
+                            controlType = CONTROL_TYPE.CHECKBOX,
+                            settingType = SETTING_TYPE.ADDON_VARIABLE,
+                            name = L["social.chat.hyperlinkEnhance.displayIcon.title"],
+                            tooltip = L["social.chat.hyperlinkEnhance.displayIcon.tooltip"],
+                            key = "social.chat.hyperlinkEnhance.displayIcon",
+                            default = true
+                        },
+                        {
+                            controlType = CONTROL_TYPE.CHECKBOX,
+                            settingType = SETTING_TYPE.ADDON_VARIABLE,
+                            name = L["social.chat.hyperlinkEnhance.displayItemLevel.title"],
+                            tooltip = L["social.chat.hyperlinkEnhance.displayItemLevel.tooltip"],
+                            key = "social.chat.hyperlinkEnhance.displayItemLevel",
+                            default = true
+                        },
+                        {
+                            controlType = CONTROL_TYPE.CHECKBOX,
+                            settingType = SETTING_TYPE.ADDON_VARIABLE,
+                            name = L["social.chat.hyperlinkEnhance.displayItemType.title"],
+                            tooltip = L["social.chat.hyperlinkEnhance.displayItemType.tooltip"],
+                            key = "social.chat.hyperlinkEnhance.displayItemType",
+                            default = true
+                        },
+                        {
+                            controlType = CONTROL_TYPE.CHECKBOX,
+                            settingType = SETTING_TYPE.ADDON_VARIABLE,
+                            name = L["social.chat.hyperlinkEnhance.displaySockets.title"],
+                            tooltip = L["social.chat.hyperlinkEnhance.displaySockets.tooltip"],
+                            key = "social.chat.hyperlinkEnhance.displaySockets",
+                            default = false
+                        },
+                    }
+                },
+                {
+                    controlType = CONTROL_TYPE.CHECKBOX,
+                    settingType = SETTING_TYPE.ADDON_VARIABLE,
                     name = L["social.chatTypeTabSwitch.title"],
                     tooltip = L["social.chatTypeTabSwitch.tooltip"],
                     key = "social.chatTypeTabSwitch.enable",
@@ -414,6 +456,14 @@ local settingsData = {
                     isVisible = function()
                         return SanluliUtils.client.PORTAL_CURRENT == "CN"
                     end
+                },
+                {
+                    controlType = CONTROL_TYPE.CHECKBOX,
+                    settingType = SETTING_TYPE.ADDON_VARIABLE,
+                    name = L["client.mountLinkFix.title"],
+                    tooltip = L["client.mountLinkFix.tooltip"],
+                    key = "client.mountLinkFix",
+                    default = true,
                 },
                 {
                     controlType = CONTROL_TYPE.CHECKBOX,
