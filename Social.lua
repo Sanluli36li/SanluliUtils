@@ -206,13 +206,7 @@ local function chatFilter(chatFrame, event, message, ...)
             sockets = sockets.." "
         end
 
-        if bonding == 5 or bonding == 10 then
-            -- 战团绑定 链接显示为传家宝颜色
-            color = "ff00ccff"
-        elseif not canUse then
-            -- 不能使用的物品
-            color = "ffff2020"
-        end
+        
 
         -- 物品分类
         if Module:GetConfig(CONFIG_CHAT_HYPERLINK_ENHANCE_DISPLAY_ITEM_TYPE) then
@@ -230,6 +224,7 @@ local function chatFilter(chatFrame, event, message, ...)
                     displayType = itemSubType.."||".._G[itemEquipLoc]
                 end
             elseif classID == Enum.ItemClass.Tradegoods and subclassID == 11 then
+                -- 制造材料
                 displayType = PROFESSIONS_MODIFIED_CRAFTING_REAGENT_BASIC
             elseif (
                 (classID == Enum.ItemClass.Consumable and subclassID == Enum.ItemConsumableSubclass.Other) or                                           -- 消耗品->其他
@@ -265,9 +260,10 @@ local function chatFilter(chatFrame, event, message, ...)
         -- 重新格式化钥石物品
         --[[
             注: 
+            钥石有两种格式 分别为"|Hitem:XXXX|h[史诗钥石]|h"的物品形式以及"|Hkeystone:XXXX|h[钥石：XXXX(10)]"的钥石形式
+            但将背包中的钥石链接至聊天框会自动转化为钥石格式而非物品格式
             物品格式的钥石链接仅在获得钥石时或与林多尔米对话更换或降低钥石时使用
-            发送链接时通常使用单独的钥石格式而非物品格式
-            此部分将统一两种链接的显示效果
+            此处代码将统一两种链接的显示效果 (钥石格式的链接显然要直观不少)
         ]]
         if classID == Enum.ItemClass.Reagent and subclassID == Enum.ItemReagentSubclass.Keystone then
             local data = strsplittable(":", metaData)
@@ -279,14 +275,26 @@ local function chatFilter(chatFrame, event, message, ...)
             end
         end
 
-        -- 物品等级 (仅武器、护甲、专业装备展示物品等级)
+        -- 物品染色
+        if IsCosmeticItem(link) then
+            -- 装饰品
+            color = "ffff80ff"
+        elseif bonding == 5 or bonding == 10 then
+            -- 战团绑定/装备前战团绑定的物品
+            color = "ff00ccff"
+        elseif not canUse then
+            -- 不能使用的物品 (例如其他职业的套装)
+            color = "ffff2020"
+        end
+
+        -- 物品等级 (仅武器、护甲、专业装备展示物品等级; 并排除装饰品)
         if Module:GetConfig(CONFIG_CHAT_HYPERLINK_ENHANCE_DISPLAY_ITEM_LEVEL) and (
-            classID == Enum.ItemClass.Weapon or                                                                                         -- 武器
-            classID == Enum.ItemClass.Armor or                                                                                          -- 护甲
-            classID == Enum.ItemClass.Profession or                                                                                     -- 专业装备
-            (classID == Enum.ItemClass.Gem and subclassID == Enum.ItemGemSubclass.Artifactrelic) or                                     -- 神器圣物
-            (classID == Enum.ItemClass.Miscellaneous and Enum.ItemMiscellaneousSubclass.Junk and itemQuality >= Enum.ItemQuality.Epic)  -- 杂项->垃圾 (史诗品质以上) (套装兑换物)
-        ) then
+            classID == Enum.ItemClass.Weapon or                                                                                                         -- 武器
+            classID == Enum.ItemClass.Armor or                                                                                                          -- 护甲
+            classID == Enum.ItemClass.Profession or                                                                                                     -- 专业装备
+            (classID == Enum.ItemClass.Gem and subclassID == Enum.ItemGemSubclass.Artifactrelic) or                                                     -- 神器圣物
+            (classID == Enum.ItemClass.Miscellaneous and subclassID == Enum.ItemMiscellaneousSubclass.Junk and itemQuality >= Enum.ItemQuality.Epic)    -- 杂项->垃圾 (史诗品质以上) (套装兑换物)
+        ) and not IsCosmeticItem(link) then
             displayItemName = itemLevel..":"..displayItemName
         end
 
@@ -350,7 +358,7 @@ ChatFrame_AddMessageEventFilter("CHAT_MSG_SAY", chatFilter)                     
 ChatFrame_AddMessageEventFilter("CHAT_MSG_EMOTE", chatFilter)                   -- 表情
 ChatFrame_AddMessageEventFilter("CHAT_MSG_YELL", chatFilter)                    -- 大喊
 ChatFrame_AddMessageEventFilter("CHAT_MSG_GUILD", chatFilter)                   -- 公会聊天
--- ChatFrame_AddMessageEventFilter("CHAT_MSG_OFFICER", chatFilter)                 -- 官员聊天 (加密字符串 无法替换)
+-- ChatFrame_AddMessageEventFilter("CHAT_MSG_OFFICER", chatFilter)              -- 官员聊天 (官员聊天的内容为受保护的字符串 插件无法读取到其内容, 故无法替换)
 ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER", chatFilter)                 -- 悄悄话
 ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER_INFORM", chatFilter)          -- 悄悄话
 ChatFrame_AddMessageEventFilter("CHAT_MSG_BN_WHISPER", chatFilter)              -- 战网昵称密语
