@@ -75,7 +75,7 @@ local function RepairItems(guildBankRepair)
                     SanluliUtils:Print(L["general.autoRepair.message.repaired"]:format("|cffffffff"..generateMoneyText(cost).."|r("..L["general.autoRepair.message.guild"]..")"))
                 elseif guildMoney == 0 then
                     -- 公修耗尽，使用个人资金并提示公修耗尽
-                    RepairAllItems(false)
+                    RepairAllItems(true)
                     SanluliUtils:Print(L["general.autoRepair.message.repaired"]:format("|cffffffff"..generateMoneyText(cost).."|r"))
                     SanluliUtils:Print(L["general.autoRepair.message.guildExhausted"])
                 else
@@ -87,9 +87,10 @@ local function RepairItems(guildBankRepair)
                 end
             elseif money >= cost then
                 -- 使用个人资金
-                RepairAllItems(false)
+                RepairAllItems(guildBankRepair)
                 SanluliUtils:Print(L["general.autoRepair.message.repaired"]:format("|cffffffff"..generateMoneyText(cost).."|r"))
             else
+                RepairAllItems(guildBankRepair)
                 -- 金钱不足，提示
                 SanluliUtils:Print(L["general.autoRepair.message.oom"]:format("|cffffffff"..generateMoneyText(cost).."|r"))
             end
