@@ -9,8 +9,8 @@ local CONFIG_REGION_DECEIVE = "regionDeceive.enable"
 local CONFIG_REGION_DECEIVE_DIFFERENT_REGION_FIX = "regionDeceive.differentRegionFix"
 local CONFIG_REGION_DECEIVE_TEMPORARILY_DISABLED = "regionDeceive.temporarilyDisabled"
 local CONFIG_ACHIEVEMENTS_DATA_INJECT = "profanityFilter.achievementDataInject"
-local CONFIG_MOUNT_LINK_FIX = "mountLinkFix"
-local CONFIG_GUILD_NEWS_FIX = "guildNewsFix"
+-- local CONFIG_MOUNT_LINK_FIX = "mountLinkFix"
+-- local CONFIG_GUILD_NEWS_FIX = "guildNewsFix"
 
 local CVAR_PORTAL = "portal"
 local CVAR_PROFANITY_FILTER = "profanityFilter"
@@ -41,9 +41,6 @@ Module.PORTAL_CURRENT = GetCVar(CVAR_PORTAL)
 
 -- 记录客户端的真实地区
 Module.REAL_REGION_ID = REGION_IDS[Module.PORTAL_CURRENT] or 1
--- 留存原有的获取好友信息方法
--- Module.BattleNetGetFriendGameAccountInfo = C_BattleNet.GetFriendGameAccountInfo
-Module.FixedDifferentRegion = false
 
 
 function Module:IsSameRegion()
@@ -105,7 +102,24 @@ function Module:SetProfanityFilter(value, printToChatFrame)
             SanluliUtils:Print(L["client.profanityFilter.message.disabled"])
         end
     end
-    
+end
+
+function Module:SetAddOnsProfiler(value, printToChatFrame)
+    if not GetCVar("addonProfilerEnabled") then
+        C_CVar.RegisterCVar("addonProfilerEnabled", "1")
+    end
+
+    if value then
+        C_CVar.SetCVar("addonProfilerEnabled", "1")
+        if printToChatFrame then
+            SanluliUtils:Print("已启用插件性能分析")
+        end
+    else
+        C_CVar.SetCVar("addonProfilerEnabled", "0")
+        if printToChatFrame then
+            SanluliUtils:Print("已禁用插件性能分析")
+        end
+    end
 end
 
 -- 开启地区误导导致的支持界面无限转圈圈，提示用户临时关闭地区误导选项
@@ -222,6 +236,9 @@ GetCurrentRegionName = function(...)
     end
 end
 
+--[[
+-- 2025/03/17 暴雪已于11.1.0.58819中修复此bug, 故移除此功能 https://github.com/Stanzilla/WoWUIBugs/issues/699
+
 C_MountJournal.GetMountLink = function(spellID)
     local link = BlizzardFunction.C_MountJournal_GetMountLink(spellID)
     if link then
@@ -237,6 +254,11 @@ C_MountJournal.GetMountLink = function(spellID)
         end
     end
 end
+]]
+
+
+--[[
+-- 2025/03/17 暴雪于11.0.7.57637已修复此bug, 故移除此功能 https://github.com/Stanzilla/WoWUIBugs/issues/683
 
 local newsRequireUpdate, newsTimer
 CommunitiesFrameGuildDetailsFrameNews:SetScript("OnEvent", function(frame, event)
@@ -259,7 +281,7 @@ CommunitiesFrameGuildDetailsFrameNews:SetScript("OnEvent", function(frame, event
         BlizzardFunction.CommunitiesGuildNewsFrame_OnEvent(frame, event)
     end
 end)
-
+]]
 
 --------------------
 -- 事件处理
@@ -275,8 +297,12 @@ function Module:Startup()
             self:SetRegionDeceive(true, false)
         end
     end
-
+    
+    -- 反和谐
     if GetCurrentRegionName() ~= 5 then
         self:SetProfanityFilter(Module:GetConfig(CONFIG_PROFANITY_FILTER), false)
     end
+
+    -- 插件性能分析
+    self:SetAddOnsProfiler(not Module:GetConfig("blzAddonProfiler.disable"), true)
 end

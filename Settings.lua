@@ -391,6 +391,17 @@ local settingsData = {
                 {
                     controlType = CONTROL_TYPE.CHECKBOX,
                     settingType = SETTING_TYPE.ADDON_VARIABLE,
+                    name = L["client.blzAddonProfiler.disable.title"],
+                    tooltip = L["client.blzAddonProfiler.disable.tooltip"],
+                    key = "client.blzAddonProfiler.disable",
+                    default = false,
+                    onValueChanged = function(value)
+                        SanluliUtils.client:SetAddOnsProfiler(not value, true)
+                    end,
+                },
+                {
+                    controlType = CONTROL_TYPE.CHECKBOX,
+                    settingType = SETTING_TYPE.ADDON_VARIABLE,
                     name = L["client.regionDeceive.title"],
                     tooltip = L["client.regionDeceive.tooltip"],
                     key = "client.regionDeceive.enable",
@@ -408,10 +419,7 @@ local settingsData = {
                             name = L["client.regionDeceive.differentRegionFix.title"],
                             tooltip = L["client.regionDeceive.differentRegionFix.tooltip"],
                             key = "client.regionDeceive.differentRegionFix",
-                            default = true,
-                            onValueChanged = function (value)
-                                SanluliUtils.client:SetDifferentRegionFix(value, true)
-                            end
+                            default = true
                         },
                         {
                             controlType = CONTROL_TYPE.CHECKBOX,
@@ -457,6 +465,8 @@ local settingsData = {
                         return SanluliUtils.client.PORTAL_CURRENT == "CN"
                     end
                 },
+                --[[
+                -- 2025/03/17 暴雪已于11.1.0.58819中修复此bug, 故移除此功能
                 {
                     controlType = CONTROL_TYPE.CHECKBOX,
                     settingType = SETTING_TYPE.ADDON_VARIABLE,
@@ -465,6 +475,9 @@ local settingsData = {
                     key = "client.mountLinkFix",
                     default = true,
                 },
+                ]]
+                --[[
+                -- 2025/03/17 暴雪于11.0.7.57637已修复此bug, 故移除此功能
                 {
                     controlType = CONTROL_TYPE.CHECKBOX,
                     settingType = SETTING_TYPE.ADDON_VARIABLE,
@@ -473,6 +486,7 @@ local settingsData = {
                     key = "client.guildNewsFix",
                     default = true,
                 },
+                ]]
             }
         }
     }
