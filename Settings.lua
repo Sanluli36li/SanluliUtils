@@ -423,9 +423,11 @@ local settingsData = {
                         SanluliUtils.client:SetAddOnsProfiler(not value, true)
                     end,
                 },
+                --[[
                 {
                     -- 区域误导
                     -- 2025/03/18: 此功能疑似在11.1.0版本失效，需要观察
+                    -- 2025/03/26: 目前无法通过ConsoleExec("portal US")修改客户端地区了，此功能已经失效，移除
                     controlType = CONTROL_TYPE.CHECKBOX,
                     settingType = SETTING_TYPE.ADDON_VARIABLE,
                     name = L["client.regionDeceive.title"],
@@ -460,6 +462,7 @@ local settingsData = {
                         }
                     }
                 },
+                ]]
                 {
                     -- 语言过滤器 (因简体中文客户端无法修改此选项, 提供一个修改按钮 (因为国服解锁了也改不了, 所以此选项仅在中国大陆地区以外生效))
                     controlType = CONTROL_TYPE.CHECKBOX,
@@ -478,7 +481,7 @@ local settingsData = {
                         end
                     end,
                     isVisible = function()
-                        return SanluliUtils.client.PORTAL_CURRENT ~= "CN" and GetLocale() == "zhCN"
+                        return GetCVar("portal") ~= "CN" and GetLocale() == "zhCN"
                     end
                 },
                 {

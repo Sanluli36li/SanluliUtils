@@ -5,22 +5,23 @@ local L = SanluliUtils.Locale
 
 
 local CONFIG_PROFANITY_FILTER = "profanityFilter"
-local CONFIG_REGION_DECEIVE = "regionDeceive.enable"
-local CONFIG_REGION_DECEIVE_DIFFERENT_REGION_FIX = "regionDeceive.differentRegionFix"
-local CONFIG_REGION_DECEIVE_TEMPORARILY_DISABLED = "regionDeceive.temporarilyDisabled"
+-- local CONFIG_REGION_DECEIVE = "regionDeceive.enable"
+-- local CONFIG_REGION_DECEIVE_DIFFERENT_REGION_FIX = "regionDeceive.differentRegionFix"
+-- local CONFIG_REGION_DECEIVE_TEMPORARILY_DISABLED = "regionDeceive.temporarilyDisabled"
 local CONFIG_ACHIEVEMENTS_DATA_INJECT = "profanityFilter.achievementDataInject"
 -- local CONFIG_MOUNT_LINK_FIX = "mountLinkFix"
 -- local CONFIG_GUILD_NEWS_FIX = "guildNewsFix"
 
-local CVAR_PORTAL = "portal"
+-- local CVAR_PORTAL = "portal"
 local CVAR_PROFANITY_FILTER = "profanityFilter"
 local CVAR_OVERRIDE_ARCHIVE = "overrideArchive"
 
-local PORTAL_COMMAND = "portal %s"
-local PORTAL_US = "US"
-local PROTAL_CN = "CN"
-local PORTAL_TEST = "test"
+-- local PORTAL_COMMAND = "portal %s"
+-- local PORTAL_US = "US"
+-- local PROTAL_CN = "CN"
+-- local PORTAL_TEST = "test"
 
+--[[
 local REGION_IDS = {
     US = 1,
     KR = 2,
@@ -28,20 +29,22 @@ local REGION_IDS = {
     TW = 4,
     CN = 5
 }
+]]
 
 local BlizzardFunction = {
-    C_BattleNet_GetFriendAccountInfo = C_BattleNet.GetFriendGameAccountInfo,
-    CommunitiesGuildNewsFrame_OnEvent = CommunitiesGuildNewsFrame_OnEvent,
-    GetCurrentRegion = GetCurrentRegion,
-    GetCurrentRegionName = GetCurrentRegionName,
-    C_MountJournal_GetMountLink = C_MountJournal.GetMountLink
+    -- C_BattleNet_GetFriendAccountInfo = C_BattleNet.GetFriendGameAccountInfo,
+    -- CommunitiesGuildNewsFrame_OnEvent = CommunitiesGuildNewsFrame_OnEvent,
+    -- GetCurrentRegion = GetCurrentRegion,
+    -- GetCurrentRegionName = GetCurrentRegionName,
+    -- C_MountJournal_GetMountLink = C_MountJournal.GetMountLink
 }
+
+--[[
 
 Module.PORTAL_CURRENT = GetCVar(CVAR_PORTAL)
 
 -- 记录客户端的真实地区
 Module.REAL_REGION_ID = REGION_IDS[Module.PORTAL_CURRENT] or 1
-
 
 function Module:IsSameRegion()
     if self.PORTAL_CURRENT == PORTAL_TEST then
@@ -49,7 +52,7 @@ function Module:IsSameRegion()
     end
     return GetCurrentRegionName() == self.PORTAL_CURRENT
 end
-
+]]
 -- 设置: 反和谐
 function Module:SetOverrideArchive(value, printToChatFrame)
     if value then
@@ -65,7 +68,9 @@ function Module:SetOverrideArchive(value, printToChatFrame)
     end
 end
 
+--[[
 -- 设置: 区域误导选项
+-- 2025/03/26: 目前无法通过ConsoleExec("portal US")修改客户端地区了，此功能已经失效，移除
 function Module:SetRegionDeceive(value, printToChatFrame)
     if self.PORTAL_CURRENT ~= PROTAL_CN then
         return
@@ -86,6 +91,7 @@ function Module:SetRegionDeceive(value, printToChatFrame)
         end
     end
 end
+]]
 
 -- 设置: 语言过滤器
 function Module:SetProfanityFilter(value, printToChatFrame)
@@ -124,10 +130,12 @@ function Module:SetAddOnsProfiler(value, printToChatFrame)
     end
 end
 
+
 -- 开启地区误导导致的支持界面无限转圈圈，提示用户临时关闭地区误导选项
 -- 2024/08/01: 此问题已解决，故移除此功能
 -- 2024/11/01: 发现只是网页能打开了而已，仍然无法登录账号填写表单，故恢复此功能
-
+-- 2025/03/26: 目前无法通过ConsoleExec("portal US")修改客户端地区了，此功能已经失效，移除
+--[[
 -- 帮助界面提示
 StaticPopupDialogs["SANLULIUTILS_REGION_DECEIVE_HELP_SHOW"] = {
     preferredIndex = 3,
@@ -162,13 +170,16 @@ StaticPopupDialogs["SANLULIUTILS_REGION_DECEIVE_HELP_HIDE"] = {
     exclusive = 1,
     whileDead = 1,
 }
-
+]]
 
 --------------------
 -- 暴雪函数安全钩子
 --------------------
+---
+--[[
+-- 支持界面
+-- 2025/03/26: 目前无法通过ConsoleExec("portal US")修改客户端地区了，此功能已经失效，移除
 
--- 支持界面 显示
 hooksecurefunc(HelpFrame, "Show", function(self)
     if not Module:IsSameRegion() then
         StaticPopup_Show("SANLULIUTILS_REGION_DECEIVE_HELP_SHOW")
@@ -177,7 +188,6 @@ hooksecurefunc(HelpFrame, "Show", function(self)
     end
 end)
 
--- 支持界面 隐藏
 hooksecurefunc(HelpFrame, "Hide", function(self)
     if Module:IsSameRegion() and (Module.PORTAL_CURRENT == "CN") and Module:GetConfig(CONFIG_REGION_DECEIVE) then
         StaticPopup_Show("SANLULIUTILS_REGION_DECEIVE_HELP_HIDE")
@@ -185,6 +195,7 @@ hooksecurefunc(HelpFrame, "Hide", function(self)
         StaticPopup_Hide("SANLULIUTILS_REGION_DECEIVE_HELP_SHOW")
     end
 end)
+]]
 
 -- 发送聊天信息
 hooksecurefunc("SendChatMessage", function (msg, chatType, languageID, target)
@@ -205,6 +216,9 @@ end)
 --------------------
 -- 替换暴雪方法
 --------------------
+
+--[[
+-- 2025/03/26: 目前无法通过ConsoleExec("portal US")修改客户端地区了，此功能已经失效，移除
 
 C_BattleNet.GetFriendGameAccountInfo = function(...)
     if Module:GetConfig(CONFIG_REGION_DECEIVE) and Module:GetConfig(CONFIG_REGION_DECEIVE_DIFFERENT_REGION_FIX) then
@@ -237,6 +251,7 @@ GetCurrentRegionName = function(...)
         return BlizzardFunction.GetCurrentRegionName()
     end
 end
+]]
 
 --[[
 -- 2025/03/17: 暴雪已于11.1.0.58819中修复此bug, 故移除此功能 https://github.com/Stanzilla/WoWUIBugs/issues/699
@@ -290,7 +305,9 @@ end)
 --------------------
 
 function Module:Startup()
+    --[[
     -- 启用客户端地区误导选项
+    -- 2025/03/26: 目前无法通过ConsoleExec("portal US")修改客户端地区了，此功能已经失效，移除
     if (self.PORTAL_CURRENT == PROTAL_CN) and Module:GetConfig(CONFIG_REGION_DECEIVE) then
         if Module:GetConfig(CONFIG_REGION_DECEIVE_TEMPORARILY_DISABLED) then
             SanluliUtils:Print(L["client.regionDeceive.temporarilyDisabled.message.enabled"])
@@ -299,7 +316,8 @@ function Module:Startup()
             self:SetRegionDeceive(true, false)
         end
     end
-    
+    ]]
+
     -- 反和谐
     if GetCurrentRegionName() ~= 5 then
         self:SetProfanityFilter(Module:GetConfig(CONFIG_PROFANITY_FILTER), false)
