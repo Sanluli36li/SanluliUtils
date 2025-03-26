@@ -1,8 +1,8 @@
 ## Interface: 110100
 ## Title: SanluliUtils
-## Notes: Sanluli36li's Utils
-## Notes-zhCN: 三鹿李的一些小工具
-## Notes-zhTW: 三鹿李的一些小工具
+## Notes: A lightweight utils AddOns
+## Notes-zhCN: 一个轻量化的小工具合集插件
+## Notes-zhTW: 一个轻量化的小工具合集插件
 ## Author: Sanluli36li (Olddruid@CN-Galakrond)
 ## Version: @project-version@
 ## SavedVariables: SanluliUtilsDB

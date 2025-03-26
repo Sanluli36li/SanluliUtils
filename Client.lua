@@ -104,6 +104,8 @@ function Module:SetProfanityFilter(value, printToChatFrame)
     end
 end
 
+-- 设置: 插件性能分析
+-- https://x.com/Luckyone961/status/1901392733790494908
 function Module:SetAddOnsProfiler(value, printToChatFrame)
     if not GetCVar("addonProfilerEnabled") then
         C_CVar.RegisterCVar("addonProfilerEnabled", "1")
@@ -112,12 +114,12 @@ function Module:SetAddOnsProfiler(value, printToChatFrame)
     if value then
         C_CVar.SetCVar("addonProfilerEnabled", "1")
         if printToChatFrame then
-            SanluliUtils:Print("已启用插件性能分析")
+            SanluliUtils:Print(L["client.blzAddonProfiler.message.enabled"])
         end
     else
         C_CVar.SetCVar("addonProfilerEnabled", "0")
         if printToChatFrame then
-            SanluliUtils:Print("已禁用插件性能分析")
+            SanluliUtils:Print(L["client.blzAddonProfiler.message.disabled"])
         end
     end
 end
@@ -237,7 +239,7 @@ GetCurrentRegionName = function(...)
 end
 
 --[[
--- 2025/03/17 暴雪已于11.1.0.58819中修复此bug, 故移除此功能 https://github.com/Stanzilla/WoWUIBugs/issues/699
+-- 2025/03/17: 暴雪已于11.1.0.58819中修复此bug, 故移除此功能 https://github.com/Stanzilla/WoWUIBugs/issues/699
 
 C_MountJournal.GetMountLink = function(spellID)
     local link = BlizzardFunction.C_MountJournal_GetMountLink(spellID)
@@ -258,7 +260,7 @@ end
 
 
 --[[
--- 2025/03/17 暴雪于11.0.7.57637已修复此bug, 故移除此功能 https://github.com/Stanzilla/WoWUIBugs/issues/683
+-- 2025/03/17: 暴雪于11.0.7.57637已修复此bug, 故移除此功能 https://github.com/Stanzilla/WoWUIBugs/issues/683
 
 local newsRequireUpdate, newsTimer
 CommunitiesFrameGuildDetailsFrameNews:SetScript("OnEvent", function(frame, event)
@@ -304,5 +306,5 @@ function Module:Startup()
     end
 
     -- 插件性能分析
-    self:SetAddOnsProfiler(not Module:GetConfig("blzAddonProfiler.disable"), true)
+    self:SetAddOnsProfiler(not Module:GetConfig("blzAddonProfiler.disable"), false)
 end

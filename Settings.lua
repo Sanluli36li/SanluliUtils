@@ -19,6 +19,7 @@ local settingsData = {
     name = ADDON_NAME,
     settings = {
         {
+            -- 自动修理
             controlType = CONTROL_TYPE.CHECKBOX_AND_DROPDOWN,
             settingType = SETTING_TYPE.ADDON_VARIABLE,
             name = L["general.autoRepair.title"],
@@ -36,6 +37,7 @@ local settingsData = {
             }
         },
         {
+            -- 自动出售垃圾
             controlType = CONTROL_TYPE.CHECKBOX_AND_DROPDOWN,
             settingType = SETTING_TYPE.ADDON_VARIABLE,
             name = L["general.autoSellJunk.title"],
@@ -54,6 +56,7 @@ local settingsData = {
             }
         },
         {
+            -- 自动输入确认内容
             controlType = CONTROL_TYPE.CHECKBOX,
             settingType = SETTING_TYPE.ADDON_VARIABLE,
             name = L["general.autoInputConfirm.title"],
@@ -62,6 +65,7 @@ local settingsData = {
             default = true
         },
         {
+            -- 自动贪婪
             controlType = CONTROL_TYPE.CHECKBOX_AND_DROPDOWN,
             settingType = SETTING_TYPE.ADDON_VARIABLE,
             name = L["general.autoRoll.title"],
@@ -79,6 +83,7 @@ local settingsData = {
             },
         },
         {
+            -- 更快的自动拾取
             controlType = CONTROL_TYPE.CHECKBOX,
             settingType = SETTING_TYPE.ADDON_VARIABLE,
             name = L["general.fasterAutoLoot.title"],
@@ -87,6 +92,7 @@ local settingsData = {
             default = true
         },
         {
+            -- 自动战斗日志
             controlType = CONTROL_TYPE.CHECKBOX,
             settingType = SETTING_TYPE.ADDON_VARIABLE,
             name = L["general.autoCombatlog.title"],
@@ -95,6 +101,7 @@ local settingsData = {
             default = false,
             subSettings = {
                 {
+                    -- 团队副本难度
                     controlType = CONTROL_TYPE.CHECKBOX_AND_DROPDOWN,
                     settingType = SETTING_TYPE.ADDON_VARIABLE,
                     name = L["general.autoCombatlog.raid.title"],
@@ -112,9 +119,9 @@ local settingsData = {
                             { L["general.autoCombatlog.difficulty.mythicRaid"] },
                         }
                     }
-                    
                 },
                 {
+                    -- 地下城难度
                     controlType = CONTROL_TYPE.CHECKBOX_AND_DROPDOWN,
                     settingType = SETTING_TYPE.ADDON_VARIABLE,
                     name = L["general.autoCombatlog.dungeon.title"],
@@ -132,7 +139,6 @@ local settingsData = {
                             { L["general.autoCombatlog.difficulty.mythicPlus"] },
                         }
                     }
-                    
                 }
             }
         },
@@ -141,6 +147,7 @@ local settingsData = {
             name = L["blizzardui.title"]
         },
         {
+            -- 同步动作条设置
             controlType = CONTROL_TYPE.CHECKBOX,
             settingType = SETTING_TYPE.ADDON_VARIABLE,
             name = L["blizzardui.sync.actionBar.title"],
@@ -154,6 +161,7 @@ local settingsData = {
             end
         },
         {
+            -- 同步团队框体配置
             controlType = CONTROL_TYPE.CHECKBOX,
             settingType = SETTING_TYPE.ADDON_VARIABLE,
             name = L["blizzardui.sync.raidFrame.title"],
@@ -167,6 +175,7 @@ local settingsData = {
             end
         },
         {
+            -- 总是显示额外能量条状态
             controlType = CONTROL_TYPE.CHECKBOX,
             settingType = SETTING_TYPE.ADDON_VARIABLE,
             name = L["blizzardui.forceShowPowerBarAltStatus.title"],
@@ -179,6 +188,7 @@ local settingsData = {
             name = L["blizzardui.actionBar.title"]
         },
         {
+            -- 隐藏动作条按钮名称
             controlType = CONTROL_TYPE.CHECKBOX,
             settingType = SETTING_TYPE.ADDON_VARIABLE,
             name = L["blizzardui.actionBar.hideName.title"],
@@ -190,6 +200,7 @@ local settingsData = {
             end,
         },
         {
+            -- 隐藏动作条快捷键
             controlType = CONTROL_TYPE.CHECKBOX,
             settingType = SETTING_TYPE.ADDON_VARIABLE,
             name = L["blizzardui.actionBar.hideHotkey.title"],
@@ -207,6 +218,7 @@ local settingsData = {
             name = L["social.title"],
             settings = {
                 {
+                    -- 聊天链接增强
                     controlType = CONTROL_TYPE.CHECKBOX,
                     settingType = SETTING_TYPE.ADDON_VARIABLE,
                     name = L["social.chat.hyperlinkEnhance.title"],
@@ -215,6 +227,7 @@ local settingsData = {
                     default = true,
                     subSettings = {
                         {
+                            -- 显示图标
                             controlType = CONTROL_TYPE.CHECKBOX,
                             settingType = SETTING_TYPE.ADDON_VARIABLE,
                             name = L["social.chat.hyperlinkEnhance.displayIcon.title"],
@@ -223,6 +236,7 @@ local settingsData = {
                             default = true
                         },
                         {
+                            -- 显示物品等级
                             controlType = CONTROL_TYPE.CHECKBOX,
                             settingType = SETTING_TYPE.ADDON_VARIABLE,
                             name = L["social.chat.hyperlinkEnhance.displayItemLevel.title"],
@@ -231,6 +245,7 @@ local settingsData = {
                             default = true
                         },
                         {
+                            -- 显示物品分类
                             controlType = CONTROL_TYPE.CHECKBOX,
                             settingType = SETTING_TYPE.ADDON_VARIABLE,
                             name = L["social.chat.hyperlinkEnhance.displayItemType.title"],
@@ -239,6 +254,7 @@ local settingsData = {
                             default = true
                         },
                         {
+                            -- 显示插槽
                             controlType = CONTROL_TYPE.CHECKBOX,
                             settingType = SETTING_TYPE.ADDON_VARIABLE,
                             name = L["social.chat.hyperlinkEnhance.displaySockets.title"],
@@ -249,6 +265,7 @@ local settingsData = {
                     }
                 },
                 {
+                    -- Tab快速切换聊天频道
                     controlType = CONTROL_TYPE.CHECKBOX,
                     settingType = SETTING_TYPE.ADDON_VARIABLE,
                     name = L["social.chatTypeTabSwitch.title"],
@@ -257,6 +274,7 @@ local settingsData = {
                     default = true
                 },
                 {
+                    -- 战网聊天名称格式
                     controlType = CONTROL_TYPE.CHECKBOX_AND_DROPDOWN,
                     settingType = SETTING_TYPE.ADDON_VARIABLE,
                     name = L["social.chat.bnPlayerLink.title"],
@@ -282,6 +300,7 @@ local settingsData = {
                     name = L["social.friendsList.title"],
                 },
                 {
+                    -- 角色名职业染色
                     controlType = CONTROL_TYPE.CHECKBOX,
                     settingType = SETTING_TYPE.ADDON_VARIABLE,
                     name = L["social.friendsList.characterNameClassColor.title"],
@@ -290,6 +309,7 @@ local settingsData = {
                     default = true
                 },
                 {
+                    -- 隐藏好友真实姓名
                     controlType = CONTROL_TYPE.CHECKBOX,
                     settingType = SETTING_TYPE.ADDON_VARIABLE,
                     name = L["social.friendsList.hideBattleNetFriendsRealName.title"],
@@ -298,6 +318,7 @@ local settingsData = {
                     default = false
                 },
                 {
+                    -- 隐藏战网昵称后缀
                     controlType = CONTROL_TYPE.CHECKBOX_AND_DROPDOWN,
                     settingType = SETTING_TYPE.ADDON_VARIABLE,
                     name = L["social.friendsList.hideBattleNetTagSuffix.title"],
@@ -357,6 +378,7 @@ local settingsData = {
             name = L["client.title"],
             settings = {
                 {
+                    -- 反和谐 (仅简体中文客户端)
                     controlType = CONTROL_TYPE.CHECKBOX,
                     settingType = SETTING_TYPE.PROXY,
                     name = L["client.overrideArchive.disable.title"],
@@ -373,6 +395,7 @@ local settingsData = {
                     end
                 },
                 {
+                    -- 降低暴力表现 (除简体中文外的客户端)
                     controlType = CONTROL_TYPE.CHECKBOX,
                     settingType = SETTING_TYPE.PROXY,
                     name = L["client.overrideArchive.enable.title"],
@@ -389,6 +412,7 @@ local settingsData = {
                     end
                 },
                 {
+                    -- 禁用暴雪插件性能分析 https://x.com/Luckyone961/status/1843256715917050331
                     controlType = CONTROL_TYPE.CHECKBOX,
                     settingType = SETTING_TYPE.ADDON_VARIABLE,
                     name = L["client.blzAddonProfiler.disable.title"],
@@ -400,6 +424,8 @@ local settingsData = {
                     end,
                 },
                 {
+                    -- 区域误导
+                    -- 2025/03/18: 此功能疑似在11.1.0版本失效，需要观察
                     controlType = CONTROL_TYPE.CHECKBOX,
                     settingType = SETTING_TYPE.ADDON_VARIABLE,
                     name = L["client.regionDeceive.title"],
@@ -435,6 +461,7 @@ local settingsData = {
                     }
                 },
                 {
+                    -- 语言过滤器 (因简体中文客户端无法修改此选项, 提供一个修改按钮 (因为国服解锁了也改不了, 所以此选项仅在中国大陆地区以外生效))
                     controlType = CONTROL_TYPE.CHECKBOX,
                     settingType = SETTING_TYPE.PROXY,
                     name = L["client.profanityFilter.title"],
@@ -455,6 +482,7 @@ local settingsData = {
                     end
                 },
                 {
+                    -- 成就屏蔽修复 (针对国服回归后的新语言过滤器, 部分日期有些获得的成就发不出去, 尝试修复)
                     controlType = CONTROL_TYPE.CHECKBOX,
                     settingType = SETTING_TYPE.ADDON_VARIABLE,
                     name = L["client.profanityFilter.achievementDataInject.title"],
@@ -466,8 +494,9 @@ local settingsData = {
                     end
                 },
                 --[[
-                -- 2025/03/17 暴雪已于11.1.0.58819中修复此bug, 故移除此功能
                 {
+                    -- 坐骑链接修复 https://github.com/Stanzilla/WoWUIBugs/issues/699
+                    -- 2025/03/17: 暴雪已于11.1.0.58819中修复此bug, 故移除此功能
                     controlType = CONTROL_TYPE.CHECKBOX,
                     settingType = SETTING_TYPE.ADDON_VARIABLE,
                     name = L["client.mountLinkFix.title"],
@@ -477,8 +506,9 @@ local settingsData = {
                 },
                 ]]
                 --[[
-                -- 2025/03/17 暴雪于11.0.7.57637已修复此bug, 故移除此功能
                 {
+                    -- 公会卡顿修复 https://github.com/Stanzilla/WoWUIBugs/issues/683
+                    -- 2025/03/17: 暴雪于11.0.7.57637已修复此bug, 故移除此功能
                     controlType = CONTROL_TYPE.CHECKBOX,
                     settingType = SETTING_TYPE.ADDON_VARIABLE,
                     name = L["client.guildNewsFilter.title"],
