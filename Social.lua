@@ -109,7 +109,7 @@ local function GetCharacterName(accountInfo, withRealmName, format, useClassColo
     if accountInfo then
         local characterName = BNet_GetValidatedCharacterName(accountInfo.gameAccountInfo.characterName, nil, accountInfo.gameAccountInfo.clientProgram)
 
-        if withRealmName and accountInfo.gameAccountInfo.realmID and accountInfo.gameAccountInfo.realmID ~= GetRealmID() then
+        if withRealmName and accountInfo.gameAccountInfo.realmID and accountInfo.gameAccountInfo.realmID ~= GetRealmID() and accountInfo.gameAccountInfo.realmName then
             characterName = characterName.."-"..accountInfo.gameAccountInfo.realmName
         end
 
