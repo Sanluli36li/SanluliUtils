@@ -190,23 +190,20 @@ local function chatFilter(chatFrame, event, message, ...)
                 elseif Module:GetConfig(CONFIG_CHAT_HYPERLINK_ENHANCE_DISPLAY_SOCKETS) and line.type == Enum.TooltipDataLineType.GemSocket then
                     -- 插槽信息
                     if line.gemIcon then
-                        sockets = sockets.."|T"..line.gemIcon..":12:12:0:-2|t"
+                        sockets = sockets.."|T"..line.gemIcon..":12:12:0:0|t"
                     elseif line.socketType then
-                        sockets = sockets.."|T"..string.format("Interface\\ItemSocketingFrame\\UI-EmptySocket-%s", line.socketType)..":12:12:0:-2|t"
+                        sockets = sockets.."|T"..string.format("Interface\\ItemSocketingFrame\\UI-EmptySocket-%s", line.socketType)..":12:12:0:0|t"
                     end
                 elseif line.type == Enum.TooltipDataLineType.RestrictedRaceClass and line.leftColor and line.leftColor:GenerateHexColor() ~= "ffffffff" then
                     -- 职业限制不可用
                     canUse = false
                 end
             end
-            
         end
 
         if sockets ~= "" then
             sockets = sockets.." "
         end
-
-        
 
         -- 物品分类
         if Module:GetConfig(CONFIG_CHAT_HYPERLINK_ENHANCE_DISPLAY_ITEM_TYPE) then
@@ -302,7 +299,7 @@ local function chatFilter(chatFrame, event, message, ...)
 
         -- 物品图标
         if Module:GetConfig(CONFIG_CHAT_HYPERLINK_ENHANCE_DISPLAY_ICON) and itemTexture then
-            newItemLink = "|T"..itemTexture..":12:12:0:-2|t"..newItemLink
+            newItemLink = "|T"..itemTexture..":12:12:1:0|t"..newItemLink
         end
 
         -- 插槽图标
@@ -319,7 +316,7 @@ local function chatFilter(chatFrame, event, message, ...)
             local name, _, itemQuality, itemLevel, itemMinLevel, itemType, itemSubType, _, itemEquipLoc, itemTexture = GetItemInfo(itemID)
 
             if itemTexture then
-                return "|T"..itemTexture..":12:12:1:-2|t"..link
+                return "|T"..itemTexture..":12:12:1:0|t"..link
             end
         end
     end):gsub("(\124Hcurrency:([0-9]+):[^\124]+\124h(%b[])\124h)", function(link, currencyIDLink, currencyName)
@@ -328,7 +325,7 @@ local function chatFilter(chatFrame, event, message, ...)
             local info = C_CurrencyInfo.GetCurrencyInfoFromLink(link)
 
             if info and info.iconFileID then
-                return "|T"..info.iconFileID..":12:12:1:-2|t"..link
+                return "|T"..info.iconFileID..":12:12:1:0|t"..link
             end
         end
     end):gsub("(\124Hspell:[^\124]+\124h(%b[])\124h)", function(link, spellName)
@@ -337,7 +334,7 @@ local function chatFilter(chatFrame, event, message, ...)
             local info = C_Spell.GetSpellInfo(link)
 
             if info and info.iconID then
-                return "|T"..info.iconID..":12:12:1:-2|t"..link
+                return "|T"..info.iconID..":12:12:1:0|t"..link
             end
         end
     end):gsub("(\124Hmount:([0-9]+):[^\124]+\124h(%b[])\124h)", function(link, spellIDStr, spellName)
@@ -347,7 +344,7 @@ local function chatFilter(chatFrame, event, message, ...)
             local spellInfo = C_Spell.GetSpellInfo(spellID)
 
             if spellInfo and spellInfo.iconID then
-                return "|T"..spellInfo.iconID..":12:12:1:-2|t"..link
+                return "|T"..spellInfo.iconID..":12:12:1:0|t"..link
             end
         end
     end)
