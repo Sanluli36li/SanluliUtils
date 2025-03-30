@@ -20,7 +20,7 @@ local CONTROL_TYPE = {
     CHECKBOX_AND_SLIDER = 6,            -- 选择框和滑动条
     BUTTON = 7,                         -- 按钮
     CHECKBOX_AND_BUTTON = 8,            -- 选择框和按钮
-
+    CUSTOM_FRAME = 11,                  -- 自定义框体
     LIB_SHARED_MEDIA_DROPDOWN = 101,    -- 下拉菜单用以选择一种LibSharedMedia素材类型, 需要LibSharedMedia-3.0库(这应当在你的插件中包含), 否则不会显示
 }
 LibBlzSettings.CONTROL_TYPE = CONTROL_TYPE
@@ -131,9 +131,7 @@ local CONTROL_TYPE_METADATA = {
         end
     },
     [CONTROL_TYPE.DROPDOWN] = {
-        setting = {
-
-        },
+        setting = { },
         requireArguments = {
             options = function (data)
                 if type(data) == "table" and #data >= 1 then
@@ -165,10 +163,20 @@ local CONTROL_TYPE_METADATA = {
             local checkboxSetting = Utils.RegisterSetting(addOnName, category, dataTbl, database, Settings.VarType.Boolean)
             local dropdownSetting = Utils.RegisterSetting(addOnName, category, dataTbl.dropdown, database, Settings.VarType.Number, dataTbl.dropdown.name or dataTbl.name)
 
-            local initializer = CreateSettingsCheckboxDropdownInitializer(
-                checkboxSetting, dataTbl.name, dataTbl.tooltip,
-                dropdownSetting, Utils.CreateOptions(dataTbl.dropdown.options), dataTbl.dropdown.name or dataTbl.name, dataTbl.dropdown.tooltip or dataTbl.tooltip
-            )
+            local data =
+            {
+                name = dataTbl.name,
+                tooltip = dataTbl.tooltip,
+                setting = checkboxSetting,  -- 把选择框的设置项单独加进去 子选项才会跟着该选项锁定
+                cbSetting = checkboxSetting,
+                cbLabel = dataTbl.name,
+                cbTooltip = dataTbl.tooltip,
+                dropdownSetting = dropdownSetting,
+                dropdownOptions = Utils.CreateOptions(dataTbl.dropdown.options),
+                dropDownLabel = dataTbl.dropdown.name or dataTbl.name,
+                dropDownTooltip = dataTbl.dropdown.tooltip or dataTbl.tooltip,
+            }
+            local initializer = Settings.CreateSettingInitializer("SettingsCheckboxDropdownControlTemplate", data)
 
             initializer:AddSearchTags(dataTbl.name)
             layout:AddInitializer(initializer)
@@ -204,7 +212,31 @@ local CONTROL_TYPE_METADATA = {
             slider = Utils.CheckControlType(CONTROL_TYPE.SLIDER)
         },
         buildFunction = function (addOnName, category, layout, dataTbl, database)
+            local checkboxSetting = Utils.RegisterSetting(addOnName, category, dataTbl, database, Settings.VarType.Boolean)
+            local sliderSetting = Utils.RegisterSetting(addOnName, category, dataTbl.slider, database, Settings.VarType.Number, dataTbl.dropdown.name or dataTbl.name)
+
+            options:SetLabelFormatter(MinimalSliderWithSteppersMixin.Label.Right, function (value)
+                return value
+            end)
             
+            local data =
+            {
+                name = dataTbl.name,
+                tooltip = dataTbl.tooltip,
+                setting = checkboxSetting,  -- 把选择框的设置项单独加进去 子选项才会跟着该选项锁定
+                cbSetting = checkboxSetting,
+                cbLabel = dataTbl.name,
+                cbTooltip = dataTbl.tooltip,
+                sliderSetting = sliderSetting,
+                sliderOptions = options,
+                sliderLabel = dataTbl.dropdown.name or dataTbl.name,
+                sliderTooltip = dataTbl.dropdown.tooltip or dataTbl.tooltip,
+            };
+            local initializer = Settings.CreateSettingInitializer("SettingsCheckboxSliderControlTemplate", data);
+
+            initializer:AddSearchTags(dataTbl.name)
+            layout:AddInitializer(initializer)
+            return checkboxSetting, initializer
         end
     },
     [CONTROL_TYPE.BUTTON] = {
@@ -212,7 +244,10 @@ local CONTROL_TYPE_METADATA = {
             execute = "function"
         },
         buildFunction = function (addOnName, category, layout, dataTbl, database)
-            
+            local initializer = CreateSettingsButtonInitializer(dataTbl.name, dataTbl.buttonText, dataTbl.execute, tooltip, dataTbl.tooltip)
+
+            layout:AddInitializer(initializer)
+            return nil, initializer
         end
     },
     [CONTROL_TYPE.CHECKBOX_AND_BUTTON] = {
@@ -223,7 +258,21 @@ local CONTROL_TYPE_METADATA = {
             button = Utils.CheckControlType(CONTROL_TYPE.BUTTON)
         },
         buildFunction = function (addOnName, category, layout, dataTbl, database)
-            
+            local checkboxSetting = Utils.RegisterSetting(addOnName, category, dataTbl, database, Settings.VarType.Boolean)
+
+            local initializer = CreateSettingsCheckboxWithButtonInitializer(checkboxSetting, dataTbl.button.buttonText, dataTbl.button.execute, dataTbl.button.requireSet, dataTbl.tooltip)
+            layout:AddInitializer(initializer)
+            return nil, initializer
+        end
+    },
+    [CONTROL_TYPE.CUSTOM_FRAME] = {
+        requireArguments = {
+            template = "string",
+        },
+        buildFunction = function (addOnName, category, layout, dataTbl, database)
+            local initializer = Settings.CreatePanelInitializer(dataTbl.template, dataTbl)
+            layout:AddInitializer(initializer)
+            return nil, initializer
         end
     },
     [CONTROL_TYPE.LIB_SHARED_MEDIA_DROPDOWN] = {
