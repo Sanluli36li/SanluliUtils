@@ -197,6 +197,12 @@ local function chatFilter(chatFrame, event, message, ...)
                 elseif line.type == Enum.TooltipDataLineType.RestrictedRaceClass and line.leftColor and line.leftColor:GenerateHexColor() ~= "ffffffff" then
                     -- 职业限制不可用
                     canUse = false
+                elseif strfind(line.leftText, ITEM_LEVEL:gsub("%%d", "%%d+")) then
+                    local i, j = strfind(line.leftText, "%d+")
+                    local ilvl = tonumber(strsub(line.leftText, i, j))
+                    if ilvl then
+                        itemLevel = ilvl
+                    end
                 end
             end
         end
@@ -276,7 +282,13 @@ local function chatFilter(chatFrame, event, message, ...)
         if IsCosmeticItem(link) then
             -- 装饰品
             color = "ffff80ff"
-        elseif bonding == 5 or bonding == 10 then
+        elseif
+            bonding == Enum.TooltipDataItemBinding.Account or                   -- 战团绑定
+            bonding == Enum.TooltipDataItemBinding.BnetAccount or               -- 战网通行证绑定 (疑似弃用)
+            bonding == Enum.TooltipDataItemBinding.BindToBnetAccount or         -- 绑定至战团 (为什么会有这么多种?)
+            bonding == Enum.TooltipDataItemBinding.AccountUntilEquipped or      -- 装备前战团绑定
+            bonding == Enum.TooltipDataItemBinding.BindToAccountUntilEquipped   -- 装备前战团绑定 (为什么会有这么多种?)
+        then
             -- 战团绑定/装备前战团绑定的物品
             color = "ff00ccff"
         elseif not canUse then
