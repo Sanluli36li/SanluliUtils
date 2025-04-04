@@ -262,6 +262,18 @@ local settingsData = {
                             key = "social.chat.hyperlinkEnhance.displaySockets",
                             default = false
                         },
+                        {
+                            -- 应用于公会新闻
+                            controlType = CONTROL_TYPE.CHECKBOX,
+                            settingType = SETTING_TYPE.ADDON_VARIABLE,
+                            name = L["social.chat.hyperlinkEnhance.applyToGuildNews.title"],
+                            tooltip = L["social.chat.hyperlinkEnhance.applyToGuildNews.tooltip"],
+                            key = "social.chat.hyperlinkEnhance.applyToGuildNews",
+                            default = true,
+                            isVisiable = function ()
+                                return not SanluliUtils
+                            end
+                        },
                     }
                 },
                 {
