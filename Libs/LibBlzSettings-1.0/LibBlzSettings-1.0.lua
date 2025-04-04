@@ -244,7 +244,7 @@ local CONTROL_TYPE_METADATA = {
             execute = "function"
         },
         buildFunction = function (addOnName, category, layout, dataTbl, database)
-            local initializer = CreateSettingsButtonInitializer(dataTbl.name, dataTbl.buttonText, dataTbl.execute, tooltip, dataTbl.tooltip)
+            local initializer = CreateSettingsButtonInitializer(dataTbl.name, dataTbl.buttonText, dataTbl.execute, dataTbl.tooltip, false)
 
             layout:AddInitializer(initializer)
             return nil, initializer
@@ -385,10 +385,17 @@ local function SetupControl(addOnName, category, layout, dataTbl, database)
         if type(dataTbl.isVisible) == "function" and not dataTbl.isVisible() then
             return
         end
+
         if type(CONTROL_TYPE_METADATA[dataTbl.controlType].buildFunction) == "function" then
             local setting, initializer = CONTROL_TYPE_METADATA[dataTbl.controlType].buildFunction(addOnName, category, layout, dataTbl, database)
 
             initializer.LibBlzSettingsData = dataTbl
+
+            if dataTbl.newFeature then
+                function initializer:IsNewTagShown()
+                    return true
+                end
+            end
 
             if CONTROL_TYPE_METADATA[dataTbl.controlType].setting then
                 -- 添加可更改标记
