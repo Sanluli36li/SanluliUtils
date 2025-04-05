@@ -113,6 +113,9 @@ local SETTING_TYPE_REQUIRE = {
 
 local CONTROL_TYPE_METADATA = {
     [CONTROL_TYPE.SECTION_HEADER] = {
+        requireArguments = {
+            name = "string",
+        },
         buildFunction = function (addOnName, category, layout, dataTbl, database)
             local initializer = CreateSettingsListSectionHeaderInitializer(dataTbl.name)
             layout:AddInitializer(initializer)
@@ -213,8 +216,9 @@ local CONTROL_TYPE_METADATA = {
         },
         buildFunction = function (addOnName, category, layout, dataTbl, database)
             local checkboxSetting = Utils.RegisterSetting(addOnName, category, dataTbl, database, Settings.VarType.Boolean)
-            local sliderSetting = Utils.RegisterSetting(addOnName, category, dataTbl.slider, database, Settings.VarType.Number, dataTbl.dropdown.name or dataTbl.name)
+            local sliderSetting = Utils.RegisterSetting(addOnName, category, dataTbl.slider, database, Settings.VarType.Number, dataTbl.slider.name or dataTbl.name)
 
+            local options = Settings.CreateSliderOptions(dataTbl.slider.minValue, dataTbl.slider.maxValue, dataTbl.slider.step)
             options:SetLabelFormatter(MinimalSliderWithSteppersMixin.Label.Right, function (value)
                 return value
             end)
@@ -229,8 +233,8 @@ local CONTROL_TYPE_METADATA = {
                 cbTooltip = dataTbl.tooltip,
                 sliderSetting = sliderSetting,
                 sliderOptions = options,
-                sliderLabel = dataTbl.dropdown.name or dataTbl.name,
-                sliderTooltip = dataTbl.dropdown.tooltip or dataTbl.tooltip,
+                sliderLabel = dataTbl.slider.name or dataTbl.name,
+                sliderTooltip = dataTbl.slider.tooltip or dataTbl.tooltip,
             };
             local initializer = Settings.CreateSettingInitializer("SettingsCheckboxSliderControlTemplate", data);
 
@@ -244,7 +248,7 @@ local CONTROL_TYPE_METADATA = {
             execute = "function"
         },
         buildFunction = function (addOnName, category, layout, dataTbl, database)
-            local initializer = CreateSettingsButtonInitializer(dataTbl.name, dataTbl.buttonText, dataTbl.execute, dataTbl.tooltip, false)
+            local initializer = CreateSettingsButtonInitializer(dataTbl.name, dataTbl.buttonText, dataTbl.execute, dataTbl.tooltip, dataTbl.name)
 
             layout:AddInitializer(initializer)
             return nil, initializer
@@ -378,14 +382,9 @@ end
 
 local function SetupControl(addOnName, category, layout, dataTbl, database)
     if CONTROL_TYPE_METADATA[dataTbl.controlType] and Utils.CheckControl(dataTbl) then
-        if type(dataTbl.name) ~= "string" then
-            return
-        end
-
         if type(dataTbl.isVisible) == "function" and not dataTbl.isVisible() then
             return
         end
-
         if type(CONTROL_TYPE_METADATA[dataTbl.controlType].buildFunction) == "function" then
             local setting, initializer = CONTROL_TYPE_METADATA[dataTbl.controlType].buildFunction(addOnName, category, layout, dataTbl, database)
 
@@ -477,6 +476,18 @@ hooksecurefunc(SettingsControlMixin, "Init", function (self, initializer)
         local data = initializer.LibBlzSettingsData
         if type(CONTROL_TYPE_METADATA[data.controlType].onControlInit) == "function" then
             CONTROL_TYPE_METADATA[data.controlType].onControlInit(self, initializer.LibBlzSettingsData)
+        end
+    end
+end)
+
+hooksecurefunc(SettingsCheckboxDropdownControlMixin, "Init", function (self, initializer)
+    if initializer and initializer.LibBlzSettingsData then
+        self.EvaluateState = function ()
+            SettingsCheckboxDropdownControlMixin.EvaluateState(self)
+            local enabled = SettingsControlMixin.IsEnabled(self)
+            self.Control:SetEnabled(enabled and initializer.data.cbSetting:GetValue())
+            self.Checkbox:SetEnabled(enabled)
+	        self:DisplayEnabled(enabled);
         end
     end
 end)
