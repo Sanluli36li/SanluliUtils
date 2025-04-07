@@ -1,17 +1,23 @@
-local MAJOR, MINOR = "LibBlzSettings-1.0", 1
+--[[
+    Name: LibBlzSettings
+    Author: Sanluli36li (Olddruid@CN-Galakrond)
+
+    This library is based on the Blizzard Settings API and is used to quickly serialize tables into Blizzard Vertical Settings Categories.
+]]
+
+local MAJOR, MINOR = "LibBlzSettings-1.0", 110100
 
 local LibBlzSettings = LibStub:NewLibrary(MAJOR, MINOR)
 
 if not LibBlzSettings then return end
 
-local SETTING_TYPE = {
+LibBlzSettings.SETTING_TYPE = {
     ADDON_VARIABLE = 1,
     CONSOLE_VARIABLE = -1,
     PROXY = 2,
 }
-LibBlzSettings.SETTING_TYPE = SETTING_TYPE
 
-local CONTROL_TYPE = {
+LibBlzSettings.CONTROL_TYPE = {
     SECTION_HEADER = 1,                 -- 表头文字
     CHECKBOX = 2,                       -- 选择框
     DROPDOWN = 3,                       -- 下拉菜单
@@ -20,11 +26,13 @@ local CONTROL_TYPE = {
     CHECKBOX_AND_SLIDER = 6,            -- 选择框和滑动条
     BUTTON = 7,                         -- 按钮
     CHECKBOX_AND_BUTTON = 8,            -- 选择框和按钮
-    CUSTOM_FRAME = 11,                  -- 自定义框体
+
+    CUSTOM_FRAME = 51,                  -- 自定义框体
     LIB_SHARED_MEDIA_DROPDOWN = 101,    -- 下拉菜单用以选择一种LibSharedMedia素材类型, 需要LibSharedMedia-3.0库(这应当在你的插件中包含), 否则不会显示
 }
-LibBlzSettings.CONTROL_TYPE = CONTROL_TYPE
 
+local SETTING_TYPE = LibBlzSettings.SETTING_TYPE
+local CONTROL_TYPE = LibBlzSettings.CONTROL_TYPE
 local Utils = {}
 
 function Utils.RegisterSetting(addOnName, category, dataTbl, database, varType, name)
@@ -50,11 +58,10 @@ function Utils.RegisterSetting(addOnName, category, dataTbl, database, varType, 
 
     -- 当值改变时调用回调函数
     if type(dataTbl.onValueChanged) == "function" then
-        local function OnValueChanged(o, setting, value)
+        local function OnValueChanged(_, value)
             dataTbl.onValueChanged(value)
         end
-
-        Settings.SetOnValueChangedCallback(addOnName.."."..dataTbl.key, OnValueChanged)
+        setting:SetValueChangedCallback(OnValueChanged)
     end
 
     return setting
@@ -67,40 +74,47 @@ function Utils.CheckControlType(controlType)
 end
 
 function Utils.CreateOptions(options)
-    local varType
-    if options and #options > 0 then
-        varType = Settings.VarType.Number
-    else
-        varType = Settings.VarType.String
+    local varType = Settings.VarType.Number
+    local entrys = {}
+    if options then
+        for i, option in ipairs(options) do
+            if type(option) == "string" then
+                tinsert(entrys, {i, option})
+            elseif type(option) == "table" then
+                if #option == 0 and option.name then
+                    tinsert(entrys, {option.value or i, option.name, option.tooltip})
+                    if option.value and type(option.value) ~= "number" then
+                        varType = Settings.VarType.String
+                    end
+                elseif #option == 1 then
+                    tinsert(entrys, {i, option[1]})
+                elseif #option == 2 then
+                    tinsert(entrys, {i, option[1], option[2]})
+                elseif #option == 3 then
+                    tinsert(entrys, {option[1], option[2], option[3]})
+                    if type(option[1]) ~= "number" then
+                        varType = Settings.VarType.String
+                    end
+                end
+            end
+        end
     end
 
     local function GetOptions ()
         local container = Settings.CreateControlTextContainer()
 
-        if options then
-            if varType == Settings.VarType.Number then
-                for k, option in ipairs(options) do
-                    if type(option) == "string" then
-                        container:Add(k, option)
-                    elseif type(option) == "table" then
-                        container:Add(k, unpack(option))
-                    end
-                end
+        for _, entry in ipairs(entrys) do
+            if varType == Settings.VarType.String then
+                container:Add(tostring(entry[1]), entry[2], entry[3])
             else
-                for k, option in pairs(options) do
-                    if type(option) == "string" then
-                        container:Add(tostring(k), option)
-                    elseif type(option) == "table" then
-                        container:Add(tostring(k), unpack(option))
-                    end
-                end
+                container:Add(entry[1], entry[2], entry[3])
             end
         end
 
         return container:GetData()
     end
 
-    return GetOptions
+    return GetOptions, varType
 end
 
 local SETTING_TYPE_REQUIRE = {
@@ -134,24 +148,28 @@ local CONTROL_TYPE_METADATA = {
         end
     },
     [CONTROL_TYPE.DROPDOWN] = {
-        setting = { },
+        setting = {},
         requireArguments = {
             options = function (data)
                 if type(data) == "table" and #data >= 1 then
+                    local vaildOption = 0
                     for i, option in pairs(data) do
-                        if not (type(option) == "string" or (type(option) == "table" and type(option[1]) == "string")) then
+                        if not (type(option) == "string" or (type(option) == "table")) then
                             return false
+                        else
+                            vaildOption = vaildOption + 1
                         end
                     end
-                    return true
+                    return vaildOption > 0
                 else
                     return false
                 end
             end
         },
         buildFunction = function (addOnName, category, layout, dataTbl, database)
+            local options, varType = Utils.CreateOptions(dataTbl.options)
             local setting = Utils.RegisterSetting(addOnName, category, dataTbl, database, varType)
-            local initializer = Settings.CreateDropdown(category, setting, Utils.CreateOptions(dataTbl.options), dataTbl.tooltip)
+            local initializer = Settings.CreateDropdown(category, setting, options, dataTbl.tooltip)
             return setting, initializer
         end
     },
@@ -163,8 +181,9 @@ local CONTROL_TYPE_METADATA = {
             dropdown = Utils.CheckControlType(CONTROL_TYPE.DROPDOWN)
         },
         buildFunction = function (addOnName, category, layout, dataTbl, database)
+            local dropdownOptions, dropdownVarType = Utils.CreateOptions(dataTbl.dropdown.options)
             local checkboxSetting = Utils.RegisterSetting(addOnName, category, dataTbl, database, Settings.VarType.Boolean)
-            local dropdownSetting = Utils.RegisterSetting(addOnName, category, dataTbl.dropdown, database, Settings.VarType.Number, dataTbl.dropdown.name or dataTbl.name)
+            local dropdownSetting = Utils.RegisterSetting(addOnName, category, dataTbl.dropdown, database, dropdownVarType, dataTbl.dropdown.name or dataTbl.name)
 
             local data =
             {
@@ -175,7 +194,7 @@ local CONTROL_TYPE_METADATA = {
                 cbLabel = dataTbl.name,
                 cbTooltip = dataTbl.tooltip,
                 dropdownSetting = dropdownSetting,
-                dropdownOptions = Utils.CreateOptions(dataTbl.dropdown.options),
+                dropdownOptions = dropdownOptions,
                 dropDownLabel = dataTbl.dropdown.name or dataTbl.name,
                 dropDownTooltip = dataTbl.dropdown.tooltip or dataTbl.tooltip,
             }
@@ -199,9 +218,14 @@ local CONTROL_TYPE_METADATA = {
             local setting = Utils.RegisterSetting(addOnName, category, dataTbl, database, Settings.VarType.Number)
 
             local options = Settings.CreateSliderOptions(dataTbl.minValue, dataTbl.maxValue, dataTbl.step)
-            options:SetLabelFormatter(MinimalSliderWithSteppersMixin.Label.Right, function (value)
-                return value
-            end)
+
+            if type(dataTbl.format) == "function" then
+                options:SetLabelFormatter(MinimalSliderWithSteppersMixin.Label.Right, dataTbl.format)
+            else
+                options:SetLabelFormatter(MinimalSliderWithSteppersMixin.Label.Right, function (value)
+                    return value
+                end)
+            end
 
             local initializer = Settings.CreateSlider(category, setting, options, dataTbl.tooltip);
             return setting, initializer
@@ -219,9 +243,14 @@ local CONTROL_TYPE_METADATA = {
             local sliderSetting = Utils.RegisterSetting(addOnName, category, dataTbl.slider, database, Settings.VarType.Number, dataTbl.slider.name or dataTbl.name)
 
             local options = Settings.CreateSliderOptions(dataTbl.slider.minValue, dataTbl.slider.maxValue, dataTbl.slider.step)
-            options:SetLabelFormatter(MinimalSliderWithSteppersMixin.Label.Right, function (value)
-                return value
-            end)
+
+            if type(dataTbl.slider.format) == "function" then
+                options:SetLabelFormatter(MinimalSliderWithSteppersMixin.Label.Right, dataTbl.slider.format)
+            else
+                options:SetLabelFormatter(MinimalSliderWithSteppersMixin.Label.Right, function (value)
+                    return value
+                end)
+            end
             
             local data =
             {
@@ -290,35 +319,90 @@ local CONTROL_TYPE_METADATA = {
             end
         },
         requireArguments = {
-            mediaType = "string"
+            mediaType = function (data)
+                for _, type in pairs(LibStub("LibSharedMedia-3.0").MediaType) do
+                    if data == type then
+                        return true
+                    end
+                end
+            end
         },
         buildFunction = function (addOnName, category, layout, dataTbl, database)
             local lib = LibStub("LibSharedMedia-3.0")
 
+            local setting = Utils.RegisterSetting(addOnName, category, dataTbl, database, Settings.VarType.String)
+
+            local function OnOptionEnter(data)
+                if dataTbl.mediaType == lib.MediaType.FONT and LibBlzSettings.SharedMediaPreview.Font then
+                    LibBlzSettings.SharedMediaPreview.Font:SetFont(data.value, "40", "OUTLINE")
+                    LibBlzSettings.SharedMediaPreview.Font:SetText((PREVIEW == " Priview" and PREVIEW) or (PREVIEW.." Priview"))
+                end
+            end
+
             local function GetOptions()
                 local container = Settings.CreateControlTextContainer()
 
-                for k, v in ipairs(lib:List(dataTbl.mediaType)) do
-                    local source = lib:Fetch(dataTbl.mediaType, v)
-                    container:Add(source, v)
+                for _, name in ipairs(lib:List(dataTbl.mediaType)) do
+                    local source = lib:Fetch(dataTbl.mediaType, name)
+                    container:Add(source, name)
                 end
-                return container:GetData()
+
+                local data = container:GetData()
+				for index, optionData in ipairs(data) do
+					optionData.onEnter = OnOptionEnter
+				end
+
+                return data
             end
 
-            local setting = Utils.RegisterSetting(addOnName, category, dataTbl, database, Settings.VarType.String)
+            local function OnShow()
+                if not LibBlzSettings.SharedMediaPreview then
+                    LibBlzSettings.SharedMediaPreview = CreateFrame("Frame", nil, SettingsPanel)
+                    LibBlzSettings.SharedMediaPreview:SetPoint("CENTER", SettingsPanel, "RIGHT")
+                    LibBlzSettings.SharedMediaPreview:SetFrameStrata("TOOLTIP")
+                end
+
+                if dataTbl.mediaType == lib.MediaType.FONT then
+                    if not LibBlzSettings.SharedMediaPreview.Font then
+                        LibBlzSettings.SharedMediaPreview.Font = LibBlzSettings.SharedMediaPreview:CreateFontString()
+                        LibBlzSettings.SharedMediaPreview.Font:SetParent(LibBlzSettings.SharedMediaPreview)
+                        LibBlzSettings.SharedMediaPreview.Font:SetPoint("CENTER", SettingsPanel, "RIGHT")
+                    end
+
+                    LibBlzSettings.SharedMediaPreview.Font:SetFont(setting:GetValue(), "40", "OUTLINE")
+                    LibBlzSettings.SharedMediaPreview.Font:SetText((PREVIEW == " Priview" and PREVIEW) or (PREVIEW.." Priview"))
+                    LibBlzSettings.SharedMediaPreview.Font:Show()
+                end
+
+                LibBlzSettings.SharedMediaPreview:Show()
+            end
+
+            local function OnHide()
+                if LibBlzSettings.SharedMediaPreview.Font then
+                    LibBlzSettings.SharedMediaPreview.Font:Hide()
+                end
+
+                LibBlzSettings.SharedMediaPreview:Hide()
+            end
 
             local initializer = Settings.CreateDropdown(category, setting, GetOptions, dataTbl.tooltip)
 
+            initializer.OnShow = OnShow
+            initializer.OnHide = OnHide
+
             return setting, initializer
         end,
-        --[[
+
         onControlInit = function (frame, dataTbl)
+            --[[
+            local source = {}
+            --
             frame.Control.Dropdown:RegisterCallback(DropdownButtonMixin.Event.OnUpdate, function (...)
                 local lib = LibStub("LibSharedMedia-3.0")
 
                 if dataTbl.mediaType == lib.MediaType.FONT then
-                    local font, fontSize = frame.Control.Dropdown.Text:GetFont()
-                    frame.Control.Dropdown.Text:SetFont(frame:GetSetting():GetValue(), fontSize)
+                    source.font, source.fontSize = frame.Control.Dropdown.Text:GetFont()
+                    frame.Control.Dropdown.Text:SetFont(frame:GetSetting():GetValue(), source.fontSize)
                 end
                 
             end)
@@ -327,9 +411,13 @@ local CONTROL_TYPE_METADATA = {
                 if frame.Control.Dropdown.menu then
                 end
             end)
-
+            frame.Release = function()
+                frame.Control.Dropdown.Text:SetFont(source.font, source.fontSize)
+                frame.Release = SettingsDropdownControlMixin.Release
+                SettingsDropdownControlMixin.Release(frame)
+            end
+            ]]
         end
-        ]]
     }
 }
 
@@ -404,14 +492,19 @@ local function SetupControl(addOnName, category, layout, dataTbl, database)
 
                 -- 构建子配置项
                 if dataTbl.subSettings then
-                    local function IsModifiable()
-                        return Settings.GetValue(addOnName.."."..dataTbl.key)
+                    local isModifiable
+                    if type(dataTbl.subSettingsModifiable) == "function" then
+                        isModifiable = dataTbl.subSettingsModifiable
+                    elseif setting then
+                        isModifiable = function()
+                            return setting:GetValue()
+                        end
                     end
 
                     for _, subDataTbl in ipairs(dataTbl.subSettings) do
                         local _, subInitializer = SetupControl(addOnName, category, layout, subDataTbl, database)
-                        if subInitializer then
-                            subInitializer:SetParentInitializer(initializer, IsModifiable)
+                        if subInitializer and isModifiable then
+                            subInitializer:SetParentInitializer(initializer, isModifiable)
                         end
                     end
                 end
@@ -447,6 +540,55 @@ local function BuildCategory(addOnName, dataTbl, database, parentCategory)
     return category, layout
 end
 
+----------------------------------------
+---   Blizzard Function Secure Hook  ---
+----------------------------------------
+
+hooksecurefunc(SettingsControlMixin, "Init", function (self, initializer)
+    if initializer and initializer.LibBlzSettingsData then
+        local data = initializer.LibBlzSettingsData
+        if type(CONTROL_TYPE_METADATA[data.controlType].onControlInit) == "function" then
+            CONTROL_TYPE_METADATA[data.controlType].onControlInit(self, initializer.LibBlzSettingsData)
+        end
+    end
+end)
+
+hooksecurefunc(SettingsCheckboxDropdownControlMixin, "Init", function (self, initializer)
+    if initializer and initializer.LibBlzSettingsData then
+        -- 暴雪自带的下拉菜单的选项不会跟随父选项更新禁用, 覆盖方法
+        function self:EvaluateState()
+            SettingsCheckboxDropdownControlMixin.EvaluateState(self)
+            local enabled = SettingsControlMixin.IsEnabled(self)
+            self.Control:SetEnabled(enabled and initializer.data.cbSetting:GetValue())
+            self.Checkbox:SetEnabled(enabled)
+	        self:DisplayEnabled(enabled)
+        end
+        -- 用完记得还回去
+        function self:Release()
+            self.EvaluateState = SettingsCheckboxDropdownControlMixin.EvaluateState
+            self.Release = SettingsCheckboxDropdownControlMixin.Release
+            SettingsCheckboxDropdownControlMixin.Release(self)
+        end
+    end
+end)
+
+--[[
+    STATIC
+    - mustChooseKey boolean 若为false, 可以选择不绑定任何按键
+    - altTooltip    string  ALT键鼠标提示信息
+    - ctrlTooltip   string  CTRL键鼠标提示信息
+    - shiftTooltip  string  SHIFT键鼠标提示信息
+    - noneTooltip   string  不绑定键位的鼠标提示信息
+]]
+function LibBlzSettings.ModifiedClickOptions(mustChooseKey, altTooltip, ctrlTooltip, shiftTooltip, noneTooltip)
+    return {
+        {value = "ALT", name = ALT_KEY, tooltip = altTooltip},
+        {value = "CTRL", name = CTRL_KEY, tooltip = ctrlTooltip},
+        {value = "SHIFT", name = SHIFT_KEY, tooltip = shiftTooltip},
+        (mustChooseKey and {value = "NONE", name = NONE_KEY, tooltip = noneTooltip}) or nil
+    }
+end
+
 --[[
     - addOnName     string  插件名称, 这个名称将作为Settings中设置项内部的键名前缀
     - dataTbl       table   选项数据表
@@ -470,24 +612,3 @@ function LibBlzSettings:RegisterVerticalSettingsTable(addOnName, dataTbl, databa
         return category, layout
     end
 end
-
-hooksecurefunc(SettingsControlMixin, "Init", function (self, initializer)
-    if initializer and initializer.LibBlzSettingsData then
-        local data = initializer.LibBlzSettingsData
-        if type(CONTROL_TYPE_METADATA[data.controlType].onControlInit) == "function" then
-            CONTROL_TYPE_METADATA[data.controlType].onControlInit(self, initializer.LibBlzSettingsData)
-        end
-    end
-end)
-
-hooksecurefunc(SettingsCheckboxDropdownControlMixin, "Init", function (self, initializer)
-    if initializer and initializer.LibBlzSettingsData then
-        self.EvaluateState = function ()
-            SettingsCheckboxDropdownControlMixin.EvaluateState(self)
-            local enabled = SettingsControlMixin.IsEnabled(self)
-            self.Control:SetEnabled(enabled and initializer.data.cbSetting:GetValue())
-            self.Checkbox:SetEnabled(enabled)
-	        self:DisplayEnabled(enabled);
-        end
-    end
-end)
