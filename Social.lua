@@ -323,9 +323,8 @@ end
 
 local function chatFilter(chatFrame, event, message, ...)
     if not Module:GetConfig(CONFIG_CHAT_HYPERLINK_ENHANCE) then return end
-    if not Module:GetConfig(CONFIG_CHAT_HYPERLINK_ENHANCE) then return end
     local newMessage = message:gsub("\124c[\\a-fA-F0-9]+\124Hitem:[^\124]+\124h%b[]\124h\124r", HandleItemLink
-    ):gsub("(\124Hkeystone:([0-9]+):[^\124]+\124h(%b[])\124h)", function(link, itemIDStr, keystoneName)
+    ):gsub("(\124c[\\a-fA-F0-9]+\124Hkeystone:([0-9]+):[^\124]+\124h(%b[])\124h\124r)", function(link, itemIDStr, keystoneName)
         -- 史诗钥石
         if Module:GetConfig(CONFIG_CHAT_HYPERLINK_ENHANCE_DISPLAY_ICON) then
             local itemID = tonumber(itemIDStr)
@@ -335,7 +334,7 @@ local function chatFilter(chatFrame, event, message, ...)
                 return "|T"..itemTexture..":12:12:1:0|t"..link
             end
         end
-    end):gsub("(\124Hcurrency:([0-9]+):[^\124]+\124h(%b[])\124h)", function(link, currencyIDLink, currencyName)
+    end):gsub("(\124c[\\a-fA-F0-9]+\124Hcurrency:([0-9]+):[^\124]+\124h(%b[])\124h\124r)", function(link, currencyIDLink, currencyName)
         -- 货币
         if Module:GetConfig(CONFIG_CHAT_HYPERLINK_ENHANCE_DISPLAY_ICON) then
             local info = C_CurrencyInfo.GetCurrencyInfoFromLink(link)
@@ -344,7 +343,7 @@ local function chatFilter(chatFrame, event, message, ...)
                 return "|T"..info.iconFileID..":12:12:1:0|t"..link
             end
         end
-    end):gsub("(\124Hspell:[^\124]+\124h(%b[])\124h)", function(link, spellName)
+    end):gsub("(\124c[\\a-fA-F0-9]+\124Hspell:[^\124]+\124h(%b[])\124h\124r)", function(link, spellName)
         -- 法术
         if Module:GetConfig(CONFIG_CHAT_HYPERLINK_ENHANCE_DISPLAY_ICON) then
             local info = C_Spell.GetSpellInfo(link)
@@ -353,7 +352,7 @@ local function chatFilter(chatFrame, event, message, ...)
                 return "|T"..info.iconID..":12:12:1:0|t"..link
             end
         end
-    end):gsub("(\124Hmount:([0-9]+):[^\124]+\124h(%b[])\124h)", function(link, spellIDStr, spellName)
+    end):gsub("(\124c[\\a-fA-F0-9]+\124Hmount:([0-9]+):[^\124]+\124h(%b[])\124h\124r)", function(link, spellIDStr, spellName)
         -- 坐骑
         if Module:GetConfig(CONFIG_CHAT_HYPERLINK_ENHANCE_DISPLAY_ICON) then
             local spellID = tonumber(spellIDStr)
