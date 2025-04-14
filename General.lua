@@ -26,6 +26,7 @@ local CONFIG_AUTO_COMBATLOG_DUNGEON_DIFFICULTY = "autoCombatlog.dungeon.difficul
 local CONFIG_AUTO_COMBATLOG_DUNGEON_DIFFICULTY_HEROIC = 2
 local CONFIG_AUTO_COMBATLOG_DUNGEON_DIFFICULTY_MYTHIC = 3
 local CONFIG_AUTO_COMBATLOG_DUNGEON_DIFFICULTY_MYTHIC_PLUS = 4
+local CONFIG_AUTO_CANCEL_LFG_APPLICATION = "autoCancelLFGApplication.enable.test"
 
 local DIFFICULTY = {
     
@@ -202,6 +203,32 @@ local function toggleCombatlog(force)
     end
 end
 
+local function LFGCancelInvaildApplications()
+    local apps = C_LFGList.GetApplications()
+    for i, resultID in ipairs(apps) do
+        local resultData = C_LFGList.GetSearchResultInfo(resultID)
+    
+        if resultData.activityIDs and resultData.activityIDs[1] then
+            local activityInfo = C_LFGList.GetActivityInfoTable(resultData.activityIDs[1])
+            local _, appStatus, pendingStatus, appDuration = C_LFGList.GetApplicationInfo(resultID)
+            if activityInfo.isMythicPlusActivity and appStatus == "applied" then
+                local memberCount = C_LFGList.GetSearchResultMemberCounts(resultID)
+                local _, tank, healer, dps = GetLFGRoles()
+                -- print(resultID, activityInfo.fullName, memberCount.TANK_REMAINING, memberCount.HEALER_REMAINING, memberCount.DAMAGER_REMAINING)
+                if not (
+                    (tank and memberCount.TANK_REMAINING ~= 0) or
+                    (healer and memberCount.HEALER_REMAINING ~= 0)or
+                    (dps and memberCount.DAMAGER_REMAINING ~= 0)
+                )
+                then
+                    SanluliUtils:Print(string.format("已取消申请%s, 因为已选择的职责已满", activityInfo.fullName))
+                    C_LFGList.CancelApplication(resultID)
+                end
+            end
+        end
+    end
+end
+
 --------------------
 -- 暴雪函数安全钩子
 --------------------
@@ -216,9 +243,27 @@ for dialogName, confirmString in pairs(CONFIRM_STRINGS) do
     end)
 end
 
+-- 队伍查找器 单击队伍条目
+hooksecurefunc("LFGListSearchEntry_OnClick", function(self)
+    if Module:GetConfig(CONFIG_AUTO_CANCEL_LFG_APPLICATION) then
+        LFGCancelInvaildApplications()
+    end
+end)
+
 --------------------
 -- 事件处理
 --------------------
+
+function Module:AfterStartup()
+    if C_AddOns.IsAddOnLoaded("MeetingStone") then
+        -- 集合石插件 单击队伍条目
+        LibStub('AceAddon-3.0'):GetAddon("MeetingStone"):GetModule("BrowsePanel").ActivityList:SetCallback("OnItemClick", function()
+            if Module:GetConfig(CONFIG_AUTO_CANCEL_LFG_APPLICATION) then
+                LFGCancelInvaildApplications()
+            end
+        end)
+    end
+end
 
 function Module:MERCHANT_SHOW()
     if self:GetConfig(CONFIG_AUTO_REPAIR) then
@@ -295,5 +340,3 @@ function Module:CHALLENGE_MODE_START()
     end
 end
 Module:RegisterEvent("CHALLENGE_MODE_START")
-
-
