@@ -254,7 +254,7 @@ end)
 -- 事件处理
 --------------------
 
-function Module:AfterStartup()
+function Module:AfterLogin()
     if C_AddOns.IsAddOnLoaded("MeetingStone") then
         -- 集合石插件 单击队伍条目
         LibStub('AceAddon-3.0'):GetAddon("MeetingStone"):GetModule("BrowsePanel").ActivityList:SetCallback("OnItemClick", function()

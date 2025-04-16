@@ -167,7 +167,7 @@ function Module:CVAR_UPDATE(name, value)
 end
 Module:RegisterEvent("CVAR_UPDATE")
 
-function Module:AfterStartup()
+function Module:AfterLogin()
     shouldSaveCVar = true
     if self:GetConfig(CONFIG_HIDE_ACTION_BAR_NAME) then
         self:SetActionBarNameDisplay(false)

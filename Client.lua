@@ -318,7 +318,7 @@ function Module:Startup()
     end
     ]]
 
-    -- 反和谐
+    -- 设置语言过滤器
     if GetCurrentRegionName() ~= 5 then
         self:SetProfanityFilter(Module:GetConfig(CONFIG_PROFANITY_FILTER), false)
     end

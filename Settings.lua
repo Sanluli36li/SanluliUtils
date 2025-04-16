@@ -165,7 +165,7 @@ local settingsData = {
             default = false,
             onValueChanged = function (value)
                 if value then
-                    SanluliUtils.blizzardui:SaveActionBarCVars()
+                    SanluliUtils.Modules.blizzardui:SaveActionBarCVars()
                 end
             end
         },
@@ -179,7 +179,7 @@ local settingsData = {
             default = false,
             onValueChanged = function (value)
                 if value then
-                    SanluliUtils.blizzardui:SaveRaidFrameCVars()
+                    SanluliUtils.Modules.blizzardui:SaveRaidFrameCVars()
                 end
             end
         },
@@ -205,7 +205,7 @@ local settingsData = {
             key = "blizzardui.actionBar.hideName",
             default = false,
             onValueChanged = function (value)
-                SanluliUtils.blizzardui:SetActionBarNameDisplay(not value)
+                SanluliUtils.Modules.blizzardui:SetActionBarNameDisplay(not value)
             end,
         },
         {
@@ -217,7 +217,7 @@ local settingsData = {
             key = "blizzardui.actionBar.hideHotkey",
             default = false,
             onValueChanged = function (value)
-                SanluliUtils.blizzardui:SetActionBarHotKeyDisplay(not value)
+                SanluliUtils.Modules.blizzardui:SetActionBarHotKeyDisplay(not value)
             end,
         }
     },
@@ -355,14 +355,14 @@ local settingsData = {
                             { BATTLE_TAG.."#0000" }
                         },
                         onValueChanged = function (value)
-                            SanluliUtils.social:SetBattleTagHideStatus(value)
+                            SanluliUtils.Modules.social:SetBattleTagHideStatus(value)
                         end
                     },
                     onValueChanged = function (value)
                         if value then
-                            SanluliUtils.social:SetBattleTagHideStatus(SanluliUtils.social:GetConfig("friendsList.hideBattleNetTagSuffix.method"))
+                            SanluliUtils.Modules.social:SetBattleTagHideStatus(SanluliUtils.social:GetConfig("friendsList.hideBattleNetTagSuffix.method"))
                         else
-                            SanluliUtils.social:SetBattleTagHideStatus(0)
+                            SanluliUtils.Modules.social:SetBattleTagHideStatus(0)
                         end
                     end
                 }
@@ -386,7 +386,7 @@ local settingsData = {
                     key = "addons.simulationcraft.forceHideMinimap",
                     default = true,
                     onValueChanged = function (value)
-                        SanluliUtils.addons.SetSimulationCraftMinimap(not value)
+                        SanluliUtils.Modules.addons.SetSimulationCraftMinimap(not value)
                     end,
                     isVisible = function ()
                         return true -- GetAddOnEnableState(nil, "SimulationCraft") >= 1
@@ -409,7 +409,7 @@ local settingsData = {
                         return not GetCVarBool("overrideArchive")
                     end,
                     setValue = function(value)
-                        SanluliUtils.client:SetOverrideArchive(not value, true)
+                        SanluliUtils.Modules.client:SetOverrideArchive(not value, true)
                     end,
                     isVisible = function()
                         return GetLocale() == "zhCN"
@@ -426,7 +426,7 @@ local settingsData = {
                         return GetCVarBool("overrideArchive")
                     end,
                     setValue = function(value)
-                        SanluliUtils.client:SetOverrideArchive(value, true)
+                        SanluliUtils.Modules.client:SetOverrideArchive(value, true)
                     end,
                     isVisible = function()
                         return GetLocale() ~= "zhCN"
@@ -441,7 +441,7 @@ local settingsData = {
                     key = "client.blzAddonProfiler.disable",
                     default = false,
                     onValueChanged = function(value)
-                        SanluliUtils.client:SetAddOnsProfiler(not value, true)
+                        SanluliUtils.Modules.client:SetAddOnsProfiler(not value, true)
                     end,
                 },
                 --[[
@@ -456,7 +456,7 @@ local settingsData = {
                     key = "client.regionDeceive.enable",
                     default = false,
                     onValueChanged = function(value)
-                        SanluliUtils.client:SetRegionDeceive(value, true)
+                        SanluliUtils.Modules.client:SetRegionDeceive(value, true)
                     end,
                     isVisible = function()
                         return SanluliUtils.client.PORTAL_CURRENT == "CN"
@@ -478,7 +478,7 @@ local settingsData = {
                             key = "client.profanityFilter",
                             default = false,
                             onValueChanged = function(value)
-                                SanluliUtils.client:SetProfanityFilter(value, true)
+                                SanluliUtils.Modules.client:SetProfanityFilter(value, true)
                             end
                         }
                     }
@@ -514,7 +514,7 @@ local settingsData = {
                     key = "client.profanityFilter.achievementDataInject",
                     default = true,
                     isVisible = function()
-                        return SanluliUtils.client.PORTAL_CURRENT == "CN"
+                        return SanluliUtils.Modules.client.PORTAL_CURRENT == "CN"
                     end
                 },
                 --[[
@@ -551,6 +551,6 @@ local function Register()
 end
 
 
-function Module:BeforeStartup()
+function Module:OnLoad()
     Register()
 end
