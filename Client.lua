@@ -198,12 +198,9 @@ end)
 ]]
 
 -- 发送聊天信息
+--[[
 hooksecurefunc("SendChatMessage", function (msg, chatType, languageID, target)
-    if chatType == "SAY" or chatType == "YELL" or chatType == "CHANNEL" then
-        -- 说/喊在副本外、向频道发送消息必须有硬件事件, 考虑到需要在这些地方发送成就的情况比较少, 跳过
-        return
-    end
-    if Module.PORTAL_CURRENT == "CN" and Module:GetConfig(CONFIG_ACHIEVEMENTS_DATA_INJECT) then
+    if GetCVar("portal") == "CN" and Module:GetConfig(CONFIG_ACHIEVEMENTS_DATA_INJECT) then
         -- 替换被异常屏蔽的成就
         if string.find(msg, ":9:18:") then
             local str = string.gsub(msg, ":9:18:", ":009:018:")
@@ -212,6 +209,7 @@ hooksecurefunc("SendChatMessage", function (msg, chatType, languageID, target)
         end
     end
 end)
+]]
 
 --------------------
 -- 替换暴雪方法

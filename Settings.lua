@@ -502,8 +502,10 @@ local settingsData = {
                         return GetCVar("portal") ~= "CN" and GetLocale() == "zhCN"
                     end
                 },
+                --[[
                 {
                     -- 成就屏蔽修复 (针对国服回归后的新语言过滤器, 部分日期有些获得的成就发不出去, 尝试修复)
+                    -- 2025/04/17: 已确定国服修复了这个问题, 移除
                     controlType = CONTROL_TYPE.CHECKBOX,
                     settingType = SETTING_TYPE.ADDON_VARIABLE,
                     name = L["client.profanityFilter.achievementDataInject.title"],
@@ -514,6 +516,7 @@ local settingsData = {
                         return GetCVar("portal") == "CN"
                     end
                 },
+                ]]
                 --[[
                 {
                     -- 坐骑链接修复 https://github.com/Stanzilla/WoWUIBugs/issues/699
