@@ -15,8 +15,8 @@ local CONTROL_TYPE = libSettings.CONTROL_TYPE
 local SETTING_TYPE = libSettings.SETTING_TYPE
 
 local settingsData = {
-    module = "general",
     name = ADDON_NAME,
+    database = "SanluliUtilsDB",
     settings = {
         {
             -- 自动修理
@@ -223,7 +223,6 @@ local settingsData = {
     },
     subCategorys = {
         {
-            module = "social",
             name = L["social.title"],
             settings = {
                 {
@@ -369,7 +368,6 @@ local settingsData = {
             }
         },
         {
-            module = "addons",
             name = L["addons.title"],
             settings = {
                 {
@@ -395,7 +393,6 @@ local settingsData = {
             }
         },
         {
-            module = "client",
             name = L["client.title"],
             settings = {
                 {
@@ -547,7 +544,7 @@ local settingsData = {
 }
 
 local function Register()
-    local category, layout = libSettings:RegisterVerticalSettingsTable(ADDON_NAME, settingsData, SanluliUtilsDB, true)
+    local category, layout = libSettings:RegisterVerticalSettingsTable(ADDON_NAME, settingsData)
 end
 
 
