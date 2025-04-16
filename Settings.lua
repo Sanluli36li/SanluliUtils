@@ -511,7 +511,7 @@ local settingsData = {
                     key = "client.profanityFilter.achievementDataInject",
                     default = true,
                     isVisible = function()
-                        return SanluliUtils.Modules.client.PORTAL_CURRENT == "CN"
+                        return GetCVar("portal") == "CN"
                     end
                 },
                 --[[
