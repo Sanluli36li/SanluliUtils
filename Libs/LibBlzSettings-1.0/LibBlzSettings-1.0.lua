@@ -185,7 +185,8 @@ local CONTROL_TYPE_METADATA = {
             local checkboxSetting = Utils.RegisterSetting(addOnName, category, dataTbl, database, Settings.VarType.Boolean)
             local dropdownSetting = Utils.RegisterSetting(addOnName, category, dataTbl.dropdown, database, dropdownVarType, dataTbl.dropdown.name or dataTbl.name)
 
-            local data ={
+            local data =
+            {
                 name = dataTbl.name,
                 tooltip = dataTbl.tooltip,
                 setting = checkboxSetting,  -- 把选择框的设置项单独加进去 子选项才会跟着该选项锁定
@@ -250,8 +251,9 @@ local CONTROL_TYPE_METADATA = {
                     return value
                 end)
             end
-
-            local data = {
+            
+            local data =
+            {
                 name = dataTbl.name,
                 tooltip = dataTbl.tooltip,
                 setting = checkboxSetting,  -- 把选择框的设置项单独加进去 子选项才会跟着该选项锁定
@@ -468,9 +470,11 @@ end
 
 local function SetupControl(addOnName, category, layout, dataTbl, database)
     if CONTROL_TYPE_METADATA[dataTbl.controlType] and Utils.CheckControl(dataTbl) then
+        --[[
         if type(dataTbl.isVisible) == "function" and not dataTbl.isVisible() then
             return
         end
+        ]]
         if type(CONTROL_TYPE_METADATA[dataTbl.controlType].buildFunction) == "function" then
 
             -- 指定额外的表 (而不是分类使用的表) 来储存数据
@@ -527,6 +531,28 @@ local function BuildCategory(addOnName, dataTbl, database, parentCategory)
         category, layout = Settings.RegisterVerticalLayoutSubcategory(parentCategory, dataTbl.name)
     else
         category, layout = Settings.RegisterVerticalLayoutCategory(dataTbl.name or addOnName)
+    end
+
+    layout.displayInitializers = {}
+
+    -- 每次重新判断是否显示
+    function layout:GetInitializers()
+        table.wipe(self.displayInitializers)
+        for i, initializer in ipairs(self.initializers) do
+            if initializer.LibBlzSettingsData then
+                if not (type(initializer.LibBlzSettingsData.isVisible) == "function" and not initializer.LibBlzSettingsData.isVisible()) then
+                    tinsert(self.displayInitializers, initializer)
+                end
+            end
+        end
+
+        return self.displayInitializers
+    end
+
+    function layout:Refresh()
+        if SettingsPanel:GetCurrentLayout() == self then
+            SettingsPanel:DisplayLayout(self)
+        end
     end
 
     if type(database) == "table" then
