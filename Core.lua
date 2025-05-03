@@ -55,7 +55,11 @@ end
 -- 获取配置项
 function AddOn:GetConfig(module, key)
 	if self.Database then
-		return self.Database[module..'.'..key]
+		if key then
+			return self.Database[module..'.'..key]
+		else
+			return self.Database[module]
+		end
 	end
 end
 
@@ -69,7 +73,7 @@ end
 -- 插件消息输出
 function AddOn:Print(text, r, g, b, ...)
     r, g, b = r or 1, g or 1, b or 0
-    DEFAULT_CHAT_FRAME:AddMessage("|cffffffff"..(self.Locale["addon.name"] or ADDON_NAME)..": |r".. tostring(text), r, g, b, ...)
+    DEFAULT_CHAT_FRAME:AddMessage("|cffffffff"..(AddOn.Locale["addon.name"] or ADDON_NAME)..": |r".. tostring(text), r, g, b, ...)
 end
 
 -- 模块类

@@ -17,8 +17,8 @@ Core.lua
 Locales\locales.xml
 
 Settings.lua
-General.lua
-BlizzardUI.lua
+Modules\Automatic\Automatic.xml
+Modules\BlizzardUI\BlizzardUI.xml
 AddOns.lua
 Client.lua
-Social.lua
+Modules\Social\Social.xml

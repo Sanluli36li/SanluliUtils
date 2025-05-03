@@ -22,17 +22,17 @@ local settingsData = {
             -- 自动修理
             controlType = CONTROL_TYPE.CHECKBOX_AND_DROPDOWN,
             settingType = SETTING_TYPE.ADDON_VARIABLE,
-            name = L["general.autoRepair.title"],
-            tooltip = L["general.autoRepair.tooltip"],
-            key = "general.autoRepair.enable",
+            name = L["automatic.autoRepair.title"],
+            tooltip = L["automatic.autoRepair.tooltip"],
+            key = "automatic.autoRepair.enable",
             default = true,
             dropdown = {
                 settingType = SETTING_TYPE.ADDON_VARIABLE,
-                key = "general.autoRepair.funds",
+                key = "automatic.autoRepair.funds",
                 default = 2,
                 options = {
-                    { L["general.autoRepair.funds.personal.title"], L["general.autoRepair.funds.personal.tooltip"] },
-                    { L["general.autoRepair.funds.guild.title"], L["general.autoRepair.funds.guild.tooltip"] },
+                    { L["automatic.autoRepair.funds.personal.title"], L["automatic.autoRepair.funds.personal.tooltip"] },
+                    { L["automatic.autoRepair.funds.guild.title"], L["automatic.autoRepair.funds.guild.tooltip"] },
                 }
             }
         },
@@ -40,18 +40,18 @@ local settingsData = {
             -- 自动出售垃圾
             controlType = CONTROL_TYPE.CHECKBOX_AND_DROPDOWN,
             settingType = SETTING_TYPE.ADDON_VARIABLE,
-            name = L["general.autoSellJunk.title"],
-            tooltip = L["general.autoSellJunk.tooltip"],
-            key = "general.autoSellJunk.enable",
+            name = L["automatic.autoSellJunk.title"],
+            tooltip = L["automatic.autoSellJunk.tooltip"],
+            key = "automatic.autoSellJunk.enable",
             default = true,
             dropdown = {
                 settingType = SETTING_TYPE.ADDON_VARIABLE,
-                key = "general.autoSellJunk.method",
+                key = "automatic.autoSellJunk.method",
                 default = 1,
                 options = {
-                    { L["general.autoSellJunk.method.12Items.title"], L["general.autoSellJunk.method.12Items.tooltip"] },
-                    { L["general.autoSellJunk.method.allItems.title"], L["general.autoSellJunk.method.allItems.tooltip"] },
-                    { L["general.autoSellJunk.method.blizzard.title"], L["general.autoSellJunk.method.blizzard.tooltip"] }
+                    { L["automatic.autoSellJunk.method.12Items.title"], L["automatic.autoSellJunk.method.12Items.tooltip"] },
+                    { L["automatic.autoSellJunk.method.allItems.title"], L["automatic.autoSellJunk.method.allItems.tooltip"] },
+                    { L["automatic.autoSellJunk.method.blizzard.title"], L["automatic.autoSellJunk.method.blizzard.tooltip"] }
                 }
             }
         },
@@ -59,26 +59,26 @@ local settingsData = {
             -- 自动输入确认内容
             controlType = CONTROL_TYPE.CHECKBOX,
             settingType = SETTING_TYPE.ADDON_VARIABLE,
-            name = L["general.autoInputConfirm.title"],
-            tooltip = L["general.autoInputConfirm.tooltip"],
-            key = "general.autoInputConfirm.enable",
+            name = L["automatic.autoInputConfirm.title"],
+            tooltip = L["automatic.autoInputConfirm.tooltip"],
+            key = "automatic.autoInputConfirm.enable",
             default = true
         },
         {
             -- 自动贪婪
             controlType = CONTROL_TYPE.CHECKBOX_AND_DROPDOWN,
             settingType = SETTING_TYPE.ADDON_VARIABLE,
-            name = L["general.autoRoll.title"],
-            tooltip = L["general.autoRoll.tooltip"],
-            key = "general.autoRoll.enable",
+            name = L["automatic.autoRoll.title"],
+            tooltip = L["automatic.autoRoll.tooltip"],
+            key = "automatic.autoRoll.enable",
             default = false,
             dropdown = {
                 settingType = SETTING_TYPE.ADDON_VARIABLE,
-                key = "general.autoRoll.method",
+                key = "automatic.autoRoll.method",
                 default = 1,
                 options = {
-                    { L["general.autoRoll.method.greed.title"], L["general.autoRoll.method.greed.tooltip"] },
-                    { L["general.autoRoll.method.pass.title"], L["general.autoRoll.method.pass.tooltip"] }
+                    { L["automatic.autoRoll.method.greed.title"], L["automatic.autoRoll.method.greed.tooltip"] },
+                    { L["automatic.autoRoll.method.pass.title"], L["automatic.autoRoll.method.pass.tooltip"] }
                 }
             },
         },
@@ -86,37 +86,37 @@ local settingsData = {
             -- 更快的自动拾取
             controlType = CONTROL_TYPE.CHECKBOX,
             settingType = SETTING_TYPE.ADDON_VARIABLE,
-            name = L["general.fasterAutoLoot.title"],
-            tooltip = L["general.fasterAutoLoot.tooltip"],
-            key = "general.fasterAutoLoot.enable",
+            name = L["automatic.fasterAutoLoot.title"],
+            tooltip = L["automatic.fasterAutoLoot.tooltip"],
+            key = "automatic.fasterAutoLoot.enable",
             default = true
         },
         {
             -- 自动战斗日志
             controlType = CONTROL_TYPE.CHECKBOX,
             settingType = SETTING_TYPE.ADDON_VARIABLE,
-            name = L["general.autoCombatlog.title"],
-            tooltip = L["general.autoCombatlog.tooltip"],
-            key = "general.autoCombatlog.enable",
+            name = L["automatic.autoCombatlog.title"],
+            tooltip = L["automatic.autoCombatlog.tooltip"],
+            key = "automatic.autoCombatlog.enable",
             default = false,
             subSettings = {
                 {
                     -- 团队副本难度
                     controlType = CONTROL_TYPE.CHECKBOX_AND_DROPDOWN,
                     settingType = SETTING_TYPE.ADDON_VARIABLE,
-                    name = L["general.autoCombatlog.raid.title"],
-                    tooltip = L["general.autoCombatlog.raid.tooltip"],
-                    key = "general.autoCombatlog.raid",
+                    name = L["automatic.autoCombatlog.raid.title"],
+                    tooltip = L["automatic.autoCombatlog.raid.tooltip"],
+                    key = "automatic.autoCombatlog.raid",
                     default = true,
                     dropdown = {
                         settingType = SETTING_TYPE.ADDON_VARIABLE,
-                        key = "general.autoCombatlog.raid.difficulty",
+                        key = "automatic.autoCombatlog.raid.difficulty",
                         default = 4,
                         options = {
-                            { L["general.autoCombatlog.difficulty.all"] },
-                            { L["general.autoCombatlog.difficulty.normal"] },
-                            { L["general.autoCombatlog.difficulty.heroic"] },
-                            { L["general.autoCombatlog.difficulty.mythicRaid"] },
+                            { L["automatic.autoCombatlog.difficulty.all"] },
+                            { L["automatic.autoCombatlog.difficulty.normal"] },
+                            { L["automatic.autoCombatlog.difficulty.heroic"] },
+                            { L["automatic.autoCombatlog.difficulty.mythicRaid"] },
                         }
                     }
                 },
@@ -124,19 +124,19 @@ local settingsData = {
                     -- 地下城难度
                     controlType = CONTROL_TYPE.CHECKBOX_AND_DROPDOWN,
                     settingType = SETTING_TYPE.ADDON_VARIABLE,
-                    name = L["general.autoCombatlog.dungeon.title"],
-                    tooltip = L["general.autoCombatlog.dungeon.tooltip"],
-                    key = "general.autoCombatlog.dungeon",
+                    name = L["automatic.autoCombatlog.dungeon.title"],
+                    tooltip = L["automatic.autoCombatlog.dungeon.tooltip"],
+                    key = "automatic.autoCombatlog.dungeon",
                     default = false,
                     dropdown = {
                         settingType = SETTING_TYPE.ADDON_VARIABLE,
-                        key = "general.autoCombatlog.dungeon.difficulty",
+                        key = "automatic.autoCombatlog.dungeon.difficulty",
                         default = 4,
                         options = {
-                            { L["general.autoCombatlog.difficulty.all"] },
-                            { L["general.autoCombatlog.difficulty.heroic"] },
-                            { L["general.autoCombatlog.difficulty.mythic"] },
-                            { L["general.autoCombatlog.difficulty.mythicPlus"] },
+                            { L["automatic.autoCombatlog.difficulty.all"] },
+                            { L["automatic.autoCombatlog.difficulty.heroic"] },
+                            { L["automatic.autoCombatlog.difficulty.mythic"] },
+                            { L["automatic.autoCombatlog.difficulty.mythicPlus"] },
                         }
                     }
                 }
@@ -148,7 +148,7 @@ local settingsData = {
             settingType = SETTING_TYPE.ADDON_VARIABLE,
             name = "自动取消队伍申请|cffff0000测试|r",
             tooltip = "在预创建队伍/集合石插件中，自动取消你选定的职责都已满员的申请\n\n只对史诗钥石地下城生效\n\n受限于暴雪API，满员时申请不会立刻被取消，而是在你选择下一个队伍时取消\n\n|cffff0000这是一个测试功能, 不保证其稳定性|r\n|cffff0000This is a testing feature, its stability is not guaranteed|r",
-            key = "general.autoCancelLFGApplication.enable.test",
+            key = "automatic.autoCancelLFGApplication.enable.test",
             default = false
         },
         {
@@ -165,7 +165,7 @@ local settingsData = {
             default = false,
             onValueChanged = function (value)
                 if value then
-                    SanluliUtils.Modules.blizzardui:SaveActionBarCVars()
+                    SanluliUtils.Modules["blizzardui.sync"]:SaveActionBarCVars()
                 end
             end
         },
@@ -179,7 +179,7 @@ local settingsData = {
             default = false,
             onValueChanged = function (value)
                 if value then
-                    SanluliUtils.Modules.blizzardui:SaveRaidFrameCVars()
+                    SanluliUtils.Modules["blizzardui.sync"]:SaveRaidFrameCVars()
                 end
             end
         },
@@ -205,7 +205,7 @@ local settingsData = {
             key = "blizzardui.actionBar.hideName",
             default = false,
             onValueChanged = function (value)
-                SanluliUtils.Modules.blizzardui:SetActionBarNameDisplay(not value)
+                SanluliUtils.Modules["blizzardui.actionBar"]:SetActionBarNameDisplay(not value)
             end,
         },
         {
@@ -217,7 +217,7 @@ local settingsData = {
             key = "blizzardui.actionBar.hideHotkey",
             default = false,
             onValueChanged = function (value)
-                SanluliUtils.Modules.blizzardui:SetActionBarHotKeyDisplay(not value)
+                SanluliUtils.Modules["blizzardui.actionBar"]:SetActionBarHotKeyDisplay(not value)
             end,
         }
     },
@@ -288,9 +288,9 @@ local settingsData = {
                     -- Tab快速切换聊天频道
                     controlType = CONTROL_TYPE.CHECKBOX,
                     settingType = SETTING_TYPE.ADDON_VARIABLE,
-                    name = L["social.chatTypeTabSwitch.title"],
-                    tooltip = L["social.chatTypeTabSwitch.tooltip"],
-                    key = "social.chatTypeTabSwitch.enable",
+                    name = L["social.chat.tabSwitch.title"],
+                    tooltip = L["social.chat.tabSwitch.tooltip"],
+                    key = "social.chat.tabSwitch.enable",
                     default = true
                 },
                 {
@@ -332,36 +332,36 @@ local settingsData = {
                     -- 隐藏好友真实姓名
                     controlType = CONTROL_TYPE.CHECKBOX,
                     settingType = SETTING_TYPE.ADDON_VARIABLE,
-                    name = L["social.friendsList.hideBattleNetFriendsRealName.title"],
-                    tooltip = L["social.friendsList.hideBattleNetFriendsRealName.tooltip"],
-                    key = "social.friendsList.hideBattleNetFriendsRealName.enable",
+                    name = L["social.privacyMode.hideBattleNetFriendsRealName.title"],
+                    tooltip = L["social.privacyMode.hideBattleNetFriendsRealName.tooltip"],
+                    key = "social.privacyMode.hideBattleNetFriendsRealName.enable",
                     default = false
                 },
                 {
                     -- 隐藏战网昵称后缀
                     controlType = CONTROL_TYPE.CHECKBOX_AND_DROPDOWN,
                     settingType = SETTING_TYPE.ADDON_VARIABLE,
-                    name = L["social.friendsList.hideBattleNetTagSuffix.title"],
-                    tooltip = L["social.friendsList.hideBattleNetTagSuffix.tooltip"],
-                    key = "social.friendsList.hideBattleNetTagSuffix.enable",
+                    name = L["social.privacyMode.hideBattleNetTagSuffix.title"],
+                    tooltip = L["social.privacyMode.hideBattleNetTagSuffix.tooltip"],
+                    key = "social.privacyMode.hideBattleNetTagSuffix.enable",
                     default = false,
                     dropdown = {
                         settingType = SETTING_TYPE.ADDON_VARIABLE,
-                        key = "social.friendsList.hideBattleNetTagSuffix.method",
+                        key = "social.privacyMode.hideBattleNetTagSuffix.method",
                         default = 1,
                         options = {
                             { BATTLE_TAG },
                             { BATTLE_TAG.."#0000" }
                         },
                         onValueChanged = function (value)
-                            SanluliUtils.Modules.social:SetBattleTagHideStatus(value)
+                            SanluliUtils.Modules["social.privacyMode"]:SetBattleTagHideStatus(value)
                         end
                     },
                     onValueChanged = function (value)
                         if value then
-                            SanluliUtils.Modules.social:SetBattleTagHideStatus(SanluliUtils.social:GetConfig("friendsList.hideBattleNetTagSuffix.method"))
+                            SanluliUtils.Modules["social.privacyMode"]:SetBattleTagHideStatus(SanluliUtils:GetConfig("social.privacyMode.hideBattleNetTagSuffix.method"))
                         else
-                            SanluliUtils.Modules.social:SetBattleTagHideStatus(0)
+                            SanluliUtils.Modules["social.privacyMode"]:SetBattleTagHideStatus(0)
                         end
                     end
                 }
@@ -429,8 +429,10 @@ local settingsData = {
                         return GetLocale() ~= "zhCN"
                     end
                 },
+                --[[
                 {
                     -- 禁用暴雪插件性能分析 https://x.com/Luckyone961/status/1843256715917050331
+                    -- 2025/05/04: 由于暴雪在11.1.5中强制启用性能分析, 故已失效 https://x.com/Luckyone961/status/1914795096324907492
                     controlType = CONTROL_TYPE.CHECKBOX,
                     settingType = SETTING_TYPE.ADDON_VARIABLE,
                     name = L["client.blzAddonProfiler.disable.title"],
@@ -441,6 +443,7 @@ local settingsData = {
                         SanluliUtils.Modules.client:SetAddOnsProfiler(not value, true)
                     end,
                 },
+                ]]
                 --[[
                 {
                     -- 区域误导

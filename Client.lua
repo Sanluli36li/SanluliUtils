@@ -110,8 +110,11 @@ function Module:SetProfanityFilter(value, printToChatFrame)
     end
 end
 
+
 -- 设置: 插件性能分析
 -- https://x.com/Luckyone961/status/1901392733790494908
+-- 2025/05/04: 由于暴雪在11.1.5中强制启用性能分析, 故已失效 https://x.com/Luckyone961/status/1914795096324907492
+--[[
 function Module:SetAddOnsProfiler(value, printToChatFrame)
     if not GetCVar("addonProfilerEnabled") then
         C_CVar.RegisterCVar("addonProfilerEnabled", "1")
@@ -129,7 +132,7 @@ function Module:SetAddOnsProfiler(value, printToChatFrame)
         end
     end
 end
-
+]]
 
 -- 开启地区误导导致的支持界面无限转圈圈，提示用户临时关闭地区误导选项
 -- 2024/08/01: 此问题已解决，故移除此功能
@@ -322,5 +325,5 @@ function Module:Startup()
     end
 
     -- 插件性能分析
-    self:SetAddOnsProfiler(not Module:GetConfig("blzAddonProfiler.disable"), false)
+    -- self:SetAddOnsProfiler(not Module:GetConfig("blzAddonProfiler.disable"), false)
 end
