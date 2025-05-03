@@ -61,7 +61,7 @@ end
 local lastChatType = 1
 
 hooksecurefunc("ChatEdit_OnTabPressed", function(editBox)
-    if Module:GetConfig(CONFIG_CHAT_TYPE_TAB_SWITCH) and editBox == ChatFrame1EditBox then
+    if Module:GetConfig(CONFIG_ENABLE) and editBox == ChatFrame1EditBox then
         if not (strsub(editBox:GetText(), 1, 1) == "/") then    -- "/"开头命令自动补全时不执行
             -- print("Current: ", editBox:GetAttribute("chatType"), CHAT_TYPE_ID[editBox:GetAttribute("chatType")])
             local currentId = CHAT_TYPE_ID[editBox:GetAttribute("chatType")] or 0

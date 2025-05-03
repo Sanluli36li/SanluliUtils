@@ -7,6 +7,7 @@ local CONFIG_ENABLE = "enable"
 local CONFIG_FORMAT = "format"
 
 local BlizzardFunction = {  -- 暴雪原方法备份
+    -- Interface\\AddOns\\Blizzard_ChatFrameBase\\Mainline\\ChatFrame.lua
     GetBNPlayerLink = _G["GetBNPlayerLink"]
 }
 
