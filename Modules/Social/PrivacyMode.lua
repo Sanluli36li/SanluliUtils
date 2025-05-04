@@ -75,10 +75,9 @@ SocialQueueUtil_GetRelationshipInfo = function(guid, missingNameFallback, clubId
             local accountInfo = C_BattleNet.GetAccountInfoByGUID(guid)
             if accountInfo then
                 return BNet_GetTruncatedBattleTag(accountInfo.battleTag), color, type, link
-            else
-                return name, color, type, link
             end
         end
+        return name, color, type, link
     else
         return BlizzardFunction.SocialQueueUtil_GetRelationshipInfo(guid, missingNameFallback, clubId)
     end
