@@ -8,9 +8,9 @@ local STRING_LOOT_ROLL_INELIGIBLE_REASON_AFFIX = "LOOT_ROLL_INELIGIBLE_REASON"
 local CONFIG_ENABLE = "enable"
 local CONFIG_METHOD = "method"
 
-local LOCALE_MESSAGE_TRANSMOG = "general.autoRoll.message.transmog"
-local LOCALE_MESSAGE_GREED = "general.autoRoll.message.greed"
-local LOCALE_MESSAGE_PASS = "general.autoRoll.message.pass"
+local LOCALE_MESSAGE_TRANSMOG = "automatic.autoRoll.message.transmog"
+local LOCALE_MESSAGE_GREED = "automatic.autoRoll.message.greed"
+local LOCALE_MESSAGE_PASS = "automatic.autoRoll.message.pass"
 
 local function removeWaitingRolls(rollID)
     local waitingRolls = GroupLootContainer.waitingRolls

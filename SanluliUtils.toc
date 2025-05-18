@@ -31,5 +31,5 @@ Settings.lua
 Modules\Automatic\Automatic.xml
 Modules\BlizzardUI\BlizzardUI.xml
 AddOns.lua
-Client.lua
 Modules\Social\Social.xml
+Modules\Client\Client.xml

@@ -8,10 +8,10 @@ local CONFIG_FUNDS = "funds"
 local CONFIG_FUNDS_PERSONAL = 1
 local CONFIG_FUNDS_GUILD = 2
 
-local LOCALE_MESSAGE_REPAIRED = "general.autoRepair.message.repaired"
-local LOCALE_MESSAGE_GUILD = "general.autoRepair.message.guild"
-local LOCALE_MESSAGE_GUILD_EXHAUSTED = "general.autoRepair.message.guildExhausted"
-local LOCALE_MESSAGE_OOM = "general.autoRepair.message.oom"
+local LOCALE_MESSAGE_REPAIRED = "automatic.autoRepair.message.repaired"
+local LOCALE_MESSAGE_GUILD = "automatic.autoRepair.message.guild"
+local LOCALE_MESSAGE_GUILD_EXHAUSTED = "automatic.autoRepair.message.guildExhausted"
+local LOCALE_MESSAGE_OOM = "automatic.autoRepair.message.oom"
 
 local TEXT_MONEY_GOLD_SLIVER_COPPER = "%d|Tinterface/moneyframe/ui-goldicon:0|t%d|Tinterface/moneyframe/ui-silvericon:0|t%d|Tinterface/moneyframe/ui-coppericon:0|t"
 local TEXT_MONEY_SLIVER_COPPER = "%d|Tinterface/moneyframe/ui-silvericon:0|t%d|Tinterface/moneyframe/ui-coppericon:0|t"

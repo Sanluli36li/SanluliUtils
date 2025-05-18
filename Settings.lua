@@ -406,7 +406,13 @@ local settingsData = {
                         return not GetCVarBool("overrideArchive")
                     end,
                     setValue = function(value)
-                        SanluliUtils.Modules.client:SetOverrideArchive(not value, true)
+                        if value then
+                            SetCVar("overrideArchive", "0")
+                            SanluliUtils:Print(L["client.disabledOverrideArchive.message.disabled"])
+                        else
+                            SetCVar("overrideArchive", "1")
+                            SanluliUtils:Print(L["client.disabledOverrideArchive.message.enabled"])
+                        end
                     end,
                     isVisible = function()
                         return GetLocale() == "zhCN"
@@ -423,10 +429,37 @@ local settingsData = {
                         return GetCVarBool("overrideArchive")
                     end,
                     setValue = function(value)
-                        SanluliUtils.Modules.client:SetOverrideArchive(value, true)
+                        if value then
+                            SetCVar("overrideArchive", "1")
+                            SanluliUtils:Print(L["client.disabledOverrideArchive.message.enabled"])
+                        else
+                            SetCVar("overrideArchive", "0")
+                            SanluliUtils:Print(L["client.disabledOverrideArchive.message.disabled"])
+                        end
                     end,
                     isVisible = function()
                         return GetLocale() ~= "zhCN"
+                    end
+                },
+                {
+                    -- 语言过滤器 (因简体中文客户端无法修改此选项, 提供一个修改按钮 (因为国服解锁了也改不了, 所以此选项仅在中国大陆地区以外生效))
+                    controlType = CONTROL_TYPE.CHECKBOX,
+                    settingType = SETTING_TYPE.PROXY,
+                    name = L["client.profanityFilter.title"],
+                    tooltip = OPTION_TOOLTIP_PROFANITY_FILTER,
+                    key = "client.profanityFilter",
+                    getValue = function()
+                        return GetCVarBool("profanityFilter")
+                    end,
+                    setValue = function(value)
+                        if value then
+                            SetCVar("profanityFilter", 1)
+                        else
+                            SetCVar("profanityFilter", 0)
+                        end
+                    end,
+                    isVisible = function()
+                        return GetCVar("portal") ~= "CN" and GetLocale() == "zhCN"
                     end
                 },
                 --[[
@@ -484,27 +517,6 @@ local settingsData = {
                     }
                 },
                 ]]
-                {
-                    -- 语言过滤器 (因简体中文客户端无法修改此选项, 提供一个修改按钮 (因为国服解锁了也改不了, 所以此选项仅在中国大陆地区以外生效))
-                    controlType = CONTROL_TYPE.CHECKBOX,
-                    settingType = SETTING_TYPE.PROXY,
-                    name = L["client.profanityFilter.title"],
-                    tooltip = OPTION_TOOLTIP_PROFANITY_FILTER,
-                    key = "client.profanityFilter",
-                    getValue = function()
-                        return GetCVarBool("profanityFilter")
-                    end,
-                    setValue = function(value)
-                        if value then
-                            SetCVar("profanityFilter", 1)
-                        else
-                            SetCVar("profanityFilter", 0)
-                        end
-                    end,
-                    isVisible = function()
-                        return GetCVar("portal") ~= "CN" and GetLocale() == "zhCN"
-                    end
-                },
                 --[[
                 {
                     -- 成就屏蔽修复 (针对国服回归后的新语言过滤器, 部分日期有些获得的成就发不出去, 尝试修复)
@@ -544,6 +556,18 @@ local settingsData = {
                     default = true,
                 },
                 ]]
+                {
+                    -- 背包卡顿修复 https://github.com/Stanzilla/WoWUIBugs/issues/732
+                    controlType = CONTROL_TYPE.CHECKBOX,
+                    settingType = SETTING_TYPE.ADDON_VARIABLE,
+                    name = "背包卡顿修复",
+                    tooltip = "缓解在战斗中当打开背包时严重掉帧的问题",
+                    key = "client.bugfix.bagUpdateCooldown",
+                    default = true,
+                    onValueChanged = function(value)
+                        SanluliUtils:Print("设置已更改，重载界面后生效")
+                    end,
+                },
             }
         }
     }

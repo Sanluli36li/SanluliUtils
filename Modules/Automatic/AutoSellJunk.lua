@@ -3,11 +3,11 @@ local ADDON_NAME, SanluliUtils = ...
 local Module = SanluliUtils:NewModule("automatic.autoSellJunk")
 local L = SanluliUtils.Locale
 
-local CONFIG_AUTO_SELL_JUNK = "autoSellJunk.enable"
-local CONFIG_AUTO_SELL_JUNK_METHOD = "autoSellJunk.method"
-local CONFIG_AUTO_SELL_JUNK_METHOD_12_ITEMS = 1
-local CONFIG_AUTO_SELL_JUNK_METHOD_ALL_ITEMS = 2
-local CONFIG_AUTO_SELL_JUNK_METHOD_BLIZZARD = 3
+local CONFIG_ENABLE = "enable"
+local CONFIG_METHOD = "method"
+local CONFIG_METHOD_12_ITEMS = 1
+local CONFIG_METHOD_ALL_ITEMS = 2
+local CONFIG_METHOD_BLIZZARD = 3
 
 local HAMMER_MERCHANTS = {
     ["100995"] = true,    -- 自动铁锤
@@ -72,16 +72,16 @@ local function SellJunkItems(blizzardMethod, sellAllItems)
             C_MerchantFrame.SellAllJunkItems()
         end
         if totalPrice > 0 then
-            SanluliUtils:Print(L["general.autoSellJunk.message.sold"]:format(sold, "|cffffffff"..generateMoneyText(totalPrice).."|r"))
+            SanluliUtils:Print(L["automatic.autoSellJunk.message.sold"]:format(sold, "|cffffffff"..generateMoneyText(totalPrice).."|r"))
         end
     end
 end
 
 function Module:MERCHANT_SHOW()
-    if (self:GetConfig(CONFIG_AUTO_SELL_JUNK)) then
+    if (self:GetConfig(CONFIG_ENABLE)) then
         SellJunkItems(
-            self:GetConfig(CONFIG_AUTO_SELL_JUNK_METHOD) == CONFIG_AUTO_SELL_JUNK_METHOD_BLIZZARD,
-            self:GetConfig(CONFIG_AUTO_SELL_JUNK_METHOD) == CONFIG_AUTO_SELL_JUNK_METHOD_ALL_ITEMS or self:GetConfig(CONFIG_AUTO_SELL_JUNK_METHOD) == CONFIG_AUTO_SELL_JUNK_METHOD_BLIZZARD
+            self:GetConfig(CONFIG_METHOD) == CONFIG_METHOD_BLIZZARD,
+            self:GetConfig(CONFIG_METHOD) == CONFIG_METHOD_ALL_ITEMS or self:GetConfig(CONFIG_METHOD) == CONFIG_METHOD_BLIZZARD
         )
     end
 end
