@@ -5,7 +5,7 @@
     This library is based on the Blizzard Settings API and is used to quickly serialize tables into Blizzard Vertical Settings Categories.
 ]]
 
-local MAJOR, MINOR = "LibBlzSettings-1.0", 110102
+local MAJOR, MINOR = "LibBlzSettings-1.0", 110103
 
 local LibBlzSettings = LibStub:NewLibrary(MAJOR, MINOR)
 
