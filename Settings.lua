@@ -326,7 +326,18 @@ local settingsData = {
                     name = L["social.friendsList.characterNameClassColor.title"],
                     tooltip = L["social.friendsList.characterNameClassColor.tooltip"],
                     key = "social.friendsList.characterNameClassColor.enable",
-                    default = true
+                    default = true,
+                    subSettings = {
+                        {
+                            -- 只包含相同版本
+                            controlType = CONTROL_TYPE.CHECKBOX,
+                            settingType = SETTING_TYPE.ADDON_VARIABLE,
+                            name = L["social.friendsList.characterNameClassColor.sameProjectId.title"],
+                            tooltip = L["social.friendsList.characterNameClassColor.sameProjectId.tooltip"],
+                            key = "social.friendsList.characterNameClassColor.sameProjectId",
+                            default = true
+                        }
+                    }
                 },
                 {
                     -- 隐藏好友真实姓名

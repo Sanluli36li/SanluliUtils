@@ -4,6 +4,7 @@ local Module = SanluliUtils:NewModule("social.friendsList")
 local L = SanluliUtils.Locale
 
 local CONFIG_FRIEND_LIST_CHARACTER_NAME_CLASS_COLOR = "characterNameClassColor.enable"
+local CONFIG_FRIEND_LIST_CHARACTER_NAME_CLASS_COLOR_SAME_PROJECT_ID = "characterNameClassColor.sameProjectId"
 
 local CLASSES_COLORS = {}   -- 职业颜色表
 
@@ -55,12 +56,17 @@ hooksecurefunc("FriendsFrame_UpdateFriendButton", function(button, elementData)
             local accountInfo = C_BattleNet.GetFriendAccountInfo(id)
             if accountInfo then
                 local nameText = BNet_GetBNetAccountName(accountInfo)
+
                 local characterName
 
-                if Module:GetConfig(CONFIG_FRIEND_LIST_CHARACTER_NAME_CLASS_COLOR) then
+                if Module:GetConfig(CONFIG_FRIEND_LIST_CHARACTER_NAME_CLASS_COLOR) and (not Module:GetConfig(CONFIG_FRIEND_LIST_CHARACTER_NAME_CLASS_COLOR_SAME_PROJECT_ID) or (accountInfo.gameAccountInfo and accountInfo.gameAccountInfo.wowProjectID == WOW_PROJECT_ID)) then
                     characterName = GetCharacterName(accountInfo, false, "(%s)", true)
                 else
-                    characterName = FRIENDS_OTHER_NAME_COLOR_CODE..GetCharacterName(accountInfo, false, "(%s)", false)..FONT_COLOR_CODE_CLOSE
+                    local name = GetCharacterName(accountInfo, false, "(%s)", false)
+                    if name then
+                        characterName = FRIENDS_OTHER_NAME_COLOR_CODE..name..FONT_COLOR_CODE_CLOSE
+                    end
+                    
                 end
 
                 if characterName then
