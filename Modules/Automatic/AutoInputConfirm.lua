@@ -18,7 +18,7 @@ local CONFIRM_STRINGS = {
 for dialogName, confirmString in pairs(CONFIRM_STRINGS) do
     hooksecurefunc(StaticPopupDialogs[dialogName], "OnShow", function(self)
         if Module:GetConfig(CONFIG_ENABLE) then
-            self.editBox:SetText(confirmString)
+            self:GetEditBox():SetText(confirmString)
         end
     end)
 end
