@@ -5,7 +5,7 @@
     This library is based on the Blizzard Settings API and is used to quickly serialize tables into Blizzard Vertical Settings Categories.
 ]]
 
-local MAJOR, MINOR = "LibBlzSettings-1.0", 110103
+local MAJOR, MINOR = "LibBlzSettings-1.0", 110200
 
 local LibBlzSettings = LibStub:NewLibrary(MAJOR, MINOR)
 
@@ -621,6 +621,15 @@ local function SetupControl(addOnName, category, layout, dataTbl, database)
                 end
             end
 
+            if dataTbl.isVisible then
+                initializer.ShouldShow = dataTbl.isVisible
+            end
+
+            if dataTbl.canSearch == false then
+                -- 忽略搜索
+                initializer:SetSearchIgnoredInLayout(layout)
+            end
+
             if CONTROL_TYPE_METADATA[dataTbl.controlType].setting then
                 -- 添加可更改标记
                 if type(dataTbl.isModifiable) == "function" then
@@ -676,27 +685,6 @@ local function BuildCategory(addOnName, dataTbl, database, parentCategory)
 
     -- 仅纵向布局才继续初始化
     if layout:IsVerticalLayout() then
-        layout.displayInitializers = {}
-
-        -- 每次重新判断是否显示
-        function layout:GetInitializers()
-            table.wipe(self.displayInitializers)
-            for i, initializer in ipairs(self.initializers) do
-                if initializer.LibBlzSettingsData then
-                    if not (type(initializer.LibBlzSettingsData.isVisible) == "function" and not initializer.LibBlzSettingsData.isVisible()) then
-                        tinsert(self.displayInitializers, initializer)
-                    end
-                end
-            end
-
-            return self.displayInitializers
-        end
-
-        function layout:Refresh()
-            if SettingsPanel:GetCurrentLayout() == self then
-                SettingsPanel:DisplayLayout(self)
-            end
-        end
 
         if type(database) == "table" then
             -- 提供了表类型作为数据库, 不做额外处理
