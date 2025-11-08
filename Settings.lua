@@ -567,8 +567,10 @@ local settingsData = {
                     default = true,
                 },
                 ]]
+                --[[
                 {
                     -- 背包卡顿修复 https://github.com/Stanzilla/WoWUIBugs/issues/732
+                    -- 2025/11/08: 在11.2.5中, 此功能会有严重污染, 故移除此功能(尚不明确是否已修复)
                     controlType = CONTROL_TYPE.CHECKBOX,
                     settingType = SETTING_TYPE.ADDON_VARIABLE,
                     name = "背包卡顿修复",
@@ -579,6 +581,7 @@ local settingsData = {
                         SanluliUtils:Print("设置已更改，重载界面后生效")
                     end,
                 },
+                ]]
             }
         }
     }
