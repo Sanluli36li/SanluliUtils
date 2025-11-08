@@ -64,6 +64,7 @@ L["blizzardui.actionBar.hideName.tooltip"] = "隐藏暴雪动作条上的宏、�
 L["blizzardui.actionBar.title"] = "动作条"
 L["blizzardui.forceShowPowerBarAltStatus.title"] = "总是显示额外能量条状态"
 L["blizzardui.forceShowPowerBarAltStatus.tooltip"] = "在额外能量条的Boss战(例如: 恩佐斯)或区域中, 总是显示能量数值"
+L["blizzardui.sync.actionBar.dialogs.noTaint"] = "动作条配置已变更, 建议|cffff0000重新加载界面|r, 否则有可能导致动作条污染\n单击\""..YES.."\"重新加载界面"
 L["blizzardui.sync.actionBar.title"] = "同步动作条配置"
 L["blizzardui.sync.actionBar.tooltip"] = "\""..SETTING_GROUP_GAMEPLAY.." -> "..ACTIONBARS_LABEL.."\"分页的选项将同步到你的其他角色上\n|cffff0000注意: 插件污染可能会在你更改动作条开关设置并同步到其他角色后出现, 只要在被同步的角色登录后/reload一次便不再发生|r"
 L["blizzardui.sync.raidFrame.title"] = "同步团队框体配置"

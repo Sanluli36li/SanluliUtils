@@ -3,10 +3,10 @@ local ADDON_NAME, SanluliUtils = ...
 local Module = SanluliUtils:NewModule("blizzardui.sync")
 local L = SanluliUtils.Locale
 
-local CONFIG_SYNC_RAID_FRAME_ENABLE = "sync.raidFrame.enable"
-local CONFIG_SYNC_RAID_FRAME_CVARS = "sync.raidFrame.cvars"
-local CONFIG_SYNC_ACTION_BAR_ENABLE = "sync.actionBar.enable"
-local CONFIG_SYNC_ACTION_BAR_CVARS = "sync.actionBar.cvars"
+local CONFIG_SYNC_RAID_FRAME_ENABLE = "raidFrame.enable"
+local CONFIG_SYNC_RAID_FRAME_CVARS = "raidFrame.cvars"
+local CONFIG_SYNC_ACTION_BAR_ENABLE = "actionBar.enable"
+local CONFIG_SYNC_ACTION_BAR_CVARS = "actionBar.cvars"
 
 local RAID_FRAME_CVARS = {
     raidFramesDisplayIncomingHeals = true,      -- 显示预计治疗
@@ -83,7 +83,7 @@ function Module:LoadActionBarCVars()
                 if k == "enableMultiActionBars" then
                     MultiActionBar_Update()
                     StaticPopup_Show("SANLULIUTILS_SYNC_ACTIONBAR_TAINT")
-                    SanluliUtils:Print("检测到动作条变更, 建议使用 /reload 避免污染")
+                    -- SanluliUtils:Print("检测到动作条变更, 建议使用 /reload 避免污染")
                 end
             end
         end
@@ -115,6 +115,7 @@ Module:RegisterEvent("CVAR_UPDATE")
 
 function Module:AfterLogin()
     shouldSaveCVar = true
+
     if self:GetConfig(CONFIG_SYNC_RAID_FRAME_ENABLE) then
         self:LoadRaidFrameCVars()
     end

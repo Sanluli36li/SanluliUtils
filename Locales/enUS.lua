@@ -60,6 +60,7 @@ L["blizzardui.actionBar.hideName.tooltip"] = "Hide names on macro/equipment set 
 L["blizzardui.actionBar.title"] = "Action Bars"
 L["blizzardui.forceShowPowerBarAltStatus.title"] = "Always Show Alt Power"
 L["blizzardui.forceShowPowerBarAltStatus.tooltip"] = "Display numeric values on special power bars (e.g. N'Zoth encounters)"
+L["blizzardui.sync.actionBar.dialogs.noTaint"] = "Action bar configuration has been changed. It is recommended to |cffff0000reload the UI|r, otherwise it may cause action bar tainting.\nClick \""..YES.."\" to reload the interface."
 L["blizzardui.sync.actionBar.title"] = "Sync Action Bar Settings"
 L["blizzardui.sync.actionBar.tooltip"] = "\""..SETTING_GROUP_GAMEPLAY.." -> "..ACTIONBARS_LABEL.."\" settings will sync across characters\n|cffff0000May require /reload after changes|r"
 L["blizzardui.sync.raidFrame.title"] = "Sync Raid Frame Settings"

@@ -64,6 +64,7 @@ L["blizzardui.actionBar.hideName.tooltip"] = "隱藏巨集/裝備管理等按鈕
 L["blizzardui.actionBar.title"] = "動作條"
 L["blizzardui.forceShowPowerBarAltStatus.title"] = "總是顯示能量條狀態"
 L["blizzardui.forceShowPowerBarAltStatus.tooltip"] = "在恩佐斯等特殊戰鬥中強制顯示能量數值"
+L["blizzardui.sync.actionBar.dialogs.noTaint"] = "動作條配置已變更, 建議|cffff0000重新載入介面|r, 否則有可能導致動作條汙染\n單擊\""..YES.."\"重新載入介面"
 L["blizzardui.sync.actionBar.title"] = "同步動作條設定"
 L["blizzardui.sync.actionBar.tooltip"] = "\""..SETTING_GROUP_GAMEPLAY.." -> "..ACTIONBARS_LABEL.."\"設定將跨角色同步\n|cffff0000注意：變更後可能需要/reload|r"
 L["blizzardui.sync.raidFrame.title"] = "同步團隊框架設定"
