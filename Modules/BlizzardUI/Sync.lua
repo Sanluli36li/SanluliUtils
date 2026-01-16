@@ -9,16 +9,23 @@ local CONFIG_SYNC_ACTION_BAR_ENABLE = "actionBar.enable"
 local CONFIG_SYNC_ACTION_BAR_CVARS = "actionBar.cvars"
 
 local RAID_FRAME_CVARS = {
-    raidFramesDisplayIncomingHeals = true,      -- 显示预计治疗
-    raidFramesDisplayPowerBars = true,          -- 显示能量条
-    raidFramesDisplayOnlyHealerPowerBars = true,    -- 只显示治疗者能量条
-    raidFramesDisplayAggroHighlight = true,     -- 高亮显示仇恨目标
-    raidFramesDisplayClassColor = true,         -- 显示职业颜色
-    raidOptionDisplayPets = true,               -- 显示宠物
-    raidOptionDisplayMainTankAndAssist = true,  -- 显示主坦克和主助理
-    raidFramesDisplayDebuffs = true,            -- 显示负面效果
+    -- 至暗之夜新增:
+    raidFramesCenterBigDefensive = true,            -- 重要防御技能居中
+    raidFramesDispelIndicatorOverlay = true,        -- 可驱散减益指示器
+    raidFramesDispelIndicatorType = true,           -- 可驱散减益颜色
+    raidFramesDisplayLargerRoleSpecificDebuffs = true,  -- 放大职责减益
+    raidFramesHealthBarColor = true,                -- 团队框架颜色 (仅不使用职业颜色时)
+    -- 旧版
+    raidFramesDisplayAggroHighlight = true,         -- 高亮显示仇恨目标
+    raidFramesDisplayClassColor = true,             -- 显示职业颜色
+    raidFramesDisplayDebuffs = true,                -- 显示负面效果
+    raidFramesDisplayIncomingHeals = true,          -- 显示预计治疗
     raidFramesDisplayOnlyDispellableDebuffs = true, -- 只显示可供驱散的负面效果
-    raidFramesHealthText = true                 -- 显示生命值数值
+    raidFramesDisplayOnlyHealerPowerBars = true,    -- 只显示治疗者能量条
+    raidFramesDisplayPowerBars = true,              -- 显示能量条
+    raidFramesHealthText = true,                    -- 显示生命值数值
+    raidOptionDisplayPets = true,                   -- 显示宠物
+    raidOptionDisplayMainTankAndAssist = true,      -- 显示主坦克和主助理
 }
 
 local ACTION_BAR_CVARS = {
