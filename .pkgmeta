@@ -1,4 +1,10 @@
 package-as: SanluliUtils
+
+externals:
+  Libs/LibStub: https://repos.curseforge.com/wow/libstub/trunk
+
+enable-nolib-creation: no
+
 ignore:
   - .gitignore
   - .github/*
