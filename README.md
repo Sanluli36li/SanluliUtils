@@ -1,4 +1,5 @@
 # SanluliUtils
+![](https://cf.way2muchnoise.eu/short_1089806_downloads.svg)
 
 This is a very lightweight AddOn that does not add any interface elements to the game. It uses the Blizzard Settings framework and is fully compatible with Dragonflight's new search function.  
 [Curseforge](https://www.curseforge.com/wow/addons/sanluliutils)

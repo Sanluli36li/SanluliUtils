@@ -1,4 +1,5 @@
 # SanluliUtils
+![](https://cf.way2muchnoise.eu/short_1089806_downloads.svg)
 
 这是一个非常轻量化的小功能合集插件，它不会向游戏添加任何界面元素，使用暴雪自带的选项框体，并且完全兼容巨龙时代新增的搜索功能  
 [Curseforge](https://www.curseforge.com/wow/addons/sanluliutils)
