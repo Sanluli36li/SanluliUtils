@@ -2,6 +2,10 @@ package-as: SanluliUtils
 
 externals:
   Libs/LibStub: https://repos.curseforge.com/wow/libstub/trunk
+  Libs/LibBlzSettings-1.0:
+    url: https://github.com/Sanluli36li/LibBlzSettings.git
+    branch: 1.0
+    # curse-slug: libblzsettings-1-0
 
 enable-nolib-creation: no
 
@@ -10,3 +14,5 @@ ignore:
   - .github/*
   - README.md
   - README-zhCN.md
+  - Libs/LibBlzSettings-1.0/LibBlzSettings-1.0.toc
+  - Libs/LibBlzSettings-1.0/LICENSE
