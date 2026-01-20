@@ -5,7 +5,7 @@ externals:
   Libs/LibBlzSettings-1.0:
     url: https://github.com/Sanluli36li/LibBlzSettings.git
     branch: 1.0
-    # curse-slug: libblzsettings-1-0
+    curse-slug: libblzsettings-1-0
 
 enable-nolib-creation: no
 
