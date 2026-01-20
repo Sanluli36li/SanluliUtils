@@ -1,0 +1,64 @@
+name: 🐞报告Bug (中文)
+description: 报告你遇到的问题。
+labels: ['🐞Bug']
+body:
+- type: dropdown
+  id: flavor
+  attributes:
+    label: 魔兽世界版本
+    description: 在哪个版本的游戏中有该问题。
+    options:
+      - 正式版 (Retail)
+  validations:
+    required: true
+
+- type: input
+  attributes:
+    label: 插件版本
+    description: |
+      你可以打开插件界面, 将鼠标悬停在ItemInfoOverlay上以查看版本, 或查看你的插件更新器, 或者查看ItemInfoOverlay.toc中的## Versions: 字段。
+  validations:
+    required: true
+
+- type: textarea
+  attributes:
+    label: 描述
+    description: 请尽可能详细的描述你遇到的问题。
+  validations:
+    required: true
+
+- type: textarea
+  attributes:
+    label: 复现步骤
+    description: 请列出复现此问题的全部步骤。请确保该步骤能够复现此问题！
+    placeholder: |
+      1. Go to '...'
+      2. Click on '....'
+      3. Scroll down to '....'
+      4. See error
+  validations:
+    required: true
+
+- type: textarea
+  attributes:
+    label: Lua错误
+    description: |
+      是否有任何错误信息？如果你没有看见任何错误信息, 请确保已启用错误日志(`/console scriptErrors 1`)或安装了[BugSack](https://www.curseforge.com/wow/addons/bugsack)和[BugGrabber](https://www.curseforge.com/wow/addons/bug-grabber)插件。
+    render: Text
+  validations:
+    required: false
+
+- type: input
+  attributes:
+    label: 功能正常的旧版本
+    description: |
+      如果之前的某个版本可以正常运行, 请提供最后一个可以正常运行的版本。
+  validations:
+    required: false
+
+- type: textarea
+  attributes:
+    label: 截图
+    description: 如果有的话, 请提供截图帮助说明问题。
+  validations:
+    required: false

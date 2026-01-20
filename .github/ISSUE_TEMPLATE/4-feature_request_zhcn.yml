@@ -1,0 +1,19 @@
+name: 🛠️功能请求 (中文)
+description: 报告你遇到的问题。
+labels: ['🛠️Feature Request']
+body:
+- type: textarea
+  attributes:
+    label: 描述
+    description: 请尽可能详细的描述你需要的功能。
+  validations:
+    required: true
+
+- type: textarea
+  attributes:
+    label: 其他信息
+    description: |
+      Add any other context or screenshots about the feature request here.
+    render: Text
+  validations:
+    required: false

@@ -1,0 +1,74 @@
+name: 🐞Bug Report
+description: Create a report to help us improve
+labels: ['🐞Bug']
+body:
+- type: dropdown
+  id: flavor
+  attributes:
+    label: World of Warcraft Flavor
+    description: What version of World of Warcraft are are you running?
+    options:
+      - Retail
+  validations:
+    required: true
+
+- type: input
+  attributes:
+    label: AddOn Version
+    description: |
+      You can open the AddOns window and hover your mouse over the ItemInfoOverlay item to check the version, or check the CurseForge app, or the ## Versions: field in ItemInfoOverlay.toc.
+  validations:
+    required: true
+
+- type: textarea
+  attributes:
+    label: Description
+    description: A clear and concise description of what the bug is.
+  validations:
+    required: true
+
+- type: textarea
+  attributes:
+    label: Reproduction Steps
+    description: Please list out the steps to reproduce your bug. Please verify that your reproduction steps are enough to reproduce the problem.
+    placeholder: |
+      1. Go to '...'
+      2. Click on '....'
+      3. Scroll down to '....'
+      4. See error
+  validations:
+    required: true
+
+- type: input
+  attributes:
+    label: Language
+    description: |
+      Which language are you playing World of Warcraft in?
+      If your problem is related to text display (e.g., XXX text is outside the icon area, or cannot be fully displayed), please be sure to provide this information.
+  validations:
+    required: false
+
+- type: textarea
+  attributes:
+    label: Lua Error
+    description: |
+      Do you have an error log of what happened? If you don't see any errors, make sure that error reporting is enabled (`/console scriptErrors 1`) or install [BugSack](https://www.curseforge.com/wow/addons/bugsack) & [BugGrabber](https://www.curseforge.com/wow/addons/bug-grabber), yes both are needed.
+    render: Text
+  validations:
+    required: false
+
+- type: input
+  attributes:
+    label: Last Good Version
+    description: |
+      Was it working in a previous version? If yes, which was the last good one?
+  validations:
+    required: false
+
+- type: textarea
+  attributes:
+    label: Screenshots
+    description: If applicable, add screenshots to help explain your problem.
+    placeholder: Click here to attach your screenshots via the editor button in the top right.
+  validations:
+    required: false
