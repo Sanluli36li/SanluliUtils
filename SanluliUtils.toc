@@ -33,3 +33,4 @@ Modules\BlizzardUI\BlizzardUI.xml
 AddOns.lua
 Modules\Social\Social.xml
 Modules\Client\Client.xml
+ 
