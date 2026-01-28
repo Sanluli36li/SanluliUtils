@@ -58,6 +58,7 @@ BNet_GetBNetAccountName = function(accountInfo)
 end
 
 -- 隐藏真实姓名: 好友列表右键菜单
+--[[
 FriendsFrame_ShowBNDropdown = function(name, connected, lineID, chatType, chatFrame, friendsList, bnetIDAccount, communityClubID, communityStreamID, communityEpoch, communityPosition, battleTag)
     if Module:GetConfig(CONFIG_HIDE_BATTLE_NET_FRIENDS_REAL_NAME) then
         return BlizzardFunction.FriendsFrame_ShowBNDropdown(BNet_GetTruncatedBattleTag(battleTag), connected, lineID, chatType, chatFrame, friendsList, bnetIDAccount, communityClubID, communityStreamID, communityEpoch, communityPosition, battleTag)
@@ -66,8 +67,9 @@ FriendsFrame_ShowBNDropdown = function(name, connected, lineID, chatType, chatFr
     end
     
 end
-
+]]
 -- 隐藏真实姓名: 好友列表/快速加入
+
 SocialQueueUtil_GetRelationshipInfo = function(guid, missingNameFallback, clubId)
     if Module:GetConfig(CONFIG_HIDE_BATTLE_NET_FRIENDS_REAL_NAME) then
         local name, color, type, link = BlizzardFunction.SocialQueueUtil_GetRelationshipInfo(guid, missingNameFallback, clubId)
