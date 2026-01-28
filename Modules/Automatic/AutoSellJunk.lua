@@ -29,7 +29,8 @@ local function generateMoneyText(copper)
 end
 
 local function SellJunkItems(blizzardMethod, sellAllItems)
-    local npcId = select(6, strsplit("-", UnitGUID("npc")))
+    local guid = UnitGUID("npc")
+    local npcId = (issecretvalue(guid) and "secret") or select(6, strsplit("-", guid))  -- 避免guid为秘密值时报错，但秘密值时无法排除铁锤
     -- 排除自动铁锤
     if (C_MerchantFrame.IsSellAllJunkEnabled() and npcId and not HAMMER_MERCHANTS[npcId]) then
         local sold = 0
