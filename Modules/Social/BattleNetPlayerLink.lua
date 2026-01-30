@@ -48,7 +48,7 @@ local function GetCharacterName(accountInfo, withRealmName, format, useClassColo
 end
 
 GetBNPlayerLink = function(name, linkDisplayText, bnetIDAccount, lineID, chatType, chatTarget)
-    if Module:GetConfig(CONFIG_ENABLE) then
+    if Module:GetConfig(CONFIG_ENABLE) and not issecretvalue(bnetIDAccount) then
         local accountInfo = C_BattleNet.GetAccountInfoByID(bnetIDAccount)
         local displayName
 
