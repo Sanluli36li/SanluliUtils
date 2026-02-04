@@ -157,7 +157,7 @@ local settingsData = {
             settingType = SETTING_TYPE.ADDON_VARIABLE,
             name = L["automatic.unequipTeleportEquipment.title"],
             tooltip = L["automatic.unequipTeleportEquipment.tooltip"],
-            key = "automatic.unequipTeleportEquipment.enable.test",
+            key = "automatic.unequipTeleportEquipment.enable",
             default = true
         },
         {
