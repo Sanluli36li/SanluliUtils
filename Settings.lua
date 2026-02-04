@@ -152,6 +152,15 @@ local settingsData = {
             default = false
         },
         {
+            -- 自动脱下传送装备
+            controlType = CONTROL_TYPE.CHECKBOX,
+            settingType = SETTING_TYPE.ADDON_VARIABLE,
+            name = L["automatic.unequipTeleportEquipment.title"],
+            tooltip = L["automatic.unequipTeleportEquipment.tooltip"],
+            key = "automatic.unequipTeleportEquipment.enable.test",
+            default = true
+        },
+        {
             controlType = CONTROL_TYPE.SECTION_HEADER,
             name = L["blizzardui.title"]
         },

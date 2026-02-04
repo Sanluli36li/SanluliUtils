@@ -7,4 +7,5 @@
     <Script file="AutoCombatlog.lua"/>
     <Script file="AutoCancelLFGApplication.lua"/>
     <Script file="FasterAutoLoot.lua"/>
+    <Script file="UnequipTeleportEquipment.lua"/>
 </Ui>
