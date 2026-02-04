@@ -41,3 +41,9 @@ function Module:AfterLogin()
         end)
     end
 end
+
+hooksecurefunc("LFGListSearchEntry_OnClick", function(self)
+    if Module:GetConfig(CONFIG_ENABLE) then
+        LFGCancelInvaildApplications()
+    end
+end)
