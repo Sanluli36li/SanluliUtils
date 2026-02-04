@@ -23,7 +23,7 @@ local function LFGCancelInvaildApplications()
                     (dps and memberCount.DAMAGER_REMAINING ~= 0)
                 )
                 then
-                    SanluliUtils:Print(string.format("已取消申请%s, 因为已选择的职责已满", activityInfo.fullName))
+                    SanluliUtils:Print(string.format(L["automatic.autoCancelLFGApplication.message"], activityInfo.fullName))
                     C_LFGList.CancelApplication(resultID)
                 end
             end
