@@ -146,10 +146,10 @@ local settingsData = {
             -- 自动取消队伍申请
             controlType = CONTROL_TYPE.CHECKBOX,
             settingType = SETTING_TYPE.ADDON_VARIABLE,
-            name = "自动取消队伍申请|cffff0000测试|r",
-            tooltip = "在预创建队伍/集合石插件中，自动取消你选定的职责都已满员的申请\n\n只对史诗钥石地下城生效\n\n受限于暴雪API，满员时申请不会立刻被取消，而是在你选择下一个队伍时取消\n\n|cffff0000这是一个测试功能, 不保证其稳定性|r\n|cffff0000This is a testing feature, its stability is not guaranteed|r",
-            key = "automatic.autoCancelLFGApplication.enable.test",
-            default = false
+            name = L["automatic.autoCancelLFGApplication.title"],
+            tooltip = L["automatic.autoCancelLFGApplication.tooltip"],
+            key = "automatic.autoCancelLFGApplication.enable",
+            default = true
         },
         {
             -- 自动脱下传送装备
