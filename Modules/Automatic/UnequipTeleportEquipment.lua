@@ -104,3 +104,13 @@ function Module:PLAYER_REGEN_ENABLED()
     end
 end
 Module:RegisterEvent("PLAYER_REGEN_ENABLED")
+
+function Module:AfterLogin()
+    for i = 1, 17 do
+        if TELEPORT_EQUIPMENTS[i] then
+            if not TELEPORT_EQUIPMENTS[i][itemId] then
+                equipmentItems[i] = GetInventoryItemLink("player", i)
+            end
+        end
+    end
+end
