@@ -8,13 +8,12 @@ local CHARACTER_NAME = UnitName("player")
 local REALM_NAME = GetRealmName()
 local PLAYER_CLASS_COLOR = "|c"..C_ClassColor.GetClassColor(select(2, UnitClass("player"))):GenerateHexColor()
 
-local libSettings = LibStub("LibBlzSettings-1.0")
+local LibBlzSettings = LibStub("LibBlzSettings-1.0")
 
-local CONTROL_TYPE = libSettings.CONTROL_TYPE
+local CONTROL_TYPE = LibBlzSettings.CONTROL_TYPE
+local SETTING_TYPE = LibBlzSettings.SETTING_TYPE
 
-local SETTING_TYPE = libSettings.SETTING_TYPE
-
-local settingsData = {
+local settings = {
     name = ADDON_NAME,
     database = "SanluliUtilsDB",
     settings = {
@@ -597,7 +596,7 @@ local settingsData = {
 }
 
 local function Register()
-    local category, layout = libSettings:RegisterVerticalSettingsTable(ADDON_NAME, settingsData)
+    LibBlzSettings:RegisterVerticalSettingsTable(ADDON_NAME, settings)
 end
 
 
