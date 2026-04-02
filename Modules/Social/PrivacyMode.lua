@@ -49,6 +49,7 @@ function Module:SetBattleTagHideStatus(value)
 end
 
 -- 隐藏真实姓名: 好友列表/好友招募
+--[[
 BNet_GetBNetAccountName = function(accountInfo)
     if Module:GetConfig(CONFIG_HIDE_BATTLE_NET_FRIENDS_REAL_NAME) then
         return (accountInfo and BNet_GetTruncatedBattleTag(accountInfo.battleTag)) or nil
@@ -56,7 +57,7 @@ BNet_GetBNetAccountName = function(accountInfo)
         return BlizzardFunction.BNet_GetBNetAccountName(accountInfo)
     end
 end
-
+]]
 -- 隐藏真实姓名: 好友列表右键菜单
 --[[
 FriendsFrame_ShowBNDropdown = function(name, connected, lineID, chatType, chatFrame, friendsList, bnetIDAccount, communityClubID, communityStreamID, communityEpoch, communityPosition, battleTag)
@@ -69,7 +70,7 @@ FriendsFrame_ShowBNDropdown = function(name, connected, lineID, chatType, chatFr
 end
 ]]
 -- 隐藏真实姓名: 好友列表/快速加入
-
+--[[
 SocialQueueUtil_GetRelationshipInfo = function(guid, missingNameFallback, clubId)
     if Module:GetConfig(CONFIG_HIDE_BATTLE_NET_FRIENDS_REAL_NAME) then
         local name, color, type, link = BlizzardFunction.SocialQueueUtil_GetRelationshipInfo(guid, missingNameFallback, clubId)
@@ -84,7 +85,7 @@ SocialQueueUtil_GetRelationshipInfo = function(guid, missingNameFallback, clubId
         return BlizzardFunction.SocialQueueUtil_GetRelationshipInfo(guid, missingNameFallback, clubId)
     end
 end
-
+]]
 -- 隐藏真实姓名: 聊天框表头
 hooksecurefunc("ChatEdit_UpdateHeader", function(editBox)
     if Module:GetConfig(CONFIG_HIDE_BATTLE_NET_FRIENDS_REAL_NAME) then

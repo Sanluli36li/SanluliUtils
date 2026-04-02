@@ -56,6 +56,9 @@ hooksecurefunc("FriendsFrame_UpdateFriendButton", function(button, elementData)
             local accountInfo = C_BattleNet.GetFriendAccountInfo(id)
             if accountInfo then
                 local nameText = BNet_GetBNetAccountName(accountInfo)
+                if SanluliUtils:GetConfig("social.privacyMode.hideBattleNetFriendsRealName.enable") then
+                    nameText = BNet_GetTruncatedBattleTag(accountInfo.battleTag) or nameText
+                end
 
                 local characterName
 
