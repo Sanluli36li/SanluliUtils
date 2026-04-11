@@ -47,6 +47,7 @@ local function GetCharacterName(accountInfo, withRealmName, format, useClassColo
     end
 end
 
+--[[
 GetBNPlayerLink = function(name, linkDisplayText, bnetIDAccount, lineID, chatType, chatTarget)
     if Module:GetConfig(CONFIG_ENABLE) and not issecretvalue(bnetIDAccount) then
         local accountInfo = C_BattleNet.GetAccountInfoByID(bnetIDAccount)
@@ -77,3 +78,4 @@ GetBNPlayerLink = function(name, linkDisplayText, bnetIDAccount, lineID, chatTyp
         return BlizzardFunction.GetBNPlayerLink(name, linkDisplayText, bnetIDAccount, lineID, chatType, chatTarget)
     end
 end
+]]
