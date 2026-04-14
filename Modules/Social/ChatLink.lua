@@ -111,13 +111,10 @@ local function HandleItemLink(itemLink)
     ]]
     if classID == Enum.ItemClass.Reagent and subclassID == Enum.ItemReagentSubclass.Keystone then
         local data = strsplittable(":", metaData)
-        local mapID = tonumber(data[16])
-        local keystoneLevel = tonumber(data[18])
-
-        if mapID and keystoneLevel then
-            local mapName = C_ChallengeMode.GetMapUIInfo(mapID)
+        if tonumber(data[16]) and tonumber(data[18]) then
+            local mapName = C_ChallengeMode.GetMapUIInfo(tonumber(data[16]))
             if mapName then
-                displayItemName = CHALLENGE_MODE_KEYSTONE_HYPERLINK:format(mapName, keystoneLevel)
+                displayItemName = CHALLENGE_MODE_KEYSTONE_HYPERLINK:format(mapName, tonumber(data[18]))
             end
         end
     end
