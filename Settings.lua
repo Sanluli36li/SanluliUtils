@@ -6,7 +6,8 @@ local L = SanluliUtils.Locale
 local BATTLE_TAG = (IsBNLogin() and BNet_GetTruncatedBattleTag(select(2, BNGetInfo()))) or "BattleTag"
 local CHARACTER_NAME = UnitName("player")
 local REALM_NAME = GetRealmName()
-local PLAYER_CLASS_COLOR = "|c"..C_ClassColor.GetClassColor(select(2, UnitClass("player"))):GenerateHexColor()
+local _, classFilename, _ = UnitClass("player")
+local PLAYER_CLASS_COLOR = "|c"..C_ClassColor.GetClassColor(classFilename):GenerateHexColor()
 
 local LibBlzSettings = LibStub("LibBlzSettings-1.0")
 
