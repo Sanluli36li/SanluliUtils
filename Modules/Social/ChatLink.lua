@@ -171,7 +171,7 @@ local function chatFilter(chatFrame, event, message, ...)
         -- 史诗钥石
         if Module:GetConfig(CONFIG_DISPLAY_ICON) then
             local itemID = tonumber(itemIDStr)
-            local name, _, itemQuality, itemLevel, itemMinLevel, itemType, itemSubType, _, itemEquipLoc, itemTexture = GetItemInfo(itemID)
+            local name, _, itemQuality, itemLevel, itemMinLevel, itemType, itemSubType, _, itemEquipLoc, itemTexture = C_Item.GetItemInfo(itemID)
 
             if itemTexture then
                 return "|T"..itemTexture..":12:12:1:0|t"..link
