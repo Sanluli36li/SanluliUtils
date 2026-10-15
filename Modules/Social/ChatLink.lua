@@ -120,7 +120,7 @@ local function HandleItemLink(itemLink)
     end
 
     -- 物品染色
-    if IsCosmeticItem(itemLink) then
+    if C_Item.IsCosmeticItem(itemLink) then
         -- 装饰品
         color = "ffff80ff"
     elseif
@@ -144,7 +144,7 @@ local function HandleItemLink(itemLink)
         classID == Enum.ItemClass.Profession or                                                                                                     -- 专业装备
         (classID == Enum.ItemClass.Gem and subclassID == Enum.ItemGemSubclass.Artifactrelic) or                                                     -- 神器圣物
         (classID == Enum.ItemClass.Miscellaneous and subclassID == Enum.ItemMiscellaneousSubclass.Junk and itemQuality >= Enum.ItemQuality.Epic)    -- 杂项->垃圾 (史诗品质以上) (套装兑换物)
-    ) and not IsCosmeticItem(itemLink) then
+    ) and not C_Item.IsCosmeticItem(itemLink) then
         displayItemName = itemLevel..":"..displayItemName
     end
 
