@@ -53,7 +53,7 @@ local function SellJunkItems(blizzardMethod, sellAllItems)
                     local itemInfo = C_Container.GetContainerItemInfo(bagId, slot)
                     if (itemInfo and not itemInfo.isLocked) then
                         if (itemInfo.quality == Enum.ItemQuality.Poor and not itemInfo.hasNoValue) then
-                            local price = itemInfo.stackCount * select(11, GetItemInfo(itemInfo.hyperlink))
+                            local price = itemInfo.stackCount * select(11, C_Item.GetItemInfo(itemInfo.hyperlink))
                             if not blizzardMethod then
                                 -- 使用右键方式出售物品
                                 C_Container.UseContainerItem(bagId, slot)
